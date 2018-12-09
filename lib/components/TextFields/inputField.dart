@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class InputField extends StatelessWidget {
   IconData icon;
@@ -12,6 +13,8 @@ class InputField extends StatelessWidget {
   var onSaved;
   Key key;
   String fromProfile;
+  List<TextInputFormatter> formatters;
+  int maxLength;
 
   //passing props in the Constructor.
   InputField(
@@ -28,8 +31,9 @@ class InputField extends StatelessWidget {
         this.validateFunction,
         this.onSaved,
         this.hintStyle,
-        this.fromProfile
-
+        this.fromProfile,
+        this.formatters,
+        this.maxLength
       });
 
   @override
@@ -50,6 +54,8 @@ class InputField extends StatelessWidget {
             keyboardType: textInputType,
             validator: validateFunction,
             onSaved: onSaved,
+            inputFormatters: formatters,
+            maxLength: maxLength,
             decoration: new InputDecoration(
               hintText: hintText,
               hintStyle: hintStyle,

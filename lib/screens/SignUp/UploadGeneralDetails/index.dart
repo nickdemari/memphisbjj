@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:memphisbjj/components/Buttons/roundedButton.dart';
 import 'package:memphisbjj/components/TextFields/inputField.dart';
 import 'package:memphisbjj/screens/Home/index.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/validations.dart';
+import 'package:memphisbjj/utils/NumberTextInputFormatter.dart';
 import 'package:memphisbjj/utils/UserInformation.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
 
@@ -24,6 +26,7 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
   UserData newUser = UserData();
   bool _autovalidate = false;
   Validations _validations = Validations();
+  NumberTextInputFormatter _mobileFormatter = NumberTextInputFormatter();
 
   void showInSnackBar(String value) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(value)));
@@ -123,6 +126,10 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 bottomMargin: 40.0,
                                 validateFunction:
                                     _validations.validatePhoneNumber,
+                                formatters: <TextInputFormatter>[
+                                  _mobileFormatter,
+                                ],
+                                maxLength: 12,
                                 onSaved: (String phone) {
                                   newUser.phoneNumber = phone;
                                 },

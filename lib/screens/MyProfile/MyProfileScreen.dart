@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -129,8 +130,9 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
+                                AutoSizeText(
                                   document["displayName"],
+                                  maxLines: 1,
                                   style: TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold),
