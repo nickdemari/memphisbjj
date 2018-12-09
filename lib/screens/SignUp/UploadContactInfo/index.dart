@@ -7,10 +7,12 @@ import 'package:memphisbjj/components/TextFields/inputField.dart';
 import 'package:memphisbjj/screens/SignUp/UploadGeneralDetails/index.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/validations.dart';
+import 'package:memphisbjj/utils/UserInformation.dart';
 
 class UploadContactInfoScreen extends StatefulWidget {
   @override
-  _UploadContactInfoScreenState createState() => _UploadContactInfoScreenState();
+  _UploadContactInfoScreenState createState() =>
+      _UploadContactInfoScreenState();
 }
 
 class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
@@ -21,8 +23,7 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
   Validations _validations = Validations();
 
   void showInSnackBar(String value) {
-    _scaffoldKey.currentState
-        .showSnackBar(SnackBar(content: Text(value)));
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(value)));
   }
 
   void _handleSubmitted() async {
@@ -55,9 +56,24 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
           "uid": user.email,
         })
       });
-      await Firestore.instance.collection("users").document(user.uid).setData(userDetails, merge: true);
+      await Firestore.instance
+          .collection("users")
+          .document(user.uid)
+          .setData(userDetails, merge: true);
 
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => UploadGeneralDetailsScreen()));
+      UserInformation userInfo = UserInformation(
+        phoneNumber: "",
+        address1: "",
+        address2: "",
+        city: "",
+        state: "",
+        zip: "",
+      );
+
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext context) => UploadGeneralDetailsScreen(info: userInfo,)));
     }
   }
 
@@ -95,12 +111,12 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
                   child: Column(
                     children: <Widget>[
                       Form(
-                        key: _formKey,
-                        autovalidate: _autovalidate,
-                        //onWillPop: _warnUserAboutInvalidData,
-                        child: Column(
-                          children: <Widget>[
-                            InputField(
+                          key: _formKey,
+                          autovalidate: _autovalidate,
+                          //onWillPop: _warnUserAboutInvalidData,
+                          child: Column(
+                            children: <Widget>[
+                              InputField(
                                 hintText: "First Name",
                                 obscureText: false,
                                 textInputType: TextInputType.text,
@@ -110,29 +126,31 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
                                 validateFunction: _validations.validateField,
                                 onSaved: (String first) {
                                   newUser.firstName = first;
-                                }),
-                            InputField(
+                                },
+                              ),
+                              InputField(
                                 hintText: "Last Name",
                                 obscureText: false,
                                 textInputType: TextInputType.text,
                                 icon: Icons.perm_identity,
                                 iconColor: Colors.black54,
                                 bottomMargin: 40.0,
-                                validateFunction:
-                                _validations.validateField,
+                                validateFunction: _validations.validateField,
                                 onSaved: (String last) {
                                   newUser.lastName = last;
-                                }),
-                            RoundedButton(
+                                },
+                              ),
+                              RoundedButton(
                                 buttonName: "Continue",
                                 onTap: _handleSubmitted,
                                 width: screenSize.width,
                                 height: 50.0,
                                 bottomMargin: 10.0,
                                 borderWidth: 1.0,
-                                buttonColor: Color(0xFF1a256f),)
-                          ],
-                        )),
+                                buttonColor: Color(0xFF1a256f),
+                              )
+                            ],
+                          )),
                     ],
                   ),
                 )
@@ -141,5 +159,4 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
           ),
         ));
   }
-
 }

@@ -35,6 +35,8 @@
 	<string>12</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>This app needs access to Music</string>
 	<key>NSCalendarsUsageDescription</key>
