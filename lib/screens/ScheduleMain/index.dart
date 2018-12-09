@@ -1,18 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByDate//index.dart';
-import 'package:memphisbjj/utils/ListItem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 class ScheduleMainScreen extends StatefulWidget {
   final String locationName;
   final FirebaseUser user;
-  final double distanceToMjj;
 
-  ScheduleMainScreen({this.locationName, this.user, this.distanceToMjj});
+  ScheduleMainScreen({this.locationName, this.user});
 
   @override
   _ScheduleMainScreenState createState() => _ScheduleMainScreenState();

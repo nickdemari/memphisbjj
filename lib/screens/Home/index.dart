@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
+import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/theme/style.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
@@ -35,15 +38,22 @@ class HomeScreenState extends State<HomeScreen> {
               width: 85.0,
               child: FloatingActionButton(
                 child: Text("SIGN UP"),
-                onPressed: () => Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginScreen())),
-              ))
+                onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginScreen(),
+                      ),
+                    ),
+              ),
+            )
           : Container(width: 0.0, height: 0.0),
       body: CustomScrollView(slivers: <Widget>[
         SliverAppBar(
+          pinned: true,
           title: Text("Memphis Judo & Jiu-Jitsu"),
-          expandedHeight: 200.0,
+          expandedHeight: 175.0,
           flexibleSpace: FlexibleSpaceBar(
+            centerTitle: true,
             background: Image.asset(
               "assets/app-drawer-main.jpg",
               fit: BoxFit.cover,
@@ -51,8 +61,10 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SliverFixedExtentList(
-          itemExtent: 200.0,
-          delegate: SliverChildListDelegate(list),
+          itemExtent: 175.0,
+          delegate: SliverChildListDelegate(
+            list,
+          ),
         ),
       ]),
     );
@@ -62,41 +74,22 @@ class HomeScreenState extends State<HomeScreen> {
 List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
   return [
     Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AdminScreen()));
-        },
-        child: Container(
-          color: Colors.white,
-          child: Center(
-            child: Text(
-              "Admin",
-              style: const TextStyle(
-                  color: const Color(0XFF000000),
-                  fontSize: 32.0,
-                  fontFamily: 'WorkSansMedium'),
+            context,
+            MaterialPageRoute(
+              builder: (context) => ScheduleMainScreen(
+                    user: widget.user.fbUser,
+                    locationName: "Bartlett",
+                  ),
             ),
-          ),
-        ),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ScheduleMainScreen(
-                        locationName: "Bartlett",
-                        user: widget.user.fbUser,
-                      )));
+          );
         },
         child: Container(
           decoration:
-              buildBoxDecoration(Colors.black87, "assets/member-benefits.jpg"),
+              buildBoxDecoration(Colors.black38, "assets/member-benefits.jpg"),
           child: Center(
             child: Text(
               "SCHEDULE",
@@ -111,9 +104,9 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
       ),
     ),
     Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.brown, "assets/about-us.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
         child: Center(
           child: Text(
             "SOCIAL MEDIA",
@@ -127,9 +120,9 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
       ),
     ),
     Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.deepPurple, "assets/styles.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
         child: Center(
           child: Text(
             "STYLES",
@@ -143,10 +136,9 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
       ),
     ),
     Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(10.0),
       child: Container(
-        decoration:
-            buildBoxDecoration(Colors.blueAccent, "assets/about-us.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
         child: Center(
           child: Text(
             "INSTRUCTORS",
@@ -159,20 +151,78 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
         ),
       ),
     ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: buildBoxDecoration(Colors.white70, "assets/about-us.jpg"),
-        child: Center(
-          child: Text(
-            "ABOUT US",
-            style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
+    Container(
+      padding: const EdgeInsets.fromLTRB(25, 25, 0, 0),
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyProfileScreen(
+                        user: widget.user.fbUser,
+                      ),
+                ),
+              );
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.user),
+                SizedBox(width: 10),
+                Text(
+                  "My Profile",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ),
-        ),
+          SizedBox(height: 15),
+          Row(
+            children: <Widget>[
+              Icon(FontAwesomeIcons.tasks),
+              SizedBox(width: 10),
+              Text(
+                "My Classes",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          SizedBox(height: 15),
+          GestureDetector(
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.infoCircle),
+                SizedBox(width: 10),
+                Text(
+                  "About",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 15),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminScreen(),
+                ),
+              );
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.userCog),
+                SizedBox(width: 10),
+                Text(
+                  "Admin Tools",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
+        ],
       ),
     ),
   ];
@@ -185,16 +235,18 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ScheduleMainScreen(
-                        locationName: "Bartlett",
-                        user: widget.user.fbUser,
-                      )));
+            context,
+            MaterialPageRoute(
+              builder: (context) => ScheduleMainScreen(
+                    user: widget.user.fbUser,
+                    locationName: "Bartlett",
+                  ),
+            ),
+          );
         },
         child: Container(
           decoration:
-              buildBoxDecoration(Colors.black87, "assets/member-benefits.jpg"),
+              buildBoxDecoration(Colors.black38, "assets/member-benefits.jpg"),
           child: Center(
             child: Text(
               "SCHEDULE",
@@ -211,7 +263,7 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
     Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.brown, "assets/about-us.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
         child: Center(
           child: Text(
             "SOCIAL MEDIA",
@@ -227,7 +279,7 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
     Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.deepPurple, "assets/styles.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
         child: Center(
           child: Text(
             "STYLES",
@@ -244,7 +296,7 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
       padding: const EdgeInsets.all(8.0),
       child: Container(
         decoration:
-            buildBoxDecoration(Colors.blueAccent, "assets/about-us.jpg"),
+            buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
         child: Center(
           child: Text(
             "INSTRUCTORS",
@@ -257,20 +309,66 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
         ),
       ),
     ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: buildBoxDecoration(Colors.white70, "assets/about-us.jpg"),
-        child: Center(
-          child: Text(
-            "ABOUT US",
-            style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
+    Container(
+      padding: const EdgeInsets.fromLTRB(25, 25, 0, 0),
+      child: Column(
+        children: <Widget>[
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyProfileScreen(
+                        user: widget.user.fbUser,
+                      ),
+                ),
+              );
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.user),
+                SizedBox(width: 10),
+                Text(
+                  "My Profile",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ),
-        ),
+          SizedBox(height: 15),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          ViewScheduleScreen(user: widget.user.fbUser)));
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.tasks),
+                SizedBox(width: 10),
+                Text(
+                  "My Classes",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ),
+          SizedBox(height: 15),
+          GestureDetector(
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.infoCircle),
+                SizedBox(width: 10),
+                Text(
+                  "About",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     ),
   ];

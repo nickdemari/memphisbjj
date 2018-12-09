@@ -26,7 +26,7 @@ class Validations {
 
   String validatePhoneNumber(String value) {
     if (value.isEmpty) return 'Phone number is required';
-    final RegExp phoneExp = RegExp(r'^\(\d\d\d\) \d\d\d\-\d\d\d\d$');
+    final RegExp phoneExp = RegExp(r'^\d\d\d\-\d\d\d\-\d\d\d\d$');
     if (!phoneExp.hasMatch(value))
       return '(###) ###-#### - Enter a US phone number.';
     return null;

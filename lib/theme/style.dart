@@ -18,7 +18,7 @@ TextStyle buttonTextStyle = const TextStyle(
 BoxDecoration buildBoxDecoration(Color color, String imageString) {
   return BoxDecoration(
       color: color,
-      borderRadius:  BorderRadius.circular(8.0),
+      borderRadius:  BorderRadius.circular(12.0),
       boxShadow: <BoxShadow> [
         BoxShadow(
             color: Colors.black12,
@@ -29,7 +29,7 @@ BoxDecoration buildBoxDecoration(Color color, String imageString) {
     image: DecorationImage(
         image: AssetImage(imageString),
         fit: BoxFit.cover,
-      colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.3), BlendMode.dstATop)
+      colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.dstATop)
     )
   );
 }
@@ -38,7 +38,7 @@ class LoginColors {
 
   const LoginColors();
 
-  static const Color loginGradientStart = const Color(0xFF6A8D92);
+  static const Color loginGradientStart = const Color(0xFF1a256f);
   static const Color loginGradientEnd = const Color(0xFF1a256f);
 
   static const primaryGradient = const LinearGradient(

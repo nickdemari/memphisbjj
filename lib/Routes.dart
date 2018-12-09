@@ -12,10 +12,14 @@ class Routes {
 
     runApp(
       MaterialApp(
+        debugShowCheckedModeBanner: false,
           home: SplashScreenPage(
             seconds: 2
           ),
-          theme: ThemeData.light()
+          theme: ThemeData(
+            scaffoldBackgroundColor: Color(0xFFe1e4e5),
+            primaryColor: Color(0xFF1a256f),
+          )
       ),
     );
   }

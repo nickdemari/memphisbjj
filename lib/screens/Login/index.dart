@@ -5,11 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:memphisbjj/screens/Home/index.dart';
+import 'package:memphisbjj/screens/SignUp/UploadGeneralDetails/index.dart';
 import 'package:memphisbjj/screens/SignUp/VerifyEmail/index.dart';
-import 'package:memphisbjj/screens/SignUp/index.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/logger.dart';
 import 'package:memphisbjj/theme/style.dart' as Theme;
+import 'package:memphisbjj/utils/UserInformation.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
 import 'package:memphisbjj/utils/bubble_indication_painter.dart';
 
@@ -97,12 +98,16 @@ class _LoginScreeneState extends State<LoginScreen>
                                     spreadRadius: 55),
                               ],
                               image: DecorationImage(
-                                image:
-                                    AssetImage("assets/memphisbjj-large.jpg"),
+                                image: AssetImage(
+                                  "assets/memphisbjj-large.jpg",
+                                ),
                               )),
                         )
                       : Container(
-                          child: Text("MEMPHIS JUDO & JIU-JITSU"),
+                          child: Text(
+                            "MEMPHIS JUDO & JIU-JITSU",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                 ),
                 Padding(
@@ -334,10 +339,7 @@ class _LoginScreeneState extends State<LoginScreen>
                     ),
                   ],
                   gradient: new LinearGradient(
-                      colors: [
-                        Theme.LoginColors.loginGradientEnd,
-                        Theme.LoginColors.loginGradientStart
-                      ],
+                      colors: [Color(0xFF333b72), Color(0xFF333b72)],
                       begin: const FractionalOffset(0.2, 0.2),
                       end: const FractionalOffset(1.0, 1.0),
                       stops: [0.0, 1.0],
@@ -429,7 +431,8 @@ class _LoginScreeneState extends State<LoginScreen>
               Padding(
                 padding: EdgeInsets.only(top: 10.0, right: 40.0),
                 child: GestureDetector(
-                  onTap: () => showInSnackBar("Coming soon! :P"), //TODO Set up facebook login
+                  onTap: () => showInSnackBar(
+                      "Coming soon! :P"), //TODO Set up facebook login
                   child: Container(
                     padding: const EdgeInsets.all(15.0),
                     decoration: new BoxDecoration(
@@ -602,10 +605,7 @@ class _LoginScreeneState extends State<LoginScreen>
                     ),
                   ],
                   gradient: new LinearGradient(
-                      colors: [
-                        Theme.LoginColors.loginGradientEnd,
-                        Theme.LoginColors.loginGradientStart
-                      ],
+                      colors: [Color(0xFF333b72), Color(0xFF333b72)],
                       begin: const FractionalOffset(0.2, 0.2),
                       end: const FractionalOffset(1.0, 1.0),
                       stops: [0.0, 1.0],
@@ -667,8 +667,21 @@ class _LoginScreeneState extends State<LoginScreen>
     var email = loginEmailController.text;
     var password = loginPasswordController.text;
     userAuth.signInWithEmail(email, password).then((user) {
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+      Future<DocumentSnapshot> fbUser =
+          Firestore.instance.collection("users").document(user.uid).get();
+      fbUser.then((doc) {
+        Navigator.pop(context);
+        Roles _roles = Roles.fromSnapshot(doc["roles"]);
+        var _user = UserItem(roles: _roles, fbUser: user);
+
+        Logger.log("LOGIN", message: _user.toString());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => HomeScreen(user: _user),
+          ),
+        );
+      });
     });
   }
 
@@ -702,47 +715,50 @@ class _LoginScreeneState extends State<LoginScreen>
   Future<Null> _signInWithGoogle() async {
     Logger.log(TAG, message: "Signed in with google called");
     userAuth.signInWithGoogle().then((user) {
-      showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return Row(
-              children: [
-                new CircularProgressIndicator(),
-                new Text("Loading"),
-              ],
-            );
-          });
+      _scaffoldKey.currentState.showBottomSheet((BuildContext context) => Row(
+            children: [
+              new CircularProgressIndicator(),
+              new Text("Loading"),
+            ],
+          ));
       Timer(Duration(seconds: 2), () {
-        Future<QuerySnapshot> fbUser = Firestore.instance
-            .collection("users")
-            .where("firebaseUid", isEqualTo: user.uid)
-            .getDocuments();
-        fbUser.then((u) {
+        Future<DocumentSnapshot> fbUser =
+            Firestore.instance.collection("users").document(user.uid).get();
+        fbUser.then((doc) {
           Navigator.pop(context);
-          DocumentSnapshot doc = u.documents[0];
           Roles _roles = Roles.fromSnapshot(doc["roles"]);
           var _user = UserItem(roles: _roles, fbUser: user);
 
+          UserInformation userInfo = UserInformation(
+            phoneNumber: "",
+            address1: "",
+            address2: "",
+            city: "",
+            state: "",
+            zip: "",
+          );
+
           Logger.log("LOGIN", message: _user.toString());
           Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(user: _user)));
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => UploadGeneralDetailsScreen(info: userInfo,),
+            ),
+          );
         });
       });
     });
   }
 
-  Future<Null> _signInAnonymously() async {
-    Logger.log(TAG, message: "Signed in anonymously called");
-    userAuth.signInAnonymously().then((user) {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(
-                    anonymousUser: user,
-                  )));
-    });
-  }
+//  Future<Null> _signInAnonymously() async {
+//    Logger.log(TAG, message: "Signed in anonymously called");
+//    userAuth.signInAnonymously().then((user) {
+//      Navigator.pushReplacement(
+//          context,
+//          MaterialPageRoute(
+//              builder: (BuildContext context) => HomeScreen(
+//                    anonymousUser: user,
+//                  )));
+//    });
+//  }
 }

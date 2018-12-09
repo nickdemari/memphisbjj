@@ -11,21 +11,26 @@ class InputField extends StatelessWidget {
   var validateFunction;
   var onSaved;
   Key key;
+  String fromProfile;
 
   //passing props in the Constructor.
   InputField(
-      {this.key,
-      this.hintText,
-      this.obscureText,
-      this.textInputType,
-      this.textFieldColor,
-      this.icon,
-      this.iconColor,
-      this.bottomMargin,
-      this.textStyle,
-      this.validateFunction,
-      this.onSaved,
-      this.hintStyle});
+      {
+        this.key,
+        this.hintText,
+        this.obscureText,
+        this.textInputType,
+        this.textFieldColor,
+        this.icon,
+        this.iconColor,
+        this.bottomMargin,
+        this.textStyle,
+        this.validateFunction,
+        this.onSaved,
+        this.hintStyle,
+        this.fromProfile
+
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,10 @@ class InputField extends StatelessWidget {
               borderRadius: new BorderRadius.all(new Radius.circular(30.0)),
               color: textFieldColor),
           child: new TextFormField(
+            textCapitalization: TextCapitalization.words,
             style: textStyle,
+            enableInteractiveSelection: true,
+            initialValue: fromProfile == null ? "" : fromProfile,
             key: key,
             obscureText: obscureText,
             keyboardType: textInputType,

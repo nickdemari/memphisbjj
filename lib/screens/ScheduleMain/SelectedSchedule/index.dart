@@ -12,9 +12,8 @@ class SelectedScheduleScreen extends StatefulWidget {
   final FirebaseUser user;
   final ScheduleItem scheduleItem;
   final CollectionReference usersInClassCollection;
-  final double distanceToMjj;
 
-  SelectedScheduleScreen({this.locationName, this.user, this.scheduleItem, this.usersInClassCollection, this.distanceToMjj});
+  SelectedScheduleScreen({this.locationName, this.user, this.scheduleItem, this.usersInClassCollection});
 
   @override
   _SelectedScheduleScreenState createState() => _SelectedScheduleScreenState();
@@ -22,14 +21,7 @@ class SelectedScheduleScreen extends StatefulWidget {
 
 class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   DocumentSnapshot usersClass;
-  DocumentSnapshot registeredClass;
   double _meters;
-
-  @override
-  void initState() {
-    super.initState();
-    _initPlateformState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +75,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
               leading: CircularProgressIndicator(),
               title: Text("Loading..."),
             );
+          print(snapshot.data.documents.length);
           if (snapshot.data.documents.length > 0) {
             this.usersClass = snapshot.data.documents[0];
             return Column(
@@ -146,8 +139,12 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           RaisedButton(
-                              child: Text("CANCEL"),
+                            color: Colors.red,
+                              child: Text("REMOVE"),
                               onPressed: () {
+                                setState(() {
+                                  _meters = null;
+                                });
                                 widget.usersInClassCollection.document(widget.user.uid).delete();
                                 userClassCollection.document(widget.scheduleItem.uid).delete();
 
@@ -162,10 +159,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => ViewScheduleScreen(
-                                            locationName: widget.locationName,
                                             user: widget.user,
-                                            scheduleItem: widget.scheduleItem,
-                                            usersInClassCollection: widget.usersInClassCollection,
                                           )));
                             },
                           )
@@ -226,8 +220,10 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                   width: 0.0,
                 )
                     : RaisedButton(
-                    child: Text("Add to schedule"),
+                  color: Color(0xFF1a256f),
+                    child: Text("Add to schedule", style: TextStyle(color: Colors.white),),
                     onPressed: () {
+                      _initPlateformState();
                       final Map<String, dynamic> participant = Map.from({
                         "uid": widget.user.uid,
                         "addedOn": DateTime.now(),

@@ -6,9 +6,14 @@ import 'package:memphisbjj/components/TextFields/inputField.dart';
 import 'package:memphisbjj/screens/Home/index.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/validations.dart';
+import 'package:memphisbjj/utils/UserInformation.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
 
 class UploadGeneralDetailsScreen extends StatefulWidget {
+  final bool isEdit;
+  final UserInformation info;
+  UploadGeneralDetailsScreen({this.isEdit, this.info});
+
   @override
   _UploadGeneralDetailsState createState() => _UploadGeneralDetailsState();
 }
@@ -32,9 +37,10 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
     } else {
       form.save();
 
+      FocusScope.of(context).requestFocus(new FocusNode());
+
       FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      DocumentSnapshot doc =
-          await Firestore.instance.collection("users").document(user.uid).get();
+      DocumentSnapshot doc = await Firestore.instance.collection("users").document(user.uid).get();
 
       Map<String, dynamic> userInfo = Map.from({
         "information": Map.from({
@@ -54,11 +60,15 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
       //TODO "Add children if guardian" screen
       Roles _roles = Roles.fromSnapshot(doc["roles"]);
       var _user = UserItem(roles: _roles, fbUser: user);
-      print(_user.toString());
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext context) => HomeScreen(user: _user)));
+
+      widget.isEdit != null && widget.isEdit
+          ? Navigator.pop(context)
+          : Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => HomeScreen(user: _user),
+              ),
+            );
     }
   }
 
@@ -107,15 +117,16 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                             InputField(
                                 hintText: "Phone",
                                 obscureText: false,
-                                textInputType: TextInputType.text,
+                                textInputType: TextInputType.phone,
                                 icon: Icons.phone,
                                 iconColor: Colors.black87,
                                 bottomMargin: 40.0,
                                 validateFunction:
-                                _validations.validatePhoneNumber,
+                                    _validations.validatePhoneNumber,
                                 onSaved: (String phone) {
                                   newUser.phoneNumber = phone;
-                                }),
+                                },
+                            fromProfile: widget.info.phoneNumber,),
                             InputField(
                                 hintText: "Address 1",
                                 obscureText: false,
@@ -126,7 +137,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 validateFunction: _validations.validateEmpty,
                                 onSaved: (String addy1) {
                                   newUser.address1 = addy1;
-                                }),
+                                },
+                              fromProfile: widget.info.address1,),
                             InputField(
                                 hintText: "Address 2",
                                 obscureText: false,
@@ -136,7 +148,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 bottomMargin: 20.0,
                                 onSaved: (String addy2) {
                                   newUser.address2 = addy2;
-                                }),
+                                },
+                              fromProfile: widget.info.address2,),
                             InputField(
                                 hintText: "City",
                                 obscureText: false,
@@ -147,7 +160,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 validateFunction: _validations.validateField,
                                 onSaved: (String city) {
                                   newUser.city = city;
-                                }),
+                                },
+                              fromProfile: widget.info.city,),
                             InputField(
                                 hintText: "State",
                                 obscureText: false,
@@ -158,7 +172,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 validateFunction: _validations.validateField,
                                 onSaved: (String state) {
                                   newUser.state = state;
-                                }),
+                                },
+                              fromProfile: widget.info.state,),
                             InputField(
                                 hintText: "Zip",
                                 obscureText: false,
@@ -169,7 +184,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                                 validateFunction: _validations.validateZipCode,
                                 onSaved: (String zip) {
                                   newUser.zip = zip;
-                                }),
+                                },
+                              fromProfile: widget.info.zip,),
                             RoundedButton(
                               buttonName: "Continue",
                               onTap: _handleSubmitted,
