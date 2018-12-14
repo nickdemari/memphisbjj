@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "928741701529",
+    "firebase_url": "https://memphis-bjj.firebaseio.com",
+    "project_id": "memphis-bjj",
+    "storage_bucket": "memphis-bjj.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928741701529:android:18e23e3a36f4eb5c",
+        "android_client_info": {
+          "package_name": "com.demarily.memphisbjj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928741701529-q3m7f9cp8384trvvc5agmi4jgu4san2c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.demarily.memphisbjj",
+            "certificate_hash": "1a717d9e2ca1b2a6717632758cd9d6eba079299a"
+          }
+        },
+        {
+          "client_id": "928741701529-8bfs3cprp4emgrencl9mlnun5n2qfhnd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-iVQ5L9C8-di3G8dCN20dskWQ6ku--W4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "928741701529-8bfs3cprp4emgrencl9mlnun5n2qfhnd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -48,10 +48,10 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
       Map<String, dynamic> userInfo = Map.from({
         "information": Map.from({
           "phoneNumber": newUser.phoneNumber,
-          "address1": newUser.address1,
-          "address2": newUser.address2,
-          "city": newUser.city,
-          "state": newUser.state,
+          "address1": newUser.address1.trim(),
+          "address2": newUser.address2.trim(),
+          "city": newUser.city.trim(),
+          "state": newUser.state.trim().toUpperCase(),
           "zip": newUser.zip
         }),
       });

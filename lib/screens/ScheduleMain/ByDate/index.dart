@@ -7,14 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
   return StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance
-        .collection("schedules")
-        .document("bartlett")
-        .collection("dates")
-        .where('date', isGreaterThanOrEqualTo: lastMidnight)
-        .orderBy("date")
-        .limit(600)
-        .snapshots(),
+    stream: Firestore.instance.collection("schedules").document("bartlett").collection("dates").where('date', isGreaterThanOrEqualTo: lastMidnight).orderBy("date").limit(600).snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
 
@@ -23,6 +16,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
         itemCount: documentCount,
         itemBuilder: (BuildContext context, int index) {
           final DocumentSnapshot doc = snapshot.data.documents[index];
+          final CollectionReference classParticipants = doc.reference.collection("participants");
+
           final ListItem item = !doc.data.containsKey("class")
               ? HeadingItem(doc['date'])
               : ScheduleItem(
@@ -33,8 +28,6 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
             ),
             doc.documentID,
           );
-          final CollectionReference classParticipants =
-          doc.reference.collection("participants");
 
           if (item is HeadingItem) {
             Widget header = Container(
@@ -48,8 +41,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
                 ));
             return header;
           } else if (item is ScheduleItem) {
-            Query userQuery =
-            classParticipants.where("uid", isEqualTo: widget.user.uid);
+            //Get a query of each classes participants to see who's in the class
+            Query userQuery = classParticipants.where("uid", isEqualTo: widget.user.uid);
 
             Widget row = ListTile(
               onTap: () {
@@ -60,7 +53,7 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
                       locationName: widget.locationName,
                       user: widget.user,
                       scheduleItem: item,
-                      usersInClassCollection: classParticipants,
+                      classParticipants: classParticipants,
                     ),
                   ),
                 );
@@ -206,7 +199,7 @@ Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
                         locationName: widget.locationName,
                         user: widget.user,
                         scheduleItem: item,
-                        usersInClassCollection: classParticipants,
+                        classParticipants: classParticipants,
                       ),
                 ),
               );
@@ -347,7 +340,7 @@ ListView _byClassListItems(AsyncSnapshot<QuerySnapshot> snapshot,
                           locationName: widget.locationName,
                           user: widget.user,
                           scheduleItem: item,
-                          usersInClassCollection: classParticipants,
+                          classParticipants: classParticipants,
                         )));
           },
           child: ListTile(

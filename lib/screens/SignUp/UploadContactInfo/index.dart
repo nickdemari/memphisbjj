@@ -35,7 +35,7 @@ class _UploadContactInfoScreenState extends State<UploadContactInfoScreen> {
       form.save();
       var user = await FirebaseAuth.instance.currentUser();
       UserUpdateInfo info = UserUpdateInfo();
-      info.displayName = "${newUser.firstName} ${newUser.lastName}";
+      info.displayName = "${newUser.firstName.trim()} ${newUser.lastName.trim()}";
       user.updateProfile(info);
 
       Map<String, dynamic> userDetails = Map.from({
