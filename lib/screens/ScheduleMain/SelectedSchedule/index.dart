@@ -78,7 +78,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   void _checkIntoClass() {
-    double meters = this._onScheduleDistance;
+    double meters = this._onScheduleDistance ?? this._meters;
     debugPrint(meters.toStringAsFixed(2));
 
     if (meters <= 275.0) {
@@ -174,8 +174,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
       final result = await _deviceCalendarPlugin.retrieveCalendars();
       var calenders = result?.data;
-      Iterable<device.Calendar> first =
-          calenders.where((i) => i.name == "Home" && !i.isReadOnly);
+      Iterable<device.Calendar> first = calenders.where((i) => i.name == "Home" && !i.isReadOnly);
       if (first.length == 0) {
         first = calenders.where((i) => !i.isReadOnly);
       }
@@ -184,9 +183,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         homeCalender.id,
         title: widget.scheduleItem.className,
         start: widget.scheduleItem.rawDateTime,
-        end: widget.scheduleItem.rawDateTime.add(
-          Duration(hours: 1),
-        ),
+        end: widget.scheduleItem.rawEndDateTime,
       );
       print(event.eventId);
       await _deviceCalendarPlugin.createOrUpdateEvent(event);

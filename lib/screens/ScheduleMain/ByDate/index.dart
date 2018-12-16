@@ -7,7 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
   return StreamBuilder<QuerySnapshot>(
-    stream: Firestore.instance.collection("schedules").document("bartlett").collection("dates").where('date', isGreaterThanOrEqualTo: lastMidnight).orderBy("date").limit(600).snapshots(),
+    stream: Firestore.instance
+        .collection("schedules")
+        .document("bartlett")
+        .collection("dates")
+        .where('date', isGreaterThanOrEqualTo: lastMidnight)
+        .orderBy("date")
+        .limit(600)
+        .snapshots(),
     builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
       if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
 
@@ -16,18 +23,19 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
         itemCount: documentCount,
         itemBuilder: (BuildContext context, int index) {
           final DocumentSnapshot doc = snapshot.data.documents[index];
-          final CollectionReference classParticipants = doc.reference.collection("participants");
+          final CollectionReference classParticipants =
+              doc.reference.collection("participants");
 
           final ListItem item = !doc.data.containsKey("class")
               ? HeadingItem(doc['date'])
               : ScheduleItem(
-            doc['date'],
-            doc['instructor'],
-            new Map<String, dynamic>.from(
-              doc['class'],
-            ),
-            doc.documentID,
-          );
+                  doc['date'],
+                  doc['instructor'],
+                  new Map<String, dynamic>.from(
+                    doc['class'],
+                  ),
+                  doc.documentID,
+                  doc['endDate']);
 
           if (item is HeadingItem) {
             Widget header = Container(
@@ -42,7 +50,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
             return header;
           } else if (item is ScheduleItem) {
             //Get a query of each classes participants to see who's in the class
-            Query userQuery = classParticipants.where("uid", isEqualTo: widget.user.uid);
+            Query userQuery =
+                classParticipants.where("uid", isEqualTo: widget.user.uid);
 
             Widget row = ListTile(
               onTap: () {
@@ -50,11 +59,11 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SelectedScheduleScreen(
-                      locationName: widget.locationName,
-                      user: widget.user,
-                      scheduleItem: item,
-                      classParticipants: classParticipants,
-                    ),
+                          locationName: widget.locationName,
+                          user: widget.user,
+                          scheduleItem: item,
+                          classParticipants: classParticipants,
+                        ),
                   ),
                 );
               },
@@ -68,8 +77,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
               subtitle: Text(item.instructor),
               trailing: FutureBuilder(
                 future: userQuery.getDocuments(),
-                builder:
-                    (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData && snapshot.data.documents.length > 0) {
                     return AnimatedOpacity(
                       opacity: 1.0,
@@ -172,8 +181,13 @@ Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
         final DocumentSnapshot doc = snapshot.data.documents[index];
         final ListItem item = !doc.data.containsKey("class")
             ? HeadingItem(doc['date'])
-            : ScheduleItem(doc['date'], doc['instructor'],
-                new Map<String, dynamic>.from(doc['class']), doc.documentID);
+            : ScheduleItem(
+                doc['date'],
+                doc['instructor'],
+                new Map<String, dynamic>.from(doc['class']),
+                doc.documentID,
+                doc['endDate'],
+              );
         final CollectionReference classParticipants =
             doc.reference.collection("participants");
         if (item is HeadingItem) {
@@ -313,8 +327,13 @@ ListView _byClassListItems(AsyncSnapshot<QuerySnapshot> snapshot,
       final DocumentSnapshot doc = snapshot.data.documents[index];
       final ListItem item = !doc.data.containsKey("class")
           ? HeadingItem(doc['date'])
-          : ScheduleItem(doc['date'], doc['instructor'],
-              new Map<String, dynamic>.from(doc['class']), doc.documentID);
+          : ScheduleItem(
+              doc['date'],
+              doc['instructor'],
+              new Map<String, dynamic>.from(doc['class']),
+              doc.documentID,
+              doc['endDate'],
+            );
       final CollectionReference classParticipants =
           doc.reference.collection("participants");
       if (item is HeadingItem) {

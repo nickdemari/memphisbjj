@@ -21,11 +21,13 @@ class ScheduleItem implements ListItem {
   String description;
   String uid;
   DateTime rawDateTime;
+  DateTime rawEndDateTime;
 
-  ScheduleItem(DateTime d, String l, Map<String, dynamic> event, String _uid) {
+  ScheduleItem(DateTime d, String l, Map<String, dynamic> event, String _uid, DateTime _RawEndDateTime) {
     // Handle Time
     this.displayDateTime = convertTime(d);
     this.rawDateTime = d;
+    this.rawEndDateTime = _RawEndDateTime;
     this.className = event['name'];
     this.instructor = l;
     this.description = event['description'];

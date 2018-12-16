@@ -749,16 +749,4 @@ class _LoginScreeneState extends State<LoginScreen>
       });
     });
   }
-
-//  Future<Null> _signInAnonymously() async {
-//    Logger.log(TAG, message: "Signed in anonymously called");
-//    userAuth.signInAnonymously().then((user) {
-//      Navigator.pushReplacement(
-//          context,
-//          MaterialPageRoute(
-//              builder: (BuildContext context) => HomeScreen(
-//                    anonymousUser: user,
-//                  )));
-//    });
-//  }
 }
