@@ -15,6 +15,7 @@
 #import <google_api_availability/GoogleApiAvailabilityPlugin.h>
 #import <google_sign_in/GoogleSignInPlugin.h>
 #import <image_picker/ImagePickerPlugin.h>
+#import <package_info/PackageInfoPlugin.h>
 #import <permission_handler/PermissionHandlerPlugin.h>
 #import <url_launcher/UrlLauncherPlugin.h>
 
@@ -33,6 +34,7 @@
   [GoogleApiAvailabilityPlugin registerWithRegistrar:[registry registrarForPlugin:@"GoogleApiAvailabilityPlugin"]];
   [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [FLTImagePickerPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTImagePickerPlugin"]];
+  [FLTPackageInfoPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTPackageInfoPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [FLTUrlLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTUrlLauncherPlugin"]];
 }

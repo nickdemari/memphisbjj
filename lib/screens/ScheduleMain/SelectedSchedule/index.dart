@@ -49,7 +49,6 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("meters build: ${this._meters}");
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -105,13 +104,15 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     }
   }
 
-  void _removeFromSchedule() {
+  void _removeFromSchedule() async {
     setState(() {
       this._onScheduleDistance = null;
       _setAddToClassIndicator(false);
     });
-    widget.classParticipants.document(widget.user.uid).delete();
-    this._registered.document(widget.scheduleItem.uid).delete();
+    await widget.classParticipants.document(widget.user.uid).delete();
+    await this._registered.document(widget.scheduleItem.uid).delete();
+
+    await _updateClassCapacity(false);
 
     final snackBar = SnackBar(
       content: Text(
@@ -151,6 +152,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         ._registered
         .document(widget.scheduleItem.uid)
         .setData(registeredClass);
+    await _updateClassCapacity(true);
 
     _addToCalender();
 
@@ -160,6 +162,38 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       ),
     );
     _globalKey.currentState.showSnackBar(snackBar);
+  }
+
+  Future _updateClassCapacity(bool isAdded) async {
+    if(isAdded) {
+      if(widget.scheduleItem.capacity.runtimeType != Null && widget.scheduleItem.capacity > 0) {
+        final Map<String, dynamic> classCapacity = Map.from({
+          "capacity": widget.scheduleItem.capacity - 1
+        });
+        await Firestore.instance.collection("schedules").document("bartlett").collection("dates").document(widget.scheduleItem.classId).updateData(classCapacity);
+        setState(() {
+          widget.scheduleItem.capacity -= 1;
+        });
+      } else {
+        final snackBar = SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(
+            "This class is full",
+          ),
+        );
+        _globalKey.currentState.showSnackBar(snackBar);
+      }
+    } else {
+      if(widget.scheduleItem.capacity.runtimeType != Null && widget.scheduleItem.capacity > 0) {
+        final Map<String, dynamic> classCapacity = Map.from({
+          "capacity": widget.scheduleItem.capacity + 1
+        });
+        await Firestore.instance.collection("schedules").document("bartlett").collection("dates").document(widget.scheduleItem.classId).updateData(classCapacity);
+        setState(() {
+          widget.scheduleItem.capacity += 1;
+        });
+      }
+    }
   }
 
   void _addToCalender() async {
@@ -240,7 +274,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 28.0,
                         ),
-                        subtitle: Text(widget.scheduleItem.instructor),
+                        subtitle: widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left"),
                       ),
                     ],
                   ),
@@ -291,7 +325,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 27.0,
                         ),
-                        subtitle: Text(widget.scheduleItem.instructor),
+                        subtitle: widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left"),
                       ),
                     ],
                   ),

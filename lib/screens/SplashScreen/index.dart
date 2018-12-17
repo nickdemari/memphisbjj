@@ -8,6 +8,7 @@ import 'package:memphisbjj/utils/UserItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info/package_info.dart';
 
 class SplashScreenPage extends StatefulWidget {
   final int seconds;
@@ -20,9 +21,16 @@ class SplashScreenPage extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreenPage> {
   final FirebaseAnalytics _analytics = new FirebaseAnalytics();
   FirebaseUser _currentUser;
+  PackageInfo _packageInfo = new PackageInfo(
+    appName: 'Unknown',
+    packageName: 'Unknown',
+    version: 'Unknown',
+    buildNumber: 'Unknown',
+  );
 
   @override
   void initState() {
+    _initPackageInfo();
     Timer(
         Duration(seconds: widget.seconds),
             () {
@@ -89,6 +97,13 @@ class _SplashScreenState extends State<SplashScreenPage> {
     );
   }
 
+  Future<Null> _initPackageInfo() async {
+    final PackageInfo info = await PackageInfo.fromPlatform();
+    setState(() {
+      _packageInfo = info;
+    });
+  }
+
   void _handleCurrentScreen() async {
     try {
       _currentUser = await FirebaseAuth.instance.currentUser();
@@ -98,12 +113,16 @@ class _SplashScreenState extends State<SplashScreenPage> {
         _analytics.logLogin();
         Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
       } else {
-        QuerySnapshot fbUsers = await Firestore.instance.collection("users").where("firebaseUid", isEqualTo: _currentUser.uid).getDocuments();
-        if (fbUsers.documents.length == 0) {
+        DocumentSnapshot fbUser = await Firestore.instance.collection("users").document(_currentUser.uid).get();
+        if (!fbUser.exists) {
           Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
         } else {
-          DocumentSnapshot doc = fbUsers.documents[0];
-          Roles _roles = Roles.fromSnapshot(doc["roles"]);
+          final Map<String, dynamic> userVersion = Map.from({
+            "usersCurrentAppVersion": "${_packageInfo.version} (${_packageInfo.buildNumber})"
+          });
+          await fbUser.reference.updateData(userVersion);
+
+          Roles _roles = Roles.fromSnapshot(fbUser["roles"]);
           var _user = UserItem(roles: _roles, fbUser: _currentUser);
 
           _analytics.logLogin();

@@ -25,7 +25,6 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
           final DocumentSnapshot doc = snapshot.data.documents[index];
           final CollectionReference classParticipants =
               doc.reference.collection("participants");
-
           final ListItem item = !doc.data.containsKey("class")
               ? HeadingItem(doc['date'])
               : ScheduleItem(
@@ -35,7 +34,9 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget) {
                     doc['class'],
                   ),
                   doc.documentID,
-                  doc['endDate']);
+                  doc['endDate'],
+                  doc['capacity'],
+                  doc['id'],);
 
           if (item is HeadingItem) {
             Widget header = Container(
@@ -187,6 +188,8 @@ Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
                 new Map<String, dynamic>.from(doc['class']),
                 doc.documentID,
                 doc['endDate'],
+                doc['capacity'],
+                doc['id']
               );
         final CollectionReference classParticipants =
             doc.reference.collection("participants");
@@ -333,6 +336,8 @@ ListView _byClassListItems(AsyncSnapshot<QuerySnapshot> snapshot,
               new Map<String, dynamic>.from(doc['class']),
               doc.documentID,
               doc['endDate'],
+              doc['capacity'],
+              doc['classId']
             );
       final CollectionReference classParticipants =
           doc.reference.collection("participants");
