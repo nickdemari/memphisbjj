@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
+import 'package:memphisbjj/services/messaging.dart';
 
 class ViewScheduleScreen extends StatefulWidget {
   final FirebaseUser user;
@@ -14,9 +17,32 @@ class ViewScheduleScreen extends StatefulWidget {
 }
 
 class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  StreamSubscription<Map<String, dynamic>> _msgStream;
+
+  @override
+  void initState() {
+    Messaging.setupFCMListeners();
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print(data.toString());
+      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      _globalKey.currentState.showSnackBar(snackBar);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _msgStream.cancel();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _globalKey,
       appBar: AppBar(
         title: Text("My Classes"),
       ),

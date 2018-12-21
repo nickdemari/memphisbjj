@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:core';
 import 'package:memphisbjj/screens/Home/index.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
+import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -19,6 +22,7 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreenPage> {
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics _analytics = new FirebaseAnalytics();
   FirebaseUser _currentUser;
   PackageInfo _packageInfo = new PackageInfo(
@@ -31,6 +35,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
   @override
   void initState() {
     _initPackageInfo();
+    Messaging.setupFCMListeners();
     Timer(
         Duration(seconds: widget.seconds),
             () {
@@ -39,9 +44,17 @@ class _SplashScreenState extends State<SplashScreenPage> {
     );
     super.initState();
   }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _globalKey,
       backgroundColor: Colors.white,
       body: new InkWell(
         child: new Stack(
@@ -117,8 +130,26 @@ class _SplashScreenState extends State<SplashScreenPage> {
         if (!fbUser.exists) {
           Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
         } else {
+          final msgToken = await Messaging.getMessagingToken();
           final Map<String, dynamic> userVersion = Map.from({
-            "usersCurrentAppVersion": "${_packageInfo.version} (${_packageInfo.buildNumber})"
+            "usersCurrentApp": Map.from({
+              "device": Map.from({
+                "android": Map.from({
+                  "installed": Platform.isAndroid,
+                  "lastOpened": Platform.isAndroid ? DateTime.now() : null,
+                  "version": Platform.isAndroid ? "${_packageInfo.version}" : "",
+                  "build": Platform.isAndroid ? _packageInfo.buildNumber : "",
+                  "fcmToken": Platform.isAndroid ? msgToken : ""
+                }),
+                "iOS": Map.from({
+                  "installed": Platform.isIOS,
+                  "lastOpened": Platform.isIOS ? DateTime.now() : null,
+                  "version": Platform.isIOS ? _packageInfo.version : "",
+                  "build": Platform.isIOS ? _packageInfo.buildNumber : "",
+                  "fcmToken": Platform.isIOS ? msgToken : ""
+                })
+              })
+            })
           });
           await fbUser.reference.updateData(userVersion);
 

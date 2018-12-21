@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByDate//index.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:memphisbjj/services/messaging.dart';
 
 class ScheduleMainScreen extends StatefulWidget {
   final String locationName;
@@ -15,9 +18,25 @@ class ScheduleMainScreen extends StatefulWidget {
 
 class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
   BuildContext context;
+  StreamSubscription<Map<String, dynamic>> _msgStream;
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    Messaging.setupFCMListeners();
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print(data.toString());
+      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      _globalKey.currentState.showSnackBar(snackBar);
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
+    _msgStream.cancel();
+
     super.dispose();
   }
 
@@ -32,6 +51,7 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
       child: DefaultTabController(
         length: 3,
         child: Scaffold(
+          key: _globalKey,
           body: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               innerBoxIsScrolled = true;

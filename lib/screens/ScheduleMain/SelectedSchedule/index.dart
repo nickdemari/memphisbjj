@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/components/Buttons/animatedFloatingActionButton.dart';
+import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,6 +30,7 @@ class SelectedScheduleScreen extends StatefulWidget {
 
 class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  StreamSubscription<Map<String, dynamic>> _msgStream;
   CollectionReference _registered;
   DocumentSnapshot usersClass;
   double _meters;
@@ -42,9 +46,23 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   @override
   void initState() {
+    Messaging.setupFCMListeners();
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print(data.toString());
+      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      _globalKey.currentState.showSnackBar(snackBar);
+    });
     _initPlateformState();
     print(this._meters);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _msgStream.cancel();
+
+    super.dispose();
   }
 
   @override

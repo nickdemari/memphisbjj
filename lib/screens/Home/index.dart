@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
+import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/theme/style.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
@@ -20,6 +24,30 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
+  StreamSubscription<Map<String, dynamic>> _msgStream;
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    Messaging.setupFCMListeners();
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print(data.toString());
+      var alert = Messaging.getAlert(data);
+      print(alert);
+      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
+      _globalKey.currentState.showSnackBar(snackBar);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _msgStream.cancel();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     List<Widget> list;
@@ -32,6 +60,7 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
+      key: _globalKey,
       floatingActionButton: widget.anonymousUser != null
           ? Container(
               height: 85.0,

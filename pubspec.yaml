@@ -30,6 +30,7 @@ dependencies:
   font_awesome_flutter: ^8.2.0
   device_calendar: ^0.0.7
   package_info: ^0.3.2
+  firebase_messaging: ^2.1.0
   flutter_native_image:
     git: https://github.com/btastic/flutter_native_image.git
 

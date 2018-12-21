@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +9,7 @@ import 'package:memphisbjj/screens/Login/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/screens/SignUp/UploadGeneralDetails/index.dart';
 import 'package:memphisbjj/screens/SignUp/UploadProfilePic/index.dart';
+import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/UserInformation.dart';
 //import 'package:memphisbjj/services/flutter_sms.dart';
 
@@ -20,7 +23,27 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  StreamSubscription<Map<String, dynamic>> _msgStream;
   bool isEdit = false;
+
+  @override
+  void initState() {
+    Messaging.setupFCMListeners();
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print(data.toString());
+      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _msgStream.cancel();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
