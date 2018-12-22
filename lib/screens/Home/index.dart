@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memphisbjj/screens/Instructors/index.dart';
 import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
@@ -135,15 +136,41 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
     Padding(
       padding: const EdgeInsets.all(10.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
         child: Center(
           child: Text(
-            "SOCIAL MEDIA",
+            "JITSU LABS",
             style: const TextStyle(
                 color: const Color(0XFFFFFFFF),
                 fontSize: 32.0,
                 fontWeight: FontWeight.normal,
                 fontFamily: 'Roboto'),
+          ),
+        ),
+      ),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InstructorsScreen(),
+            ),
+          );
+        },
+        child: Container(
+          decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
+          child: Center(
+            child: Text(
+              "INSTRUCTORS",
+              style: const TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto'),
+            ),
           ),
         ),
       ),
@@ -155,22 +182,6 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
         child: Center(
           child: Text(
             "STYLES",
-            style: const TextStyle(
-                color: const Color(0XFFFFFFFF),
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
-          ),
-        ),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Container(
-        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
-        child: Center(
-          child: Text(
-            "INSTRUCTORS",
             style: const TextStyle(
                 color: const Color(0XFFFFFFFF),
                 fontSize: 32.0,
@@ -292,10 +303,10 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
     Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
+        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
         child: Center(
           child: Text(
-            "SOCIAL MEDIA",
+            "JITSU LABS",
             style: const TextStyle(
                 color: const Color(0XFFFFFFFF),
                 fontSize: 32.0,
@@ -307,28 +318,38 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
     ),
     Padding(
       padding: const EdgeInsets.all(8.0),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InstructorsScreen(),
+            ),
+          );
+        },
+        child: Container(
+          decoration:
+              buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
+          child: Center(
+            child: Text(
+              "INSTRUCTORS",
+              style: const TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto'),
+            ),
+          ),
+        ),
+      ),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
       child: Container(
         decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
         child: Center(
           child: Text(
             "STYLES",
-            style: const TextStyle(
-                color: const Color(0XFFFFFFFF),
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
-          ),
-        ),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration:
-            buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
-        child: Center(
-          child: Text(
-            "INSTRUCTORS",
             style: const TextStyle(
                 color: const Color(0XFFFFFFFF),
                 fontSize: 32.0,
