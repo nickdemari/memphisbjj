@@ -50,7 +50,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
       print(data.toString());
-      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      var alert = Messaging.getAlert(data);
+      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
     });
     _initPlateformState();
@@ -170,6 +171,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         ._registered
         .document(widget.scheduleItem.uid)
         .setData(registeredClass);
+
     await _updateClassCapacity(true);
 
     _addToCalender();
@@ -182,9 +184,10 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     _globalKey.currentState.showSnackBar(snackBar);
   }
 
-  Future _updateClassCapacity(bool isAdded) async {
+  void _updateClassCapacity(bool isAdded) async {
     if(isAdded) {
-      if(widget.scheduleItem.capacity.runtimeType != Null && widget.scheduleItem.capacity > 0) {
+      if (widget.scheduleItem.capacity.runtimeType == Null) return;
+      if(widget.scheduleItem.capacity > 0) {
         final Map<String, dynamic> classCapacity = Map.from({
           "capacity": widget.scheduleItem.capacity - 1
         });

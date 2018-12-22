@@ -38,7 +38,7 @@ class Messaging {
   }
 
   static String getAlert(Map<String, dynamic> message) {
-    return Platform.isIOS ? message["aps"]["alert"] : message["notification"]["body"];
+    return Platform.isIOS ? message["aps"]["alert"]["body"] : message["notification"]["body"];
   }
 
   static void _iOS_Permission() {

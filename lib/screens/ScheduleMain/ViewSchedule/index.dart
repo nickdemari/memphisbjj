@@ -26,7 +26,8 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
       print(data.toString());
-      var snackBar = SnackBar(content: Text(data["notification"]["body"]), backgroundColor: Colors.deepOrange,);
+      var alert = Messaging.getAlert(data);
+      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
     });
     super.initState();
