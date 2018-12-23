@@ -46,6 +46,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   @override
   void initState() {
+    _initPlateformState();
     Messaging.setupFCMListeners();
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
@@ -53,21 +54,20 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       var alert = Messaging.getAlert(data);
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
+      Messaging.removeMessageFromNotifications();
     });
-    _initPlateformState();
-    print(this._meters);
     super.initState();
   }
 
   @override
   void dispose() {
     _msgStream.cancel();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _initPlateformState();
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -88,6 +88,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         onSchedule: this._addedToSchedule,
         checkedIn: this._checkedIn,
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -97,7 +98,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   void _checkIntoClass() {
     double meters = this._onScheduleDistance ?? this._meters;
-    debugPrint(meters.toStringAsFixed(2));
+    debugPrint("distance in meters: ${meters.toStringAsFixed(2)}");
 
     if (meters <= 275.0) {
       this.usersClass.reference.updateData(
@@ -131,7 +132,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     await widget.classParticipants.document(widget.user.uid).delete();
     await this._registered.document(widget.scheduleItem.uid).delete();
 
-    await _updateClassCapacity(false);
+    _updateClassCapacity(false);
 
     final snackBar = SnackBar(
       content: Text(
@@ -172,7 +173,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         .document(widget.scheduleItem.uid)
         .setData(registeredClass);
 
-    await _updateClassCapacity(true);
+    _updateClassCapacity(true);
 
     _addToCalender();
 

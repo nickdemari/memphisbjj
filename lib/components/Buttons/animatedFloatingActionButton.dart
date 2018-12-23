@@ -87,23 +87,26 @@ class _AnimatedFloatingActionButtonState
 
   Widget add() {
     return Container(
-      child: FloatingActionButton(
+      child: FloatingActionButton.extended(
         heroTag: "add",
-        onPressed: widget.meters == null && !widget.onSchedule ? widget.addToSchedule : null,
+        onPressed: !widget.onSchedule ?  widget.addToSchedule : null,
         tooltip: 'Add',
-        child: Icon(Icons.add),
+        icon: Icon(Icons.add),
+        label: Text("Add to schedule"),
         backgroundColor: widget.meters == null && !widget.onSchedule ? null : Colors.grey,
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );
   }
 
   Widget checkIn() {
     return Container(
-      child: FloatingActionButton(
+      child: FloatingActionButton.extended(
         heroTag: "image",
         onPressed: widget.meters != null || widget.onSchedule ? widget.checkInToClass : null,
         tooltip: 'Image',
-        child: Icon(Icons.check),
+        icon: Icon(Icons.check),
+        label: Text("Check in to class"),
         backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
       ),
     );
@@ -111,11 +114,12 @@ class _AnimatedFloatingActionButtonState
 
   Widget remove() {
     return Container(
-      child: FloatingActionButton(
+      child: FloatingActionButton.extended(
         heroTag: "inbox",
         onPressed: widget.meters != null || (widget.onSchedule && !widget.checkedIn) ? widget.removeFromSchedule : null,
         tooltip: 'Inbox',
-        child: Icon(Icons.remove),
+        icon: Icon(Icons.remove),
+        label: Text("Remove from schedule"),
         backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
       ),
     );
@@ -139,33 +143,43 @@ class _AnimatedFloatingActionButtonState
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 3.0,
-            0.0,
-          ),
-          child: add(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 2.0,
-            0.0,
-          ),
-          child: checkIn(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value,
-            0.0,
-          ),
-          child: remove(),
-        ),
-        toggle(),
-      ],
+      children: isOpened ? _renderTools() : _renderBlank(),
     );
+  }
+
+  List<Widget> _renderBlank() {
+    return <Widget>[
+      toggle()
+    ];
+  }
+
+  List<Widget> _renderTools() {
+    return <Widget>[
+      Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translateButton.value * 3.0,
+          0.0,
+        ),
+        child: add(),
+      ),
+      Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translateButton.value * 2.0,
+          0.0,
+        ),
+        child: checkIn(),
+      ),
+      Transform(
+        transform: Matrix4.translationValues(
+          0.0,
+          _translateButton.value,
+          0.0,
+        ),
+        child: remove(),
+      ),
+      toggle()
+    ];
   }
 }

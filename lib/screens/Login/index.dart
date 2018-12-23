@@ -55,7 +55,6 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
-    print(screenHeight);
     return new Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
@@ -170,7 +169,6 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
 
     Messaging.setupFCMListeners();
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print(data.toString());
       var alert = Messaging.getAlert(data);
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -727,6 +725,7 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
   Future<Null> _signInWithGoogle() async {
     Logger.log(TAG, message: "Signed in with google called");
     userAuth.signInWithGoogle().then((user) {
+      Logger.log(TAG, message: user.toString());
       _scaffoldKey.currentState.showBottomSheet((BuildContext context) => Row(
             children: [
               new CircularProgressIndicator(),

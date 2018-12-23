@@ -51,4 +51,8 @@ class Messaging {
       print("Settings registered: $settings");
     });
   }
+
+  static void removeMessageFromNotifications() {
+    _onMessageStreamController.sink.close();
+  }
 }
