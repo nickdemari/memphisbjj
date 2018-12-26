@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -28,23 +26,28 @@ class HomeScreenState extends State<HomeScreen> {
   StreamSubscription<Map<String, dynamic>> _msgStream;
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
+  HomeScreenState() {
+    print("Testing");
+  }
+
   @override
   void initState() {
-    Messaging.setupFCMListeners();
+    print("HOME");
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print(data.toString());
+      print("FCM TRIGGERED in home");
       var alert = Messaging.getAlert(data);
-      print(alert);
+      Messaging.cancelFcmMessaging();
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
+      _msgStream.cancel();
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _msgStream.cancel();
+    print("HOME DISPOSED");
 
     super.dispose();
   }
@@ -53,11 +56,11 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     List<Widget> list;
     if (widget.anonymousUser != null && widget.anonymousUser.isAnonymous) {
-      list = _createMemberList(context: context, widget: widget);
+      list = _createMemberList(context: context, widget: widget, msg: _msgStream);
     } else if (widget.user != null && widget.user.roles.admin) {
-      list = _createAdminList(context: context, widget: widget);
+      list = _createAdminList(context: context, widget: widget, msg: _msgStream);
     } else if (widget.user != null && widget.user.roles.subscriber) {
-      list = _createMemberList(context: context, widget: widget);
+      list = _createMemberList(context: context, widget: widget, msg: _msgStream);
     }
 
     return Scaffold(
@@ -101,7 +104,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
+List<Widget> _createAdminList({BuildContext context, HomeScreen widget, StreamSubscription<Map<String, dynamic>> msg}) {
   return [
     Padding(
       padding: const EdgeInsets.all(10.0),
@@ -268,12 +271,13 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget}) {
   ];
 }
 
-List<Widget> _createMemberList({BuildContext context, HomeScreen widget}) {
+List<Widget> _createMemberList({BuildContext context, HomeScreen widget, StreamSubscription<Map<String, dynamic>> msg}) {
   return [
     Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         onTap: () {
+          msg.cancel();
           Navigator.push(
             context,
             MaterialPageRoute(
