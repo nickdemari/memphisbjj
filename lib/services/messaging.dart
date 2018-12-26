@@ -29,7 +29,7 @@ class Messaging {
     _firebaseMessaging.subscribeToTopic(topic);
   }
 
-  static cancelFcmMessaging() {
+  static void cancelFcmMessaging() {
     _onMessageStreamController.close();
   }
 
@@ -50,9 +50,5 @@ class Messaging {
     {
       print("Settings registered: $settings");
     });
-  }
-
-  static void removeMessageFromNotifications() {
-    _onMessageStreamController.sink.close();
   }
 }

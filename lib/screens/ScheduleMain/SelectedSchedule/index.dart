@@ -47,27 +47,20 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   @override
   void initState() {
     _initPlateformState();
-    Messaging.setupFCMListeners();
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print(data.toString());
+      print("FCM TRIGGERED in selected schedule");
       var alert = Messaging.getAlert(data);
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
-      Messaging.removeMessageFromNotifications();
+
+      _msgStream.cancel();
     });
     super.initState();
   }
 
   @override
-  void dispose() {
-    _msgStream.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _initPlateformState();
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
@@ -142,6 +135,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   void _addToSchedule() async {
+    _initPlateformState();
     setState(() {
       this._onScheduleDistance = this._meters;
     });

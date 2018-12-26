@@ -28,20 +28,20 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
   @override
   void initState() {
-    Messaging.setupFCMListeners();
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print(data.toString());
       var alert = Messaging.getAlert(data);
+      Messaging.cancelFcmMessaging();
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _scaffoldKey.currentState.showSnackBar(snackBar);
+
+      _msgStream.cancel();
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _msgStream.cancel();
 
     super.dispose();
   }

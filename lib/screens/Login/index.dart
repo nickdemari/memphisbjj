@@ -9,7 +9,6 @@ import 'package:memphisbjj/screens/SignUp/UploadGeneralDetails/index.dart';
 import 'package:memphisbjj/screens/SignUp/VerifyEmail/index.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/logger.dart';
-import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/theme/style.dart' as Theme;
 import 'package:memphisbjj/utils/UserInformation.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
@@ -25,7 +24,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   UserAuth userAuth = UserAuth();
-  StreamSubscription<Map<String, dynamic>> _msgStream;
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
@@ -153,9 +151,6 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
 
   @override
   void dispose() {
-    _msgStream.cancel();
-
-
     myFocusNodePassword.dispose();
     myFocusNodeEmail.dispose();
     myFocusNodeName.dispose();
@@ -165,14 +160,6 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
 
   @override
   void initState() {
-    super.initState();
-
-    Messaging.setupFCMListeners();
-    _msgStream = Messaging.onFcmMessage.listen((data) {
-      var alert = Messaging.getAlert(data);
-      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
-      _scaffoldKey.currentState.showSnackBar(snackBar);
-    });
 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -180,6 +167,7 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
     ]);
 
     _pageController = PageController();
+    super.initState();
   }
 
   void showInSnackBar(String value, {Color color}) {

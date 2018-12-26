@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:memphisbjj/screens/ScheduleMain/ByClass/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByDate//index.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:memphisbjj/screens/ScheduleMain/ByInstructor/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 
 class ScheduleMainScreen extends StatefulWidget {
@@ -23,20 +25,21 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
 
   @override
   void initState() {
-    Messaging.setupFCMListeners();
     Messaging.subscribeToTopic("testing");
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print(data.toString());
+      print("FCM TRIGGERED schedule main");
       var alert = Messaging.getAlert(data);
       var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
       _globalKey.currentState.showSnackBar(snackBar);
+
+      _msgStream.cancel();
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _msgStream.cancel();
+    print("SCHEDULE MAIN DISPOSED");
 
     super.dispose();
   }
@@ -104,9 +107,9 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
             },
             body: TabBarView(
               children: <Widget>[
-                buildByDateTab(lastMidnight, widget),
-                buildByInstructorTab(lastMidnight, widget),
-                buildByClassTab(lastMidnight, widget)
+                buildByDateTab(lastMidnight, widget, _msgStream),
+                buildByInstructorTab(lastMidnight, widget, _msgStream),
+                buildByClassTab(lastMidnight, widget, _msgStream)
               ],
             )
           ),

@@ -35,7 +35,6 @@ class _SplashScreenState extends State<SplashScreenPage> {
   @override
   void initState() {
     _initPackageInfo();
-    Messaging.setupFCMListeners();
     Timer(
         Duration(seconds: widget.seconds),
             () {
@@ -124,6 +123,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
 
       if (_currentUser == null) {
         _analytics.logLogin();
+
         Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
       } else {
         DocumentSnapshot fbUser = await Firestore.instance.collection("users").document(_currentUser.uid).get();
