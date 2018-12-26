@@ -5,7 +5,8 @@ import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget, StreamSubscription<Map<String, dynamic>> msg) {
+StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
+    StreamSubscription<Map<String, dynamic>> msg) {
   return StreamBuilder<QuerySnapshot>(
     stream: Firestore.instance
         .collection("schedules")
@@ -36,7 +37,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget, S
                   doc.documentID,
                   doc['endDate'],
                   doc['capacity'],
-                  doc['id'],);
+                  doc['id'],
+                );
 
           if (item is HeadingItem) {
             Widget header = Container(
@@ -51,8 +53,10 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget, S
             return header;
           } else if (item is ScheduleItem) {
             //Get a query of each classes participants to see who's in the class
-            Query userQuery =
-                classParticipants.where("uid", isEqualTo: widget.user.uid);
+            Query userQuery = classParticipants.where(
+              "uid",
+              isEqualTo: widget.user.uid,
+            );
 
             Widget row = ListTile(
               onTap: () {
@@ -81,7 +85,11 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget, S
                 future: userQuery.getDocuments(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasData && snapshot.data.documents.length > 0) {
+                  if (!snapshot.hasData)
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  if (snapshot.data.documents.length > 0) {
                     return AnimatedOpacity(
                       opacity: 1.0,
                       duration: Duration(milliseconds: 500),
