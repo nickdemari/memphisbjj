@@ -7,9 +7,12 @@ class InstructorsScreen extends StatefulWidget {
 }
 
 class _InstructorsScreenState extends State<InstructorsScreen> {
+  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _globalKey,
       body: NestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return <Widget>[
