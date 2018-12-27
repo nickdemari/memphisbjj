@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:memphisbjj/screens/Instructors/Selected/index.dart';
 
 class InstructorsScreen extends StatefulWidget {
   @override
@@ -51,7 +52,17 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
               itemCount: collectionCount,
               itemBuilder: (BuildContext context, int index) {
                 final DocumentSnapshot doc = snapshot.data.documents[index];
+                if(doc["name"] == "None") return Container(height: 0, width: 0,);
                 return ListTile(
+                  onTap: () {
+                    String uid = doc.documentID;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectedInstructorScreen(instructorId: uid, name: doc['name'],),
+                      ),
+                    );
+                  },
                   title: Text(doc['name']),
                 );
               },
