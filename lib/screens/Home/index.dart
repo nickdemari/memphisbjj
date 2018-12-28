@@ -1,16 +1,17 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memphisbjj/screens/Admin/index.dart';
 import 'package:memphisbjj/screens/Instructors/index.dart';
+import 'package:memphisbjj/screens/Login/index.dart';
 import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
+import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/theme/style.dart';
-import 'package:memphisbjj/screens/ScheduleMain/index.dart';
-import 'package:memphisbjj/screens/Login/index.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
-import 'package:memphisbjj/screens/Admin/index.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserItem user;
@@ -38,7 +39,10 @@ class HomeScreenState extends State<HomeScreen> {
       print("FCM TRIGGERED in home");
       var alert = Messaging.getAlert(data);
       Messaging.cancelFcmMessaging();
-      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
+      var snackBar = SnackBar(
+        content: Text(alert),
+        backgroundColor: Colors.deepOrange,
+      );
       _globalKey.currentState.showSnackBar(snackBar);
       _msgStream.cancel();
     });
@@ -56,11 +60,14 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     List<Widget> list;
     if (widget.anonymousUser != null && widget.anonymousUser.isAnonymous) {
-      list = _createMemberList(context: context, widget: widget, msg: _msgStream);
+      list =
+          _createMemberList(context: context, widget: widget, msg: _msgStream);
     } else if (widget.user != null && widget.user.roles.admin) {
-      list = _createAdminList(context: context, widget: widget, msg: _msgStream);
+      list =
+          _createAdminList(context: context, widget: widget, msg: _msgStream);
     } else if (widget.user != null && widget.user.roles.subscriber) {
-      list = _createMemberList(context: context, widget: widget, msg: _msgStream);
+      list =
+          _createMemberList(context: context, widget: widget, msg: _msgStream);
     }
 
     return Scaffold(
@@ -104,7 +111,10 @@ class HomeScreenState extends State<HomeScreen> {
   }
 }
 
-List<Widget> _createAdminList({BuildContext context, HomeScreen widget, StreamSubscription<Map<String, dynamic>> msg}) {
+List<Widget> _createAdminList(
+    {BuildContext context,
+    HomeScreen widget,
+    StreamSubscription<Map<String, dynamic>> msg}) {
   return [
     Padding(
       padding: const EdgeInsets.all(10.0),
@@ -221,15 +231,26 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget, StreamSu
             ),
           ),
           SizedBox(height: 15),
-          Row(
-            children: <Widget>[
-              Icon(FontAwesomeIcons.tasks),
-              SizedBox(width: 10),
-              Text(
-                "My Classes",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-            ],
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      ViewScheduleScreen(user: widget.user.fbUser),
+                ),
+              );
+            },
+            child: Row(
+              children: <Widget>[
+                Icon(FontAwesomeIcons.tasks),
+                SizedBox(width: 10),
+                Text(
+                  "My Classes",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
           ),
           SizedBox(height: 15),
           GestureDetector(
@@ -271,7 +292,10 @@ List<Widget> _createAdminList({BuildContext context, HomeScreen widget, StreamSu
   ];
 }
 
-List<Widget> _createMemberList({BuildContext context, HomeScreen widget, StreamSubscription<Map<String, dynamic>> msg}) {
+List<Widget> _createMemberList(
+    {BuildContext context,
+    HomeScreen widget,
+    StreamSubscription<Map<String, dynamic>> msg}) {
   return [
     Padding(
       padding: const EdgeInsets.all(8.0),
@@ -332,8 +356,7 @@ List<Widget> _createMemberList({BuildContext context, HomeScreen widget, StreamS
           );
         },
         child: Container(
-          decoration:
-              buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
+          decoration: buildBoxDecoration(Colors.black38, "assets/about-us.jpg"),
           child: Center(
             child: Text(
               "INSTRUCTORS",
