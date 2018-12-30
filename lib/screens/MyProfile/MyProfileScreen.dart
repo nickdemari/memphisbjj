@@ -273,6 +273,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 MaterialPageRoute(
                   builder: (BuildContext context) => ViewScheduleScreen(
                         user: widget.user,
+                        getAll: true,
                       ),
                 ),
               );

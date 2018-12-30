@@ -236,8 +236,10 @@ List<Widget> _createAdminList(
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      ViewScheduleScreen(user: widget.user.fbUser),
+                  builder: (BuildContext context) => ViewScheduleScreen(
+                        user: widget.user.fbUser,
+                        getAll: false,
+                      ),
                 ),
               );
             },
@@ -416,10 +418,14 @@ List<Widget> _createMemberList(
           GestureDetector(
             onTap: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          ViewScheduleScreen(user: widget.user.fbUser)));
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => ViewScheduleScreen(
+                        user: widget.user.fbUser,
+                        getAll: false,
+                      ),
+                ),
+              );
             },
             child: Row(
               children: <Widget>[

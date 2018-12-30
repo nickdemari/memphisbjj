@@ -1,16 +1,17 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 
 class ViewScheduleScreen extends StatefulWidget {
   final FirebaseUser user;
+  final bool getAll;
 
-  ViewScheduleScreen({this.user});
+  ViewScheduleScreen({this.user, this.getAll});
 
   @override
   _ViewScheduleScreenState createState() => _ViewScheduleScreenState();
@@ -26,7 +27,10 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
     _msgStream = Messaging.onFcmMessage.listen((data) {
       var alert = Messaging.getAlert(data);
       Messaging.cancelFcmMessaging();
-      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
+      var snackBar = SnackBar(
+        content: Text(alert),
+        backgroundColor: Colors.deepOrange,
+      );
       _globalKey.currentState.showSnackBar(snackBar);
 
       _msgStream.cancel();
@@ -36,25 +40,42 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final lastMidnight = new DateTime(now.year, now.month, now.day);
+
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
         title: Text("My Classes"),
       ),
       body: StreamBuilder(
-          stream: Firestore.instance
-              .collection("users")
-              .document(widget.user.uid)
-              .collection("registeredClasses")
-              .orderBy("rawDateTime")
-              .snapshots(),
+          stream: widget.getAll
+              ? Firestore.instance
+                  .collection("users")
+                  .document(widget.user.uid)
+                  .collection("registeredClasses")
+                  .orderBy("rawDateTime")
+                  .snapshots()
+              : Firestore.instance
+                  .collection("users")
+                  .document(widget.user.uid)
+                  .collection("registeredClasses")
+                  .where("rawDateTime", isGreaterThanOrEqualTo: lastMidnight)
+                  .orderBy("rawDateTime")
+                  .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (!snapshot.hasData) return CircularProgressIndicator();
             if (snapshot.data.documents.length == 0)
               return ListTile(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => ScheduleMainScreen(user: widget.user, locationName: "Bartlett",)));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => ScheduleMainScreen(
+                                user: widget.user,
+                                locationName: "Bartlett",
+                              )));
                 },
                 title: Text("No classes found. Tap here to add a class."),
               );

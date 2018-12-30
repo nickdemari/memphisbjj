@@ -92,7 +92,7 @@ class _AnimatedFloatingActionButtonState
         onPressed: !widget.onSchedule ?  widget.addToSchedule : null,
         tooltip: 'Add',
         icon: Icon(Icons.add),
-        label: Text("Add to schedule"),
+        label: Text("SIGN UP"),
         backgroundColor: widget.meters == null && !widget.onSchedule ? null : Colors.grey,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -106,7 +106,7 @@ class _AnimatedFloatingActionButtonState
         onPressed: widget.meters != null || widget.onSchedule ? widget.checkInToClass : null,
         tooltip: 'Image',
         icon: Icon(Icons.check),
-        label: Text("Check in to class"),
+        label: Text("CHECK-IN"),
         backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
       ),
     );
@@ -119,7 +119,7 @@ class _AnimatedFloatingActionButtonState
         onPressed: widget.meters != null || (widget.onSchedule && !widget.checkedIn) ? widget.removeFromSchedule : null,
         tooltip: 'Inbox',
         icon: Icon(Icons.remove),
-        label: Text("Remove from schedule"),
+        label: Text("CANCEL"),
         backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
       ),
     );

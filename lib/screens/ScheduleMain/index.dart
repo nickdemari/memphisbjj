@@ -1,10 +1,10 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByClass/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByDate//index.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByInstructor/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 
@@ -29,7 +29,10 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
     _msgStream = Messaging.onFcmMessage.listen((data) {
       print("FCM TRIGGERED schedule main");
       var alert = Messaging.getAlert(data);
-      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
+      var snackBar = SnackBar(
+        content: Text(alert),
+        backgroundColor: Colors.deepOrange,
+      );
       _globalKey.currentState.showSnackBar(snackBar);
 
       _msgStream.cancel();
@@ -57,62 +60,68 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
         child: Scaffold(
           key: _globalKey,
           body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              innerBoxIsScrolled = true;
-              return <Widget>[
-                SliverAppBar(
-                  expandedHeight: 125.0,
-                  floating: false,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    centerTitle: true,
-                    title: Text("${widget.locationName} Schedule",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        )),
-                    background: Image.asset(
-                      "assets/member-benefits.jpg",
-                      fit: BoxFit.cover,
-                      color: Color(0xff3e4b60),
-                      colorBlendMode: BlendMode.hardLight,
+              headerSliverBuilder:
+                  (BuildContext context, bool innerBoxIsScrolled) {
+                innerBoxIsScrolled = true;
+                return <Widget>[
+                  SliverAppBar(
+                    expandedHeight: 125.0,
+                    floating: false,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      centerTitle: true,
+                      title: Text("${widget.locationName} Schedule",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                          )),
+                      background: Image.asset(
+                        "assets/member-benefits.jpg",
+                        fit: BoxFit.cover,
+                        color: Color(0xff3e4b60),
+                        colorBlendMode: BlendMode.hardLight,
+                      ),
                     ),
                   ),
-                ),
-                SliverPersistentHeader(
-                  delegate: _SliverAppBarDelegate(
-                    TabBar(
-                      indicatorColor: Colors.black,
-                      labelColor: Colors.white,
-                      unselectedLabelColor: Colors.white30,
-                      tabs: [
-                        Tab(child: AutoSizeText(
-                          "BY DATE",
-                          style: TextStyle(fontSize: 10.0),
-                        ),),
-                        Tab(child: AutoSizeText(
-                          "BY INSTRUCTOR",
-                          style: TextStyle(fontSize: 10.0),
-                        ),),
-                        Tab(child: AutoSizeText(
-                          "BY CLASS",
-                          style: TextStyle(fontSize: 10.0),
-                        ),),
-                      ],
+                  SliverPersistentHeader(
+                    delegate: _SliverAppBarDelegate(
+                      TabBar(
+                        indicatorColor: Colors.black,
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.white30,
+                        tabs: [
+                          Tab(
+                            child: AutoSizeText(
+                              "BY DATE",
+                              style: TextStyle(fontSize: 10.0),
+                            ),
+                          ),
+                          Tab(
+                            child: AutoSizeText(
+                              "BY INSTRUCTOR",
+                              style: TextStyle(fontSize: 10.0),
+                            ),
+                          ),
+                          Tab(
+                            child: AutoSizeText(
+                              "BY CLASS",
+                              style: TextStyle(fontSize: 10.0),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  pinned: true,
-                )
-              ];
-            },
-            body: TabBarView(
-              children: <Widget>[
-                buildByDateTab(lastMidnight, widget, _msgStream),
-                buildByInstructorTab(lastMidnight, widget, _msgStream),
-                buildByClassTab(lastMidnight, widget, _msgStream)
-              ],
-            )
-          ),
+                    pinned: true,
+                  )
+                ];
+              },
+              body: TabBarView(
+                children: <Widget>[
+                  buildByDateTab(lastMidnight, widget, _msgStream),
+                  buildByInstructorTab(lastMidnight, widget, _msgStream),
+                  buildByClassTab(lastMidnight, widget, _msgStream),
+                ],
+              )),
         ),
       ),
     );
@@ -131,7 +140,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return new Material(
       color: Colors.black,
       child: _tabBar,

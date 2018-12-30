@@ -1,15 +1,15 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_calendar/device_calendar.dart' as device;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:memphisbjj/components/Buttons/animatedFloatingActionButton.dart';
+import 'package:memphisbjj/screens/Error/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:flutter/services.dart';
-import 'package:memphisbjj/screens/Error/index.dart';
-import 'package:device_calendar/device_calendar.dart' as device;
 
 class SelectedScheduleScreen extends StatefulWidget {
   final String locationName;
@@ -51,7 +51,10 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     _msgStream = Messaging.onFcmMessage.listen((data) {
       print("FCM TRIGGERED in selected schedule");
       var alert = Messaging.getAlert(data);
-      var snackBar = SnackBar(content: Text(alert), backgroundColor: Colors.deepOrange,);
+      var snackBar = SnackBar(
+        content: Text(alert),
+        backgroundColor: Colors.deepOrange,
+      );
       _globalKey.currentState.showSnackBar(snackBar);
 
       _msgStream.cancel();
@@ -180,13 +183,17 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   void _updateClassCapacity(bool isAdded) async {
-    if(isAdded) {
+    if (isAdded) {
       if (widget.scheduleItem.capacity.runtimeType == Null) return;
-      if(widget.scheduleItem.capacity > 0) {
-        final Map<String, dynamic> classCapacity = Map.from({
-          "capacity": widget.scheduleItem.capacity - 1
-        });
-        await Firestore.instance.collection("schedules").document("bartlett").collection("dates").document(widget.scheduleItem.classId).updateData(classCapacity);
+      if (widget.scheduleItem.capacity > 0) {
+        final Map<String, dynamic> classCapacity =
+            Map.from({"capacity": widget.scheduleItem.capacity - 1});
+        await Firestore.instance
+            .collection("schedules")
+            .document("bartlett")
+            .collection("dates")
+            .document(widget.scheduleItem.classId)
+            .updateData(classCapacity);
         setState(() {
           widget.scheduleItem.capacity -= 1;
         });
@@ -200,11 +207,16 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         _globalKey.currentState.showSnackBar(snackBar);
       }
     } else {
-      if(widget.scheduleItem.capacity.runtimeType != Null && widget.scheduleItem.capacity > 0) {
-        final Map<String, dynamic> classCapacity = Map.from({
-          "capacity": widget.scheduleItem.capacity + 1
-        });
-        await Firestore.instance.collection("schedules").document("bartlett").collection("dates").document(widget.scheduleItem.classId).updateData(classCapacity);
+      if (widget.scheduleItem.capacity.runtimeType != Null &&
+          widget.scheduleItem.capacity > 0) {
+        final Map<String, dynamic> classCapacity =
+            Map.from({"capacity": widget.scheduleItem.capacity + 1});
+        await Firestore.instance
+            .collection("schedules")
+            .document("bartlett")
+            .collection("dates")
+            .document(widget.scheduleItem.classId)
+            .updateData(classCapacity);
         setState(() {
           widget.scheduleItem.capacity += 1;
         });
@@ -224,7 +236,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
       final result = await _deviceCalendarPlugin.retrieveCalendars();
       var calenders = result?.data;
-      Iterable<device.Calendar> first = calenders.where((i) => i.name == "Home" && !i.isReadOnly);
+      Iterable<device.Calendar> first =
+          calenders.where((i) => i.name == "Home" && !i.isReadOnly);
       if (first.length == 0) {
         first = calenders.where((i) => !i.isReadOnly);
       }
@@ -254,7 +267,9 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         .document(widget.user.uid)
         .collection("registeredClasses");
     return StreamBuilder(
-        stream: widget.classParticipants.where("uid", isEqualTo: widget.user.uid).snapshots(),
+        stream: widget.classParticipants
+            .where("uid", isEqualTo: widget.user.uid)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData)
             return ListTile(
@@ -290,7 +305,11 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 28.0,
                         ),
-                        subtitle: widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left"),
+                        subtitle: widget.scheduleItem.capacity.runtimeType ==
+                                Null
+                            ? Text("No sign up limits")
+                            : Text(
+                                "${widget.scheduleItem.capacity.toString()} Spots Left"),
                       ),
                     ],
                   ),
@@ -341,7 +360,11 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 27.0,
                         ),
-                        subtitle: widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left"),
+                        subtitle: widget.scheduleItem.capacity.runtimeType ==
+                                Null
+                            ? Text("No sign up limits")
+                            : Text(
+                                "${widget.scheduleItem.capacity.toString()} Spots Left"),
                       ),
                     ],
                   ),
