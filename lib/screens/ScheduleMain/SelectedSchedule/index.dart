@@ -149,7 +149,6 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       "checkedIn": false,
       "lastUpdatedOn": DateTime.now(),
       "fullName": widget.user.displayName,
-      "photoUrl": widget.user.photoUrl
     });
     final Map<String, dynamic> registeredClass = Map.from({
       "uid": widget.scheduleItem.uid,
