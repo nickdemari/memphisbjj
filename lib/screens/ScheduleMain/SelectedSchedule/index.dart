@@ -125,8 +125,12 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       this._onScheduleDistance = null;
       _setAddToClassIndicator(false);
     });
-    await widget.classParticipants.document(widget.user.uid).delete();
-    await this._registered.document(widget.scheduleItem.uid).delete();
+    await widget.classParticipants.document(widget.user.uid).updateData(Map.from({
+      "visible": false
+    }));
+    await this._registered.document(widget.scheduleItem.uid).updateData(Map.from({
+      "visible": false
+    }));
 
     _updateClassCapacity(false);
 
@@ -149,6 +153,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       "checkedIn": false,
       "lastUpdatedOn": DateTime.now(),
       "fullName": widget.user.displayName,
+      "visible": true,
     });
     final Map<String, dynamic> registeredClass = Map.from({
       "uid": widget.scheduleItem.uid,
@@ -159,7 +164,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       "className": widget.scheduleItem.className,
       "displayDateTime": widget.scheduleItem.displayDateTime,
       "rawDateTime": widget.scheduleItem.rawDateTime,
-      "instructor": widget.scheduleItem.instructor
+      "instructor": widget.scheduleItem.instructor,
+      "visible": true,
     });
     await widget.classParticipants
         .document(widget.user.uid)
