@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:memphisbjj/screens/About/index.dart';
 import 'package:memphisbjj/screens/Admin/index.dart';
 import 'package:memphisbjj/screens/Instructors/index.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
@@ -256,6 +257,14 @@ List<Widget> _createAdminList(
           ),
           SizedBox(height: 15),
           GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => AboutScreen(),
+                ),
+              );
+            },
             child: Row(
               children: <Widget>[
                 Icon(FontAwesomeIcons.infoCircle),
@@ -440,6 +449,14 @@ List<Widget> _createMemberList(
           ),
           SizedBox(height: 15),
           GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => AboutScreen(),
+                  ),
+              );
+            },
             child: Row(
               children: <Widget>[
                 Icon(FontAwesomeIcons.infoCircle),
