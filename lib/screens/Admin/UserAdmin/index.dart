@@ -1,8 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:memphisbjj/screens/Admin/UserClassesAdmin/index.dart';
-import 'package:memphisbjj/utils/ListItem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:memphisbjj/screens/Admin/UserClassesAdmin/index.dart';
 
 class UserAdminScreen extends StatefulWidget {
   final String userUid;
@@ -58,7 +56,8 @@ class _UserAdminScreenState extends State<UserAdminScreen> {
   }
 }
 
-/*floatingActionButton: FloatingActionButton(onPressed: () {
+/*
+floatingActionButton: FloatingActionButton(onPressed: () {
   var datesCollection = Firestore.instance.collection("schedules").document("bartlett").collection("dates");
   final now = DateTime.now();
   var lastMidnight = new DateTime(now.year, now.month, now.day);
@@ -67,4 +66,5 @@ class _UserAdminScreenState extends State<UserAdminScreen> {
     datesCollection.add(Map.from({"date": lastMidnight}));
   }
   print("done");
-}),*/
+}),
+*/

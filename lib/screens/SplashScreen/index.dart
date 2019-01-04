@@ -1,16 +1,18 @@
-import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:core';
-import 'package:memphisbjj/screens/Home/index.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:memphisbjj/screens/Login/index.dart';
-import 'package:memphisbjj/services/messaging.dart';
-import 'package:memphisbjj/utils/UserItem.dart';
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:memphisbjj/screens/Home/index.dart';
+import 'package:memphisbjj/screens/Login/index.dart';
+import 'package:memphisbjj/screens/SignUp/UploadProfilePic/index.dart';
+import 'package:memphisbjj/screens/SignUp/VerifyEmail/index.dart';
+import 'package:memphisbjj/services/messaging.dart';
+import 'package:memphisbjj/utils/UserItem.dart';
 import 'package:package_info/package_info.dart';
 
 class SplashScreenPage extends StatefulWidget {
@@ -153,11 +155,21 @@ class _SplashScreenState extends State<SplashScreenPage> {
           });
           await fbUser.reference.updateData(userVersion);
 
-          Roles _roles = Roles.fromSnapshot(fbUser["roles"]);
-          var _user = UserItem(roles: _roles, fbUser: _currentUser);
+          if(!fbUser["emailVerified"]) {
+            Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => VerifyEmailScreen()));
+          }
 
-          _analytics.logLogin();
-          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => HomeScreen(user: _user)));
+          if (fbUser["isOnboardingComplete"] != null) {
+            if (fbUser["isOnboardingComplete"]) {
+              Roles _roles = Roles.fromSnapshot(fbUser["roles"]);
+              var _user = UserItem(roles: _roles, fbUser: _currentUser);
+
+              _analytics.logLogin();
+              Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => HomeScreen(user: _user)));
+            } else {
+              Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => UploadProfilePicScreen()));
+            }
+          }
         }
       }
     } on PlatformException catch (e) {

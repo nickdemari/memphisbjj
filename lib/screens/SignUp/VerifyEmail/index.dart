@@ -1,8 +1,9 @@
+import 'package:android_intent/android_intent.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/SignUp/UploadProfilePic/index.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:android_intent/android_intent.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   @override
@@ -36,6 +37,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> with WidgetsBindi
       await user.reload();
       var reloadedUser = await FirebaseAuth.instance.currentUser();
       if(reloadedUser.isEmailVerified) {
+        Firestore.instance.collection("users").document(reloadedUser.uid).updateData(Map.from({
+          "emailVerified": reloadedUser.isEmailVerified,
+        }));
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => UploadProfilePicScreen()));
       } else {
         showInSnackBar("Email is not verified", Colors.redAccent);
@@ -56,7 +60,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> with WidgetsBindi
         launch("message:");
       }
     }
-    // TODO: implement build
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(

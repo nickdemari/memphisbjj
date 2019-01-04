@@ -1,9 +1,10 @@
 import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
     StreamSubscription<Map<String, dynamic>> msg) {
@@ -24,8 +25,7 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
         itemCount: documentCount,
         itemBuilder: (BuildContext context, int index) {
           final DocumentSnapshot doc = snapshot.data.documents[index];
-          final CollectionReference classParticipants =
-              doc.reference.collection("participants");
+          final CollectionReference classParticipants = Firestore.instance.collection("class-participants").document(doc.documentID).collection("participants");
           final ListItem item = !doc.data.containsKey("class")
               ? HeadingItem(doc['date'])
               : ScheduleItem(
@@ -83,15 +83,16 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
               subtitle: Text(item.instructor),
               trailing: FutureBuilder(
                 future: userQuery.getDocuments(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData)
                     return Center(
                       child: CircularProgressIndicator(),
                     );
+
                   if (snapshot.data.documents.length > 0) {
+                    var doc = snapshot.data.documents[0];
                     return AnimatedOpacity(
-                      opacity: 1.0,
+                      opacity: doc["visible"] ? 1 : 0,
                       duration: Duration(milliseconds: 500),
                       child: Icon(Icons.schedule),
                     );

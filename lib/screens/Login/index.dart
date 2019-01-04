@@ -698,6 +698,11 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
     ));
     userAuth.createUserFromEmail(email, password).then((signedIn) {
       signedIn.sendEmailVerification().then((value) {
+        Firestore.instance.collection("users").document(signedIn.uid).setData(Map.from({
+          "email": signedIn.email,
+          "emailVerified": signedIn.isEmailVerified,
+          "isOnboardingComplete": false
+        }));
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(

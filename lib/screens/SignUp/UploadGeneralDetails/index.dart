@@ -54,6 +54,7 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
           "state": newUser.state.trim().toUpperCase(),
           "zip": newUser.zip
         }),
+      "isOnboardingComplete": true
       });
       await Firestore.instance
           .collection("users")
