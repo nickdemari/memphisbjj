@@ -25,7 +25,8 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
         itemCount: documentCount,
         itemBuilder: (BuildContext context, int index) {
           final DocumentSnapshot doc = snapshot.data.documents[index];
-          final CollectionReference classParticipants = Firestore.instance.collection("class-participants").document(doc.documentID).collection("participants");
+          final CollectionReference classParticipants =
+              Firestore.instance.collection("class-participants");
           final ListItem item = !doc.data.containsKey("class")
               ? HeadingItem(doc['date'])
               : ScheduleItem(
@@ -53,10 +54,9 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
             return header;
           } else if (item is ScheduleItem) {
             //Get a query of each classes participants to see who's in the class
-            Query userQuery = classParticipants.where(
-              "uid",
-              isEqualTo: widget.user.uid,
-            );
+            Query userQuery = classParticipants
+                .where("userUid", isEqualTo: widget.user.uid)
+                .where("classUid", isEqualTo: item.uid);
 
             Widget row = ListTile(
               onTap: () {
@@ -83,22 +83,22 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
               subtitle: Text(item.instructor),
               trailing: FutureBuilder(
                 future: userQuery.getDocuments(),
-                builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData)
                     return Center(
                       child: CircularProgressIndicator(),
                     );
 
-                  if (snapshot.data.documents.length > 0) {
-                    var doc = snapshot.data.documents[0];
+                  if (snapshot.data.documents.length == 0) {
                     return AnimatedOpacity(
-                      opacity: doc["visible"] ? 1 : 0,
+                      opacity: 0,
                       duration: Duration(milliseconds: 500),
                       child: Icon(Icons.schedule),
                     );
                   } else {
                     return AnimatedOpacity(
-                      opacity: 0.0,
+                      opacity: 1,
                       duration: Duration(milliseconds: 500),
                       child: Icon(Icons.schedule),
                     );

@@ -125,12 +125,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       this._onScheduleDistance = null;
       _setAddToClassIndicator(false);
     });
-    await widget.classParticipants.document(widget.user.uid).updateData(
-      Map.from({
-        "visible": false,
-        "lastUpdatedOn": DateTime.now()
-      })
-    );
+    QuerySnapshot doc = await widget.classParticipants.where("userUid", isEqualTo: widget.user.uid).where("classUid", isEqualTo: widget.scheduleItem.uid).getDocuments();
+    doc.documents[0].reference.delete();
     await this._registered.document(widget.scheduleItem.uid).updateData(
       Map.from({
         "visible": false,
@@ -154,14 +150,14 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       this._onScheduleDistance = this._meters;
     });
     final Map<String, dynamic> participant = Map.from({
-      "uid": widget.user.uid,
+      "userUid": widget.user.uid,
+      "classUid": widget.scheduleItem.uid,
       "addedOn": DateTime.now(),
       "onSchedule": true,
       "checkedIn": false,
       "lastUpdatedOn": DateTime.now(),
       "fullName": widget.user.displayName,
-      "photoUrl": widget.user.photoUrl,
-      "visible": true,
+      "photoUrl": widget.user.photoUrl
     });
     final Map<String, dynamic> registeredClass = Map.from({
       "uid": widget.scheduleItem.uid,
@@ -176,8 +172,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       "visible": true,
     });
     await widget.classParticipants
-        .document(widget.user.uid)
-        .setData(participant);
+        .add(participant);
     await this
         ._registered
         .document(widget.scheduleItem.uid)
@@ -186,13 +181,6 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     _updateClassCapacity(true);
 
     _addToCalender();
-
-    final snackBar = SnackBar(
-      content: Text(
-        "${widget.scheduleItem.className} added to ${widget.user.displayName}'s schedule",
-      ),
-    );
-    _globalKey.currentState.showSnackBar(snackBar);
   }
 
   void _updateClassCapacity(bool isAdded) async {
@@ -280,7 +268,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         .document(widget.user.uid)
         .collection("registeredClasses");
     return StreamBuilder(
-        stream: widget.classParticipants.where("uid", isEqualTo: widget.user.uid).snapshots(),
+        stream: widget.classParticipants.where("userUid", isEqualTo: widget.user.uid).where("classUid", isEqualTo: widget.scheduleItem.uid).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData)
             return ListTile(
@@ -289,8 +277,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
             );
 
           if (snapshot.data.documents.length > 0) {
+            _setAddToClassIndicator(true);
             this.usersClass = snapshot.data.documents[0];
-            this.usersClass["visible"] ? _setAddToClassIndicator(true) : _setAddToClassIndicator(false);
             return Column(
               children: <Widget>[
                 Card(
@@ -302,7 +290,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           style: TextStyle(fontSize: 18.0),
                         ),
                         trailing: AnimatedOpacity(
-                          opacity: this.usersClass["visible"] ? 1.0 : 0.0,
+                          opacity: 1.0,
                           duration: Duration(milliseconds: 500),
                           child: Icon(Icons.schedule),
                         ),
@@ -350,6 +338,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
               ],
             );
           } else {
+            _setAddToClassIndicator(false);
             return Column(
               children: <Widget>[
                 Card(
