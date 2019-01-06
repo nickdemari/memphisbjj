@@ -38,6 +38,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   device.DeviceCalendarPlugin _deviceCalendarPlugin;
   bool _addedToSchedule = false;
   bool _checkedIn = false;
+  String status = "REGISTERED!";
 
   _SelectedScheduleScreenState() {
     _deviceCalendarPlugin = new device.DeviceCalendarPlugin();
@@ -67,7 +68,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
-        title: Text("Event Details"),
+        title: Text("Details"),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -98,7 +99,14 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
     if (meters <= 275.0) {
       this.usersClass.reference.updateData(
-          Map.from({"checkedIn": true, "lastUpdatedOn": DateTime.now()}));
+          Map.from({
+            "checkedIn": true,
+            "lastUpdatedOn": DateTime.now()
+          }));
+      setState(() {
+        this._checkedIn = true;
+        this.status = "CHECKED-IN!";
+      });
       final snackBar = SnackBar(
         backgroundColor: Colors.greenAccent,
         content: Text(
@@ -114,9 +122,6 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         ),
       );
       _globalKey.currentState.showSnackBar(snackBar);
-      setState(() {
-        this._checkedIn = true;
-      });
     }
   }
 
@@ -148,6 +153,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     _initPlateformState();
     setState(() {
       this._onScheduleDistance = this._meters;
+      this.status = "REGISTERED!";
     });
     final Map<String, dynamic> participant = Map.from({
       "userUid": widget.user.uid,
@@ -268,7 +274,9 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         .document(widget.user.uid)
         .collection("registeredClasses");
     return StreamBuilder(
-        stream: widget.classParticipants.where("userUid", isEqualTo: widget.user.uid).where("classUid", isEqualTo: widget.scheduleItem.uid).snapshots(),
+        stream: widget.classParticipants
+            .where("userUid", isEqualTo: widget.user.uid)
+            .where("classUid", isEqualTo: widget.scheduleItem.uid).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData)
             return ListTile(
@@ -304,13 +312,18 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 28.0,
                         ),
-                        subtitle: widget.scheduleItem.capacity.runtimeType ==
-                                Null
-                            ? Text("No sign up limits")
-                            : Text(
-                                "${widget.scheduleItem.capacity.toString()} Spots Left"),
+                        subtitle: _getClassSubtitle(),
                       ),
                     ],
+                  ),
+                ),
+                Card(
+                  color: Colors.green,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(this.status),
+                    ),
                   ),
                 ),
                 Row(
@@ -359,11 +372,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                           ),
                           radius: 27.0,
                         ),
-                        subtitle: widget.scheduleItem.capacity.runtimeType ==
-                                Null
-                            ? Text("No sign up limits")
-                            : Text(
-                                "${widget.scheduleItem.capacity.toString()} Spots Left"),
+                        subtitle: _getClassSubtitle(),
                       ),
                     ],
                   ),
@@ -395,6 +404,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
           }
         });
   }
+
+  Text _getClassSubtitle() => widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left");
 
   void _initPlateformState() async {
     Position position;
