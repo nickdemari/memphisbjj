@@ -17,6 +17,7 @@ class HeadingItem implements ListItem {
 class ScheduleItem implements ListItem {
   String className;
   String instructor;
+  String instructorId;
   String displayDateTime;
   String description;
   String uid;
@@ -25,13 +26,14 @@ class ScheduleItem implements ListItem {
   int capacity;
   String classId;
 
-  ScheduleItem(DateTime d, String l, Map<String, dynamic> event, String _uid, DateTime _rawEndDateTime, int _capacity, String _classId) {
+  ScheduleItem(DateTime d, Map<String, dynamic> l, Map<String, dynamic> event, String _uid, DateTime _rawEndDateTime, int _capacity, String _classId) {
     // Handle Time
     this.displayDateTime = convertTime(d);
     this.rawDateTime = d;
     this.rawEndDateTime = _rawEndDateTime;
     this.className = event['name'];
-    this.instructor = l;
+    this.instructor = l["name"];
+    this.instructorId = l["id"];
     this.description = event['description'];
     this.uid = _uid;
     this.capacity = _capacity;

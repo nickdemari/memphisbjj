@@ -31,7 +31,9 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
               ? HeadingItem(doc['date'])
               : ScheduleItem(
                   doc['date'],
-                  doc['instructor'],
+                  new Map<String, dynamic>.from(
+                    doc['instructor'],
+                  ),
                   new Map<String, dynamic>.from(
                     doc['class'],
                   ),

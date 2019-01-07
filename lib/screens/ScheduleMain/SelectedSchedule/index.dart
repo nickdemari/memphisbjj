@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:memphisbjj/components/Buttons/animatedFloatingActionButton.dart';
 import 'package:memphisbjj/screens/Error/index.dart';
+import 'package:memphisbjj/screens/Instructors/Selected/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
 
@@ -71,11 +72,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         title: Text("Details"),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            _buildColumn(context),
-          ],
-        ),
+        physics: BouncingScrollPhysics(),
+        child: _buildColumn(context)
       ),
       floatingActionButton: AnimatedFloatingActionButton(
         checkInToClass: _checkIntoClass,
@@ -318,6 +316,20 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                   ),
                 ),
                 Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SelectedInstructorScreen(instructorId: widget.scheduleItem.instructorId, name: widget.scheduleItem.instructor,),
+                        ),
+                      );
+                    },
+                    title: Text(widget.scheduleItem.instructor),
+                    subtitle: Text("Tap here to read more about your coach"),
+                  )
+                ),
+                Card(
                   color: Colors.green,
                   child: Center(
                     child: Padding(
@@ -376,6 +388,20 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
                       ),
                     ],
                   ),
+                ),
+                Card(
+                    child: ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SelectedInstructorScreen(instructorId: widget.scheduleItem.instructorId, name: widget.scheduleItem.instructor,),
+                          ),
+                        );
+                      },
+                      title: Text(widget.scheduleItem.instructor),
+                      subtitle: Text("Tap here to read more about your coach"),
+                    )
                 ),
                 Row(
                   children: <Widget>[
