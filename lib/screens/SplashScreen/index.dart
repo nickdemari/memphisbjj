@@ -21,14 +21,14 @@ class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key, this.seconds});
 
   @override
-  _SplashScreenState createState() => new _SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreenPage> {
   GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
-  final FirebaseAnalytics _analytics = new FirebaseAnalytics();
+  final FirebaseAnalytics _analytics = FirebaseAnalytics();
   FirebaseUser _currentUser;
-  PackageInfo _packageInfo = new PackageInfo(
+  PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
     packageName: 'Unknown',
     version: 'Unknown',
@@ -58,28 +58,28 @@ class _SplashScreenState extends State<SplashScreenPage> {
     return Scaffold(
       key: _globalKey,
       backgroundColor: Colors.white,
-      body: new InkWell(
-        child: new Stack(
+      body: InkWell(
+        child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            new Container(
+            Container(
               decoration: BoxDecoration(color: Colors.white),
             ),
-            new Column(
+            Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                new Expanded(
+                Expanded(
                   flex: 2,
-                  child: new Container(
-                      child: new Column(
+                  child: Container(
+                      child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      new CircleAvatar(
+                      CircleAvatar(
                         backgroundColor: Colors.transparent,
-                        backgroundImage: new AssetImage('assets/memphisbjj-large.jpg'),
+                        backgroundImage: AssetImage('assets/memphisbjj-large.jpg'),
                         radius: 150.0,
                       ),
-                      new Padding(
+                      Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                       ),
                     ],
@@ -92,14 +92,14 @@ class _SplashScreenState extends State<SplashScreenPage> {
                     children: <Widget>[
                       CircularProgressIndicator(
                         valueColor:
-                            new AlwaysStoppedAnimation<Color>(Colors.black12),
+                            AlwaysStoppedAnimation<Color>(Colors.black12),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                       ),
-                      Text("Loading", style: new TextStyle()),
-                      new Center(
-                        child: Text("Now", style: new TextStyle()),
+                      Text("Loading", style: TextStyle()),
+                      Center(
+                        child: Text("Now", style: TextStyle()),
                       ),
                     ],
                   ),
@@ -132,11 +132,11 @@ class _SplashScreenState extends State<SplashScreenPage> {
       if (_currentUser == null) {
         _analytics.logLogin();
 
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
       } else {
         DocumentSnapshot fbUser = await Firestore.instance.collection("users").document(_currentUser.uid).get();
         if (!fbUser.exists) {
-          Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
           return;
         } else {
           final msgToken = await Messaging.getMessagingToken();
@@ -163,7 +163,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
           await fbUser.reference.updateData(userVersion);
 
           if(!fbUser["emailVerified"]) {
-            Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => VerifyEmailScreen()));
+            Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => VerifyEmailScreen()));
             return;
           }
 
@@ -173,10 +173,10 @@ class _SplashScreenState extends State<SplashScreenPage> {
               var _user = UserItem(roles: _roles, fbUser: _currentUser);
 
               _analytics.logLogin();
-              Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => HomeScreen(user: _user)));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => HomeScreen(user: _user)));
               return;
             } else {
-              Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => UploadProfilePicScreen()));
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => UploadProfilePicScreen()));
               return;
             }
           }
@@ -188,14 +188,14 @@ class _SplashScreenState extends State<SplashScreenPage> {
           "code": e.code,
           "message": e.message
         }));
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
         return;
       } else {
         _analytics.logEvent(name: "unknown-error", parameters: Map.from({
           "code": e.code,
           "message": e.message
         }));
-        Navigator.of(context).pushReplacement(new MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
+        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => LoginScreen()));
         return;
       }
     }
