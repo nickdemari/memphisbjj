@@ -10,6 +10,7 @@ import 'package:memphisbjj/screens/Login/index.dart';
 import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
+import 'package:memphisbjj/screens/Styles/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/theme/style.dart';
 import 'package:memphisbjj/utils/UserItem.dart';
@@ -191,16 +192,21 @@ List<Widget> _createAdminList(
     ),
     Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Container(
-        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
-        child: Center(
-          child: Text(
-            "STYLES",
-            style: const TextStyle(
-                color: const Color(0XFFFFFFFF),
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StylesScreen()));
+        },
+        child: Container(
+          decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
+          child: Center(
+            child: Text(
+              "STYLES",
+              style: const TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto'),
+            ),
           ),
         ),
       ),
@@ -383,16 +389,21 @@ List<Widget> _createMemberList(
     ),
     Padding(
       padding: const EdgeInsets.all(10.0),
-      child: Container(
-        decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
-        child: Center(
-          child: Text(
-            "STYLES",
-            style: const TextStyle(
-                color: const Color(0XFFFFFFFF),
-                fontSize: 32.0,
-                fontWeight: FontWeight.normal,
-                fontFamily: 'Roboto'),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StylesScreen()));
+        },
+        child: Container(
+          decoration: buildBoxDecoration(Colors.black38, "assets/styles.jpg"),
+          child: Center(
+            child: Text(
+              "STYLES",
+              style: const TextStyle(
+                  color: const Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto'),
+            ),
           ),
         ),
       ),
