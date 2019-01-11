@@ -7,7 +7,7 @@ import 'package:memphisbjj/screens/About/index.dart';
 import 'package:memphisbjj/screens/Admin/index.dart';
 import 'package:memphisbjj/screens/Instructors/index.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
-import 'package:memphisbjj/screens/MyProfile/MyProfileScreen.dart';
+import 'package:memphisbjj/screens/MyProfile/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/screens/Styles/index.dart';

@@ -88,9 +88,11 @@ StreamBuilder buildByDateTab(DateTime lastMidnight, ScheduleMainScreen widget,
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData)
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return AnimatedOpacity(
+                    opacity: 0,
+                    duration: Duration(milliseconds: 500),
+                    child: Icon(Icons.schedule),
+                  );
 
                   if (snapshot.data.documents.length == 0) {
                     return AnimatedOpacity(

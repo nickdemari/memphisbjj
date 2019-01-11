@@ -1,13 +1,14 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-Builder buildByInstructorTab(DateTime lastMidnight, ScheduleMainScreen widget,  StreamSubscription<Map<String, dynamic>> msg) {
+Builder buildByInstructorTab(DateTime lastMidnight, ScheduleMainScreen widget,
+    StreamSubscription<Map<String, dynamic>> msg) {
   return Builder(
     builder: (BuildContext context) {
       final Stream<QuerySnapshot> instructorsRef = Firestore.instance
@@ -24,7 +25,12 @@ Builder buildByInstructorTab(DateTime lastMidnight, ScheduleMainScreen widget,  
                 if (!snapshot.hasData) return CircularProgressIndicator();
 
                 return _byInstructorListBuilder(
-                    snapshot, _globalKey, lastMidnight, widget, msg);
+                  snapshot,
+                  _globalKey,
+                  lastMidnight,
+                  widget,
+                  msg,
+                );
               }));
     },
   );
@@ -42,44 +48,68 @@ ListView _byInstructorListBuilder(
         DocumentSnapshot document = snapshot.data.documents[index];
         String name = document["name"];
         return ListTile(
-            title: Text(name),
-            onTap: () => _globalKey.currentState.showBottomSheet((context) =>
-                StreamBuilder(
-                    stream: Firestore.instance
-                        .collection("schedules")
-                        .document("bartlett")
-                        .collection("dates")
-                        .where("instructor", isEqualTo: name)
-                        .where('date', isGreaterThanOrEqualTo: lastMidnight)
-                        .orderBy("date")
-                        .snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData)
-                        return Center(child: CircularProgressIndicator());
+          title: Text(name),
+          onTap: () => _globalKey.currentState.showBottomSheet(
+                (context) => StreamBuilder(
+                      stream: Firestore.instance
+                          .collection("schedules")
+                          .document("bartlett")
+                          .collection("dates")
+                          .where("instructor.name", isEqualTo: name)
+                          .where('date', isGreaterThanOrEqualTo: lastMidnight)
+                          .orderBy("date")
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(child: CircularProgressIndicator());
 
-                      final int documentCount = snapshot.data.documents.length;
-                      return Container(
-                        child: Column(
+                        final int documentCount =
+                            snapshot.data.documents.length;
+                        return Column(
                           children: <Widget>[
-                            Container(
-                              color: Colors.black12,
-                              child: ListTile(
-                                leading: Text(name),
-                                trailing: Icon(Icons.drag_handle),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                color: Colors.black12,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(name),
+                                      Icon(Icons.drag_handle)
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                             _expandedInstructorItem(
-                                snapshot, widget, documentCount, msg)
+                              snapshot,
+                              widget,
+                              documentCount,
+                              msg,
+                            )
                           ],
-                        ),
-                      );
-                    })));
+                        );
+                      },
+                    ),
+              ),
+        );
       });
 }
 
-Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
-    ScheduleMainScreen widget, int documentCount, StreamSubscription<Map<String, dynamic>> msg) {
+Expanded _expandedInstructorItem(
+  AsyncSnapshot<QuerySnapshot> snapshot,
+  ScheduleMainScreen widget,
+  int documentCount,
+  StreamSubscription<Map<String, dynamic>> msg,
+) {
   return Expanded(
     child: ListView.builder(
       itemBuilder: (BuildContext context, int index) {
@@ -87,16 +117,17 @@ Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
         final ListItem item = !doc.data.containsKey("class")
             ? HeadingItem(doc['date'])
             : ScheduleItem(
-            doc['date'],
-            doc['instructor'],
-            new Map<String, dynamic>.from(doc['class']),
-            doc.documentID,
-            doc['endDate'],
-            doc['capacity'],
-            doc['id']
-        );
+                doc['date'],
+                new Map<String, dynamic>.from(
+                  doc['instructor'],
+                ),
+                new Map<String, dynamic>.from(doc['class']),
+                doc.documentID,
+                doc['endDate'],
+                doc['capacity'],
+                doc['id']);
         final CollectionReference classParticipants =
-        doc.reference.collection("participants");
+            doc.reference.collection("class-participants");
         if (item is HeadingItem) {
           Widget header = Container(
               color: Colors.blue,
@@ -118,11 +149,11 @@ Expanded _expandedInstructorItem(AsyncSnapshot<QuerySnapshot> snapshot,
                 context,
                 MaterialPageRoute(
                   builder: (context) => SelectedScheduleScreen(
-                    locationName: widget.locationName,
-                    user: widget.user,
-                    scheduleItem: item,
-                    classParticipants: classParticipants,
-                  ),
+                        locationName: widget.locationName,
+                        user: widget.user,
+                        scheduleItem: item,
+                        classParticipants: classParticipants,
+                      ),
                 ),
               );
             },

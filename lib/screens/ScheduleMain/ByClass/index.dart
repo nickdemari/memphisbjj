@@ -1,13 +1,14 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
-Builder buildByClassTab(DateTime lastMidnight, ScheduleMainScreen widget, StreamSubscription<Map<String, dynamic>> msg) {
+Builder buildByClassTab(DateTime lastMidnight, ScheduleMainScreen widget,
+    StreamSubscription<Map<String, dynamic>> msg) {
   return Builder(builder: (BuildContext context) {
     final Stream<QuerySnapshot> eventsRef = Firestore.instance
         .collection("events")
@@ -42,66 +43,70 @@ ListView _byClassListBuilder(
         var eventObj = Map<String, dynamic>.from(event);
         var eventName = eventObj['name'];
         return ListTile(
-        title: Text(eventObj['name']),
-        onTap: () => _classGlobalKey.currentState.showBottomSheet(
-        (context) => StreamBuilder(
-        stream: Firestore.instance
-            .collection("schedules")
-            .document("bartlett")
-            .collection("dates")
-            .where("class.name", isEqualTo: eventName)
-            .where('date', isGreaterThanOrEqualTo: lastMidnight)
-            .orderBy("date")
-            .snapshots(),
-        builder: (BuildContext context,
-        AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData)
-        return Center(child: CircularProgressIndicator());
+          title: Text(eventObj['name']),
+          onTap: () => _classGlobalKey.currentState.showBottomSheet(
+                (context) => StreamBuilder(
+                      stream: Firestore.instance
+                          .collection("schedules")
+                          .document("bartlett")
+                          .collection("dates")
+                          .where("class.name", isEqualTo: eventName)
+                          .where('date', isGreaterThanOrEqualTo: lastMidnight)
+                          .orderBy("date")
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (!snapshot.hasData)
+                          return Center(child: CircularProgressIndicator());
 
-        final int documentCount =
-        snapshot.data.documents.length;
-        return Container(
-        child: Column(
-        children: <Widget>[
-        Container(
-        color: Colors.black12,
-        child: ListTile(
-        leading: Text(eventName),
-        trailing: Icon(Icons.drag_handle),
-        ),
-        ),
-        Expanded(
-        child: _byClassListItems(
-        snapshot, widget, documentCount, msg),
-        ),
-        ],
-        ),
-        );
-        },
-        ),
-        ),
+                        final int documentCount =
+                            snapshot.data.documents.length;
+                        return Container(
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                color: Colors.black12,
+                                child: ListTile(
+                                  leading: Text(eventName),
+                                  trailing: Icon(Icons.drag_handle),
+                                ),
+                              ),
+                              Expanded(
+                                child: _byClassListItems(
+                                    snapshot, widget, documentCount, msg),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+              ),
         );
       });
 }
 
-ListView _byClassListItems(AsyncSnapshot<QuerySnapshot> snapshot,
-    ScheduleMainScreen widget, int documentCount, StreamSubscription<Map<String, dynamic>> msg) {
+ListView _byClassListItems(
+    AsyncSnapshot<QuerySnapshot> snapshot,
+    ScheduleMainScreen widget,
+    int documentCount,
+    StreamSubscription<Map<String, dynamic>> msg) {
   return ListView.builder(
     itemBuilder: (BuildContext context, int index) {
       final DocumentSnapshot doc = snapshot.data.documents[index];
       final ListItem item = !doc.data.containsKey("class")
           ? HeadingItem(doc['date'])
           : ScheduleItem(
-          doc['date'],
-          doc['instructor'],
-          new Map<String, dynamic>.from(doc['class']),
-          doc.documentID,
-          doc['endDate'],
-          doc['capacity'],
-          doc['classId']
-      );
+              doc['date'],
+          new Map<String, dynamic>.from(
+            doc['instructor'],
+          ),
+              new Map<String, dynamic>.from(doc['class']),
+              doc.documentID,
+              doc['endDate'],
+              doc['capacity'],
+              doc['classId']);
       final CollectionReference classParticipants =
-      doc.reference.collection("participants");
+          doc.reference.collection("class-participants");
       if (item is HeadingItem) {
         Widget header = Container(
             color: Colors.blue,
@@ -123,11 +128,11 @@ ListView _byClassListItems(AsyncSnapshot<QuerySnapshot> snapshot,
                 context,
                 MaterialPageRoute(
                     builder: (context) => SelectedScheduleScreen(
-                      locationName: widget.locationName,
-                      user: widget.user,
-                      scheduleItem: item,
-                      classParticipants: classParticipants,
-                    )));
+                          locationName: widget.locationName,
+                          user: widget.user,
+                          scheduleItem: item,
+                          classParticipants: classParticipants,
+                        )));
           },
           child: ListTile(
             leading: CircleAvatar(
