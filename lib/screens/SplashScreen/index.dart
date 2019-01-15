@@ -7,6 +7,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:memphisbjj/screens/Error/index.dart';
 import 'package:memphisbjj/screens/Home/index.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
 import 'package:memphisbjj/screens/SignUp/UploadProfilePic/index.dart';
@@ -33,6 +34,12 @@ class _SplashScreenState extends State<SplashScreenPage> {
     version: 'Unknown',
     buildNumber: 'Unknown',
   );
+
+  bool get isInDebugMode {
+    bool inDebugMode = false;
+    assert(inDebugMode = true);
+    return inDebugMode;
+  }
 
   @override
   void initState() {
@@ -120,11 +127,13 @@ class _SplashScreenState extends State<SplashScreenPage> {
 
   void _handleCurrentScreen() async {
     try {
-//      DocumentSnapshot fbVersionObject = await Firestore.instance.collection("versioning").document("XzvMRYCsyDXlxXTEVMac").get();
-//      if (_packageInfo.version != fbVersionObject["displayVersion"] || _packageInfo.buildNumber != fbVersionObject["build"]) {
-//        Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ErrorScreen(title: "Update Required", message: "Please update to get the newest content",)));
-//        return;
-//      }
+      if (isInDebugMode == false) {
+        DocumentSnapshot fbVersionObject = await Firestore.instance.collection("versioning").document("XzvMRYCsyDXlxXTEVMac").get();
+        if (_packageInfo.version != fbVersionObject["displayVersion"] || _packageInfo.buildNumber != fbVersionObject["build"]) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (BuildContext context) => ErrorScreen(title: "Update Required", message: "Please update to get the newest content",)));
+          return;
+        }
+      }
       _currentUser = await FirebaseAuth.instance.currentUser();
       if (_currentUser != null) await _currentUser.reload();
 
