@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:memphisbjj/screens/Login/index.dart';
+import 'package:memphisbjj/screens/MyProfile/MemberDependents/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ViewSchedule/index.dart';
 import 'package:memphisbjj/screens/SignUp/UploadGeneralDetails/index.dart';
 import 'package:memphisbjj/screens/SignUp/UploadProfilePic/index.dart';
@@ -305,12 +306,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           Divider(),
           GestureDetector(
             onTap: () async {
-              _scaffoldKey.currentState.showSnackBar(
-                SnackBar(
-                  content: Text("In development"),
-                  backgroundColor: Colors.blueAccent,
-                ),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MemberDependentsScreen(parentFbUid: widget.user.uid,)));
             },
             child: Padding(
               padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
@@ -325,7 +321,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       width: 15,
                     ),
                     Text(
-                      "Invite a friend",
+                      "Manage Dependents",
                       style: TextStyle(
                           fontSize: 28,
                           color: const Color(0xFF1a256f),

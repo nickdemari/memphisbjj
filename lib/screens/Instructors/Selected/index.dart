@@ -26,13 +26,15 @@ class _SelectedInstructorScreenState extends State<SelectedInstructorScreen> {
             title: Text(widget.name),
           ),
           body: Center(
-            child: Column(
-              children: <Widget>[
-                Card(child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(bio),
-                ),)
-              ],
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Card(child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(bio),
+                  ),)
+                ],
+              ),
             ),
           ),
         );
