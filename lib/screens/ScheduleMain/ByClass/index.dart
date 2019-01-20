@@ -24,7 +24,12 @@ Builder buildByClassTab(DateTime lastMidnight, ScheduleMainScreen widget,
               if (!snapshot.hasData) return CircularProgressIndicator();
 
               return _byClassListBuilder(
-                  snapshot, _classGlobalKey, lastMidnight, widget, msg);
+                snapshot,
+                _classGlobalKey,
+                lastMidnight,
+                widget,
+                msg,
+              );
             }));
   });
 }
@@ -71,9 +76,11 @@ ListView _byClassListBuilder(
                                   trailing: Icon(Icons.drag_handle),
                                 ),
                               ),
-                              Expanded(
-                                child: _byClassListItems(
-                                    snapshot, widget, documentCount, msg),
+                              _byClassListItems(
+                                snapshot,
+                                widget,
+                                documentCount,
+                                msg,
                               ),
                             ],
                           ),
@@ -85,77 +92,79 @@ ListView _byClassListBuilder(
       });
 }
 
-ListView _byClassListItems(
+Expanded _byClassListItems(
     AsyncSnapshot<QuerySnapshot> snapshot,
     ScheduleMainScreen widget,
     int documentCount,
     StreamSubscription<Map<String, dynamic>> msg) {
-  return ListView.builder(
-    itemBuilder: (BuildContext context, int index) {
-      final DocumentSnapshot doc = snapshot.data.documents[index];
-      final ListItem item = !doc.data.containsKey("class")
-          ? HeadingItem(doc['date'])
-          : ScheduleItem(
-              doc['date'],
-          new Map<String, dynamic>.from(
-            doc['instructor'],
-          ),
-              new Map<String, dynamic>.from(doc['class']),
-              doc.documentID,
-              doc['endDate'],
-              doc['capacity'],
-              doc['classId']);
-      final CollectionReference classParticipants =
-          doc.reference.collection("class-participants");
-      if (item is HeadingItem) {
-        Widget header = Container(
-            color: Colors.blue,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                item.day,
-                style: TextStyle(color: Colors.white, fontSize: 18.0),
+  return Expanded(
+    child: ListView.builder(
+      itemBuilder: (BuildContext context, int index) {
+        final DocumentSnapshot doc = snapshot.data.documents[index];
+        final ListItem item = !doc.data.containsKey("class")
+            ? HeadingItem(doc['date'])
+            : ScheduleItem(
+                doc['date'],
+                new Map<String, dynamic>.from(
+                  doc['instructor'],
+                ),
+                new Map<String, dynamic>.from(doc['class']),
+                doc.documentID,
+                doc['endDate'],
+                doc['capacity'],
+                doc['classId']);
+        final CollectionReference classParticipants =
+            doc.reference.collection("class-participants");
+        if (item is HeadingItem) {
+          Widget header = Container(
+              color: Colors.blue,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  item.day,
+                  style: TextStyle(color: Colors.white, fontSize: 18.0),
+                ),
+              ));
+          return header;
+        } else if (item is ScheduleItem) {
+          var formatter = new DateFormat('EEEE');
+          var day = formatter.format(item.rawDateTime);
+          Widget row = GestureDetector(
+            onTap: () {
+              msg.cancel();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SelectedScheduleScreen(
+                            locationName: widget.locationName,
+                            user: widget.user,
+                            scheduleItem: item,
+                            classParticipants: classParticipants,
+                          )));
+            },
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(item.displayDateTime),
+                    Text(
+                      day,
+                      style: TextStyle(fontSize: 10.0),
+                    ),
+                  ],
+                ),
+                radius: 28.0,
               ),
-            ));
-        return header;
-      } else if (item is ScheduleItem) {
-        var formatter = new DateFormat('EEEE');
-        var day = formatter.format(item.rawDateTime);
-        Widget row = GestureDetector(
-          onTap: () {
-            msg.cancel();
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SelectedScheduleScreen(
-                          locationName: widget.locationName,
-                          user: widget.user,
-                          scheduleItem: item,
-                          classParticipants: classParticipants,
-                        )));
-          },
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(item.displayDateTime),
-                  Text(
-                    day,
-                    style: TextStyle(fontSize: 10.0),
-                  ),
-                ],
-              ),
-              radius: 28.0,
+              title: new Text(item.className),
+              subtitle: Text(item.instructor),
             ),
-            title: new Text(item.className),
-            subtitle: Text(item.instructor),
-          ),
-        );
-        return row;
-      }
-    },
-    itemCount: documentCount,
+          );
+          return row;
+        }
+      },
+      itemCount: documentCount,
+    ),
   );
 }

@@ -59,34 +59,18 @@ ListView _byInstructorListBuilder(
                           .where('date', isGreaterThanOrEqualTo: lastMidnight)
                           .orderBy("date")
                           .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData)
                           return Center(child: CircularProgressIndicator());
 
-                        final int documentCount =
-                            snapshot.data.documents.length;
+                        final int documentCount = snapshot.data.documents.length;
                         return Column(
                           children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                color: Colors.black12,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(name),
-                                      Icon(Icons.drag_handle)
-                                    ],
-                                  ),
-                                ),
+                            Container(
+                              color: Colors.black12,
+                              child: ListTile(
+                                leading: Text(name),
+                                trailing: Icon(Icons.drag_handle),
                               ),
                             ),
                             _expandedInstructorItem(

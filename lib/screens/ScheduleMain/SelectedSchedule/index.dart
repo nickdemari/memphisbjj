@@ -8,7 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:memphisbjj/components/Buttons/animatedFloatingActionButton.dart';
 import 'package:memphisbjj/screens/Error/index.dart';
-import 'package:memphisbjj/screens/Instructors/Selected/index.dart';
+import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/notOnScheduleColumn.dart';
+import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/onScheduleColumn.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
 
@@ -53,11 +54,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     _msgStream = Messaging.onFcmMessage.listen((data) {
       print("FCM TRIGGERED in selected schedule");
       var alert = Messaging.getAlert(data);
-      var snackBar = SnackBar(
-        content: Text(alert),
-        backgroundColor: Colors.deepOrange,
-      );
-      _globalKey.currentState.showSnackBar(snackBar);
+      showSnackBar(alert, Colors.deepOrange);
 
       _msgStream.cancel();
     });
@@ -72,9 +69,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
         title: Text("Details"),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: _buildColumn(context)
-      ),
+          physics: BouncingScrollPhysics(), child: _buildColumn(context)),
       floatingActionButton: AnimatedFloatingActionButton(
         checkInToClass: _checkIntoClass,
         addToSchedule: _addToSchedule,
@@ -97,29 +92,14 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
     if (meters <= 275.0) {
       this.usersClass.reference.updateData(
-          Map.from({
-            "checkedIn": true,
-            "lastUpdatedOn": DateTime.now()
-          }));
+          Map.from({"checkedIn": true, "lastUpdatedOn": DateTime.now()}));
       setState(() {
         this._checkedIn = true;
         this.status = "CHECKED-IN!";
       });
-      final snackBar = SnackBar(
-        backgroundColor: Colors.greenAccent,
-        content: Text(
-          "Checked into ${widget.scheduleItem.className} at this location: $meters",
-        ),
-      );
-      _globalKey.currentState.showSnackBar(snackBar);
+      showSnackBar("Checked into ${widget.scheduleItem.className}.", Colors.greenAccent);
     } else {
-      final snackBar = SnackBar(
-        backgroundColor: Colors.redAccent,
-        content: Text(
-          "You must be at Memphis Judo and Jiu-Jitsu to check into this class. Try again at the gym.",
-        ),
-      );
-      _globalKey.currentState.showSnackBar(snackBar);
+      showSnackBar("You must be at Memphis Judo and Jiu-Jitsu to check into this class. Try again at the gym.", Colors.red);
     }
   }
 
@@ -128,23 +108,17 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       this._onScheduleDistance = null;
       _setAddToClassIndicator(false);
     });
-    QuerySnapshot doc = await widget.classParticipants.where("userUid", isEqualTo: widget.user.uid).where("classUid", isEqualTo: widget.scheduleItem.uid).getDocuments();
+    QuerySnapshot doc = await widget.classParticipants
+        .where("userUid", isEqualTo: widget.user.uid)
+        .where("classUid", isEqualTo: widget.scheduleItem.uid)
+        .getDocuments();
     doc.documents[0].reference.delete();
     await this._registered.document(widget.scheduleItem.uid).updateData(
-      Map.from({
-        "visible": false,
-        "lastUpdatedOn": DateTime.now()
-      })
-    );
+        Map.from({"visible": false, "lastUpdatedOn": DateTime.now()}));
 
     _updateClassCapacity(false);
 
-    final snackBar = SnackBar(
-      content: Text(
-        "${widget.scheduleItem.className} removed from ${widget.user.displayName}'s schedule",
-      ),
-    );
-    _globalKey.currentState.showSnackBar(snackBar);
+    showSnackBar("${widget.scheduleItem.className} removed from ${widget.user.displayName}'s schedule", Colors.blueAccent);
   }
 
   void _addToSchedule() async {
@@ -175,8 +149,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       "instructor": widget.scheduleItem.instructor,
       "visible": true,
     });
-    await widget.classParticipants
-        .add(participant);
+    await widget.classParticipants.add(participant);
     await this
         ._registered
         .document(widget.scheduleItem.uid)
@@ -203,13 +176,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
           widget.scheduleItem.capacity -= 1;
         });
       } else {
-        final snackBar = SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-            "This class is full",
-          ),
-        );
-        _globalKey.currentState.showSnackBar(snackBar);
+        showSnackBar("This class is full", Colors.red);
       }
     } else {
       if (widget.scheduleItem.capacity.runtimeType != Null &&
@@ -256,13 +223,18 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       print(event.eventId);
       await _deviceCalendarPlugin.createOrUpdateEvent(event);
     } on PlatformException catch (e) {
-      final snackBar = SnackBar(
-        content: Text(
-          e.message,
-        ),
-      );
-      _globalKey.currentState.showSnackBar(snackBar);
+      showSnackBar(e.message, Colors.red);
     }
+  }
+
+  void showSnackBar(String message, Color color) {
+    final snackBar = SnackBar(
+      backgroundColor: color,
+      content: Text(
+        message,
+      ),
+    );
+    _globalKey.currentState.showSnackBar(snackBar);
   }
 
   Widget _buildColumn(BuildContext context) {
@@ -274,7 +246,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     return StreamBuilder(
         stream: widget.classParticipants
             .where("userUid", isEqualTo: widget.user.uid)
-            .where("classUid", isEqualTo: widget.scheduleItem.uid).snapshots(),
+            .where("classUid", isEqualTo: widget.scheduleItem.uid)
+            .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData)
             return ListTile(
@@ -285,153 +258,17 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
           if (snapshot.data.documents.length > 0) {
             _setAddToClassIndicator(true);
             this.usersClass = snapshot.data.documents[0];
-            return Column(
-              children: <Widget>[
-                Card(
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text(
-                          widget.scheduleItem.className,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        trailing: AnimatedOpacity(
-                          opacity: 1.0,
-                          duration: Duration(milliseconds: 500),
-                          child: Icon(Icons.schedule),
-                        ),
-                        leading: CircleAvatar(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(widget.scheduleItem.displayDateTime)
-                            ],
-                          ),
-                          radius: 28.0,
-                        ),
-                        subtitle: _getClassSubtitle(),
-                      ),
-                    ],
-                  ),
-                ),
-                Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SelectedInstructorScreen(instructorId: widget.scheduleItem.instructorId, name: widget.scheduleItem.instructor,),
-                        ),
-                      );
-                    },
-                    title: Text(widget.scheduleItem.instructor),
-                    subtitle: Text("Tap here to read more about your coach"),
-                  )
-                ),
-                Card(
-                  color: Colors.green,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(this.status),
-                    ),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 20.0),
-                      child: Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              width: cWidth,
-                              child: Text(
-                                widget.scheduleItem.description,
-                                style: TextStyle(fontSize: 22.0),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
+            return onScheduleColumn(context, cWidth, widget, _getClassSubtitle(), this.status, _globalKey);
           } else {
             _setAddToClassIndicator(false);
-            return Column(
-              children: <Widget>[
-                Card(
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text(
-                          widget.scheduleItem.className,
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        leading: CircleAvatar(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(widget.scheduleItem.displayDateTime)
-                            ],
-                          ),
-                          radius: 27.0,
-                        ),
-                        subtitle: _getClassSubtitle(),
-                      ),
-                    ],
-                  ),
-                ),
-                Card(
-                    child: ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SelectedInstructorScreen(instructorId: widget.scheduleItem.instructorId, name: widget.scheduleItem.instructor,),
-                          ),
-                        );
-                      },
-                      title: Text(widget.scheduleItem.instructor),
-                      subtitle: Text("Tap here to read more about your coach"),
-                    )
-                ),
-                Row(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20.0, bottom: 20.0, left: 20.0),
-                      child: Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Container(
-                              width: cWidth,
-                              child: Text(
-                                widget.scheduleItem.description,
-                                style: TextStyle(fontSize: 22.0),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
+            return notOnScheduleColumn(context, cWidth, widget, _getClassSubtitle(), _globalKey);
           }
         });
   }
 
-  Text _getClassSubtitle() => widget.scheduleItem.capacity.runtimeType == Null ? Text("No sign up limits") : Text("${widget.scheduleItem.capacity.toString()} Spots Left");
+  Text _getClassSubtitle() => widget.scheduleItem.capacity.runtimeType == Null
+      ? Text("No sign up limits")
+      : Text("${widget.scheduleItem.capacity.toString()} Spots Left");
 
   void _initPlateformState() async {
     Position position;
