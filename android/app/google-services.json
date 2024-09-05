@@ -15,11 +15,27 @@
       },
       "oauth_client": [
         {
-          "client_id": "928741701529-q3m7f9cp8384trvvc5agmi4jgu4san2c.apps.googleusercontent.com",
+          "client_id": "928741701529-qetg15v2u16829oleslpkcta220o8og1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.demarily.memphisbjj",
-            "certificate_hash": "1a717d9e2ca1b2a6717632758cd9d6eba079299a"
+            "certificate_hash": "100d507c14beeadc91203aec69fc22f964b416ce"
+          }
+        },
+        {
+          "client_id": "928741701529-tld3k3jtlho2o1fulteh4vlmngcel143.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.demarily.memphisbjj",
+            "certificate_hash": "b31695addd9dbd7d6c737ef358613cbdea693081"
+          }
+        },
+        {
+          "client_id": "928741701529-us8pd8615h7quhpkfbkee0lfvt7otdj7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.demarily.memphisbjj",
+            "certificate_hash": "e3b0970c77640360223adf60c6b5fd96cba6ff30"
           }
         },
         {
@@ -33,20 +49,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "928741701529-8bfs3cprp4emgrencl9mlnun5n2qfhnd.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "928741701529-dtvq21uprbjf797m4sefv384akvff979.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.demarily.memphisbjj"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

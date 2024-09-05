@@ -17,32 +17,36 @@ class StickyList extends StatefulWidget {
   /// Background color of list
   final Color background;
   final bool reverse;
+
   /// Delegate that builds children widget similar to [SliverChildBuilderDelegate]
   final _StickyChildBuilderDelegate childrenDelegate;
   final ScrollController controller;
 
   /// Use this constructor for list of [StickyListRow]
   StickyList({
-    Color background: Colors.transparent,
-    bool reverse: false,
-    ScrollController controller,
-    List<StickyListRow> children: const <StickyListRow>[],
-  })
-      : childrenDelegate = new _StickyChildBuilderDelegate(children),
-        reverse = reverse, background = background, controller = controller;
+    Color background = Colors.transparent,
+    bool reverse = false,
+    required ScrollController controller,
+    List<StickyListRow> children = const <StickyListRow>[],
+  })  : childrenDelegate = new _StickyChildBuilderDelegate(children),
+        reverse = reverse,
+        background = background,
+        controller = controller;
 
   /// This constructor is appropriate for list views with a large (or infinite)
   /// number of children because the builder is called only for those children
   /// that are actually visible.
-  StickyList.builder({
-    Color background: Colors.transparent,
-    bool reverse: false,
-    int itemCount,
-    ScrollController controller,
-    StickyWidgetBuilder builder
-  })
-      : childrenDelegate = new _StickyChildBuilderDelegate.builder(
-      builder, itemCount), reverse = reverse, background = background, controller = controller;
+  StickyList.builder(
+      {Color background = Colors.transparent,
+      bool reverse = false,
+      required int itemCount,
+      required ScrollController controller,
+      required StickyWidgetBuilder builder})
+      : childrenDelegate =
+            new _StickyChildBuilderDelegate.builder(builder, itemCount),
+        reverse = reverse,
+        background = background,
+        controller = controller;
 
   @override
   _StickyListState createState() =>
@@ -59,12 +63,9 @@ class _StickyListState extends State<StickyList> {
   /// Current position at the top of list
   var _currentPosition = -1;
 
-  _StickyListState({
-    Color background
-  }) {
-    this._background = background;
-    this._stickyTranslationOffset = 0.0;
-  }
+  _StickyListState({required Color background})
+      : _background = background,
+        _stickyTranslationOffset = 0.0 {}
 
   @override
   Widget build(BuildContext context) {
@@ -107,13 +108,14 @@ class _StickyListState extends State<StickyList> {
         header = (header as WrapStickyWidget).child;
       }
 
-      var translationOffset = this.widget.reverse ? _stickyTranslationOffset : -_stickyTranslationOffset;
+      var translationOffset = this.widget.reverse
+          ? _stickyTranslationOffset
+          : -_stickyTranslationOffset;
       stickyWidget = new ClipRect(
           child: new Container(
-            child: header,
-            transform: new Matrix4.translationValues(
-                0.0, translationOffset, 0.0),
-          ));
+        child: header,
+        transform: new Matrix4.translationValues(0.0, translationOffset, 0.0),
+      ));
     }
     return stickyWidget;
   }
@@ -130,7 +132,8 @@ class _StickyListState extends State<StickyList> {
 
   ScrollController _getScrollController() {
     // If a ScrollController is provided use it, otherwise create a new ScrollController
-    var controller = widget.controller != null ? widget.controller : new ScrollController();
+    var controller =
+        widget.controller != null ? widget.controller : new ScrollController();
     controller.addListener(() {
       var pixels = controller.offset;
       var newPosition = _getPositionForOffset(context, pixels);
@@ -153,13 +156,17 @@ class _StickyListState extends State<StickyList> {
     }
   }
 
-  void _calculateStickyOffset(BuildContext ctx, int newPosition, double pixels) {
-    if ((newPosition > 0) && this.widget.childrenDelegate.build(ctx, newPosition).isSticky()) {
-      final headerHeight = this.widget.childrenDelegate.build(ctx, newPosition).getHeight();
-      if (_getOffsetForCurrentRow(context, pixels, newPosition) < headerHeight) {
+  void _calculateStickyOffset(
+      BuildContext ctx, int newPosition, double pixels) {
+    if ((newPosition > 0) &&
+        this.widget.childrenDelegate.build(ctx, newPosition).isSticky()) {
+      final headerHeight =
+          this.widget.childrenDelegate.build(ctx, newPosition).getHeight();
+      if (_getOffsetForCurrentRow(context, pixels, newPosition) <
+          headerHeight) {
         setState(() {
-          _stickyTranslationOffset =
-              headerHeight - _getOffsetForCurrentRow(context, pixels, newPosition);
+          _stickyTranslationOffset = headerHeight -
+              _getOffsetForCurrentRow(context, pixels, newPosition);
         });
       }
     } else {
@@ -171,13 +178,16 @@ class _StickyListState extends State<StickyList> {
     }
   }
 
-  double _getOffsetForCurrentRow(BuildContext ctx, double offset, int position) {
+  double _getOffsetForCurrentRow(
+      BuildContext ctx, double offset, int position) {
     double calcOffset = offset;
     for (var i = 0; i < position - 1; i++) {
-      calcOffset = calcOffset - this.widget.childrenDelegate.build(ctx, i).getHeight();
+      calcOffset =
+          calcOffset - this.widget.childrenDelegate.build(ctx, i).getHeight();
     }
 
-    return (this.widget.childrenDelegate.build(ctx, position-1).getHeight() - calcOffset);
+    return (this.widget.childrenDelegate.build(ctx, position - 1).getHeight() -
+        calcOffset);
   }
 
   int _getPositionForOffset(BuildContext ctx, double offset) {
@@ -189,13 +199,13 @@ class _StickyListState extends State<StickyList> {
     }
 
     while (calcOffset > 0) {
-      calcOffset = calcOffset - this.widget.childrenDelegate.build(ctx, counter).getHeight();
+      calcOffset = calcOffset -
+          this.widget.childrenDelegate.build(ctx, counter).getHeight();
       counter++;
     }
 
     return counter;
   }
-
 }
 
 /// Simple widget that just wraps the child. When height is not provided,
@@ -204,8 +214,7 @@ class _StickyListState extends State<StickyList> {
 class WrapStickyWidget extends StatelessWidget {
   final Widget child;
 
-  WrapStickyWidget({this.child, Key key}):
-        super(key: key);
+  WrapStickyWidget({required this.child, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -217,24 +226,27 @@ class WrapStickyWidget extends StatelessWidget {
 ///  builder way. Works similar to [SliverChildBuilderDelegate] that is used
 ///  by [ListView]
 class _StickyChildBuilderDelegate {
-
-  StickyWidgetBuilder stickyBuilder;
-  int itemCount;
+  StickyWidgetBuilder? stickyBuilder;
+  late int itemCount;
   List<StickyListRow> children;
 
-  _StickyChildBuilderDelegate(this.children) {
-    this.itemCount = children.length;
-  }
+  _StickyChildBuilderDelegate(List<StickyListRow> children)
+      : stickyBuilder = null,
+        children = children,
+        itemCount = children.length;
 
-  _StickyChildBuilderDelegate.builder(this.stickyBuilder, this.itemCount);
+  _StickyChildBuilderDelegate.builder(
+      StickyWidgetBuilder builder, int itemCount)
+      : stickyBuilder = builder,
+        itemCount = itemCount,
+        children = <StickyListRow>[];
 
   StickyListRow build(BuildContext context, int index) {
     if (stickyBuilder != null) {
-      final w = stickyBuilder(context, index);
+      final w = stickyBuilder!(context, index);
       return w;
     } else {
       return children[index];
     }
   }
-
 }

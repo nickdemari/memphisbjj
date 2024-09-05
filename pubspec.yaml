@@ -7,36 +7,34 @@ description: Memphis Judo &amp; Jiu-Jitsu
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.1+35
+version: 1.0.1+36
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  google_sign_in: ^3.0.4
-  firebase_analytics: ^1.0.4
-  firebase_auth: ^0.6.2+1
-  cloud_firestore: ^0.8.2+3
-  sticky_header_list: ^1.0.6
-  intl: ^0.15.7
-  auto_size_text: ^0.2.2
-  geolocator: ^2.1.0
-  url_launcher: ^4.0.2
-  android_intent: ^0.2.1
-  image_picker: ^0.4.10
-  firebase_storage: ^1.0.4
-  font_awesome_flutter: ^8.2.0
-  device_calendar: ^0.0.7
-  package_info: ^0.3.2
-  firebase_messaging: ^2.1.0
-  flutter_native_image:
-    git: https://github.com/btastic/flutter_native_image.git
+  google_sign_in: ^6.2.1
+  firebase_analytics: ^11.3.0
+  firebase_auth: ^5.2.0
+  cloud_firestore: ^5.4.0
+  intl: ^0.19.0
+  auto_size_text: ^3.0.0
+  geolocator: ^12.0.0
+  url_launcher: ^6.3.0
+  image_picker: ^1.1.2
+  firebase_storage: ^12.2.0
+  font_awesome_flutter: ^10.7.0
+  device_calendar: ^4.3.2
+  package_info_plus: ^8.0.2
+  firebase_messaging: ^15.1.0
+  flutter_native_image: ^0.0.6
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.8
+  android_intent_plus: ^5.1.0
 
 dev_dependencies:
   flutter_test:

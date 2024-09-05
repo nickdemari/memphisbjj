@@ -6,7 +6,11 @@ class UserAdminScreen extends StatefulWidget {
   final String userUid;
   final String displayName;
 
-  UserAdminScreen({Key key, this.userUid, this.displayName});
+  const UserAdminScreen({
+    Key? key,
+    required this.userUid,
+    required this.displayName,
+  }) : super(key: key);
 
   @override
   _UserAdminScreenState createState() => _UserAdminScreenState();
@@ -17,54 +21,64 @@ class _UserAdminScreenState extends State<UserAdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Admin"),
+        title: const Text("Admin"),
       ),
-      body: StreamBuilder(
-          stream: Firestore.instance.collection("users").orderBy("displayName").snapshots(),
-          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator();
-            return ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                itemBuilder: (_, int index) {
-                  final DocumentSnapshot document = snapshot.data.documents[index];
-                  return StreamBuilder(
-                    stream: document.reference.collection("registeredClasses").snapshots(),
-                    builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData) return CircularProgressIndicator();
-                      List<DocumentSnapshot> userClasses = snapshot.data.documents;
-                      return ListTile(
-                        leading: CircleAvatar(
-                          child: ClipOval(
-                              child: Image.network(
-                                document["photoUrl"],
-                                fit: BoxFit.cover,
-                                width: 90.0,
-                                height: 90.0,
-                              )),
-                          radius: 27.0,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection("users")
+            .orderBy("displayName")
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData)
+            return const Center(child: CircularProgressIndicator());
+
+          final users = snapshot.data?.docs ?? [];
+
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final userDoc = users[index];
+
+              return FutureBuilder<QuerySnapshot>(
+                future: userDoc.reference.collection("registeredClasses").get(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> classSnapshot) {
+                  if (!classSnapshot.hasData)
+                    return const CircularProgressIndicator();
+
+                  final userClasses = classSnapshot.data?.docs ?? [];
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      child: ClipOval(
+                        child: Image.network(
+                          userDoc["photoUrl"] ?? "",
+                          fit: BoxFit.cover,
+                          width: 90.0,
+                          height: 90.0,
                         ),
-                        title: Text(document["displayName"]),
-                        subtitle: Text(document["email"]),
-                        trailing: Text(userClasses.length.toString()),
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => UserClassesScreen(userUid: document["firebaseUid"], displayName: document["displayName"],))),
-                      );
-                    },
+                      ),
+                      radius: 27.0,
+                    ),
+                    title: Text(userDoc["displayName"] ?? "Unknown"),
+                    subtitle: Text(userDoc["email"] ?? "No email"),
+                    trailing: Text(userClasses.length.toString()),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserClassesScreen(
+                          userUid: userDoc["firebaseUid"] ?? "",
+                          displayName: userDoc["displayName"] ?? "",
+                        ),
+                      ),
+                    ),
                   );
-                });
-          }),
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
-
-/*
-floatingActionButton: FloatingActionButton(onPressed: () {
-  var datesCollection = Firestore.instance.collection("schedules").document("bartlett").collection("dates");
-  final now = DateTime.now();
-  var lastMidnight = new DateTime(now.year, now.month, now.day);
-  for (var i = 0; i < 4023; i++) {
-    lastMidnight = lastMidnight.add(Duration(days: 1));
-    datesCollection.add(Map.from({"date": lastMidnight}));
-  }
-  print("done");
-}),
-*/

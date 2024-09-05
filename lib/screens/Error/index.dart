@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 class ErrorScreen extends StatelessWidget {
   final String title;
   final String message;
-  ErrorScreen({Key key, this.title, this.message});
+  ErrorScreen({Key? key, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {
-    double cWidth = MediaQuery.of(context).size.width*0.8;
+    double cWidth = MediaQuery.of(context).size.width * 0.8;
     return Scaffold(
       appBar: AppBar(
         title: Text(this.title),
@@ -21,9 +21,11 @@ class ErrorScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: cWidth,
-                child: Text(this.message, style: TextStyle(fontSize: 24.0),)
-              )
+                  width: cWidth,
+                  child: Text(
+                    this.message,
+                    style: TextStyle(fontSize: 24.0),
+                  ))
             ],
           )
         ],

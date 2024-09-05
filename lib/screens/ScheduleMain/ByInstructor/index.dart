@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,162 +6,238 @@ import 'package:memphisbjj/screens/ScheduleMain/SelectedSchedule/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/index.dart';
 import 'package:memphisbjj/utils/ListItem.dart';
 
-Builder buildByInstructorTab(DateTime lastMidnight, ScheduleMainScreen widget,
-    StreamSubscription<Map<String, dynamic>> msg) {
-  return Builder(
-    builder: (BuildContext context) {
-      final Stream<QuerySnapshot> instructorsRef = Firestore.instance
-          .collection("instructors")
-          .orderBy("name")
-          .snapshots();
-      final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
-      return Scaffold(
-          key: _globalKey,
-          body: StreamBuilder(
-              stream: instructorsRef,
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (!snapshot.hasData) return CircularProgressIndicator();
+class InstructorTabBuilder extends StatelessWidget {
+  final DateTime lastMidnight;
+  final ScheduleMainScreen widget;
 
-                return _byInstructorListBuilder(
-                  snapshot,
-                  _globalKey,
-                  lastMidnight,
-                  widget,
-                  msg,
-                );
-              }));
-    },
-  );
+  InstructorTabBuilder({
+    required this.lastMidnight,
+    required this.widget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> instructorsRef = FirebaseFirestore.instance
+        .collection("instructors")
+        .orderBy("name")
+        .snapshots();
+    final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+
+    return Scaffold(
+      key: _globalKey,
+      body: StreamBuilder<QuerySnapshot>(
+        stream: instructorsRef,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
+          return InstructorList(
+            snapshot: snapshot,
+            globalKey: _globalKey,
+            lastMidnight: lastMidnight,
+            widget: widget,
+          );
+        },
+      ),
+    );
+  }
 }
 
-ListView _byInstructorListBuilder(
-    AsyncSnapshot<QuerySnapshot> snapshot,
-    GlobalKey<ScaffoldState> _globalKey,
-    DateTime lastMidnight,
-    ScheduleMainScreen widget,
-    StreamSubscription<Map<String, dynamic>> msg) {
-  return ListView.builder(
-      itemCount: snapshot.data.documents.length,
-      itemBuilder: (context, int index) {
-        DocumentSnapshot document = snapshot.data.documents[index];
-        String name = document["name"];
+class InstructorList extends StatelessWidget {
+  final AsyncSnapshot<QuerySnapshot> snapshot;
+  final GlobalKey<ScaffoldState> globalKey;
+  final DateTime lastMidnight;
+  final ScheduleMainScreen widget;
+
+  InstructorList({
+    required this.snapshot,
+    required this.globalKey,
+    required this.lastMidnight,
+    required this.widget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: snapshot.data!.docs.length,
+      itemBuilder: (context, index) {
+        final DocumentSnapshot document = snapshot.data!.docs[index];
+        final String name = document["name"];
+
         return ListTile(
           title: Text(name),
-          onTap: () => _globalKey.currentState.showBottomSheet(
-                (context) => StreamBuilder(
-                      stream: Firestore.instance
-                          .collection("schedules")
-                          .document("bartlett")
-                          .collection("dates")
-                          .where("instructor.name", isEqualTo: name)
-                          .where('date', isGreaterThanOrEqualTo: lastMidnight)
-                          .orderBy("date")
-                          .snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (!snapshot.hasData)
-                          return Center(child: CircularProgressIndicator());
-
-                        final int documentCount = snapshot.data.documents.length;
-                        return Column(
-                          children: <Widget>[
-                            Container(
-                              color: Colors.black12,
-                              child: ListTile(
-                                leading: Text(name),
-                                trailing: Icon(Icons.drag_handle),
-                              ),
-                            ),
-                            _expandedInstructorItem(
-                              snapshot,
-                              widget,
-                              documentCount,
-                              msg,
-                            )
-                          ],
-                        );
-                      },
-                    ),
-              ),
+          onTap: () => globalKey.currentState!.showBottomSheet(
+            (context) => InstructorScheduleBottomSheet(
+              name: name,
+              lastMidnight: lastMidnight,
+              widget: widget,
+            ),
+          ),
         );
-      });
+      },
+    );
+  }
 }
 
-Expanded _expandedInstructorItem(
-  AsyncSnapshot<QuerySnapshot> snapshot,
-  ScheduleMainScreen widget,
-  int documentCount,
-  StreamSubscription<Map<String, dynamic>> msg,
-) {
-  return Expanded(
-    child: ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        final DocumentSnapshot doc = snapshot.data.documents[index];
-        final ListItem item = !doc.data.containsKey("class")
-            ? HeadingItem(doc['date'])
-            : ScheduleItem(
-                doc['date'],
-                new Map<String, dynamic>.from(
-                  doc['instructor'],
-                ),
-                new Map<String, dynamic>.from(doc['class']),
-                doc.documentID,
-                doc['endDate'],
-                doc['capacity'],
-                doc['id']);
+class InstructorScheduleBottomSheet extends StatelessWidget {
+  final String name;
+  final DateTime lastMidnight;
+  final ScheduleMainScreen widget;
+
+  InstructorScheduleBottomSheet({
+    required this.name,
+    required this.lastMidnight,
+    required this.widget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> scheduleStream = FirebaseFirestore.instance
+        .collection("schedules")
+        .doc("bartlett")
+        .collection("dates")
+        .where("instructor.name", isEqualTo: name)
+        .where('date', isGreaterThanOrEqualTo: lastMidnight)
+        .orderBy("date")
+        .snapshots();
+
+    return StreamBuilder<QuerySnapshot>(
+      stream: scheduleStream,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final int documentCount = snapshot.data!.docs.length;
+        return Column(
+          children: [
+            Container(
+              color: Colors.black12,
+              child: ListTile(
+                leading: Text(name),
+                trailing: Icon(Icons.drag_handle),
+              ),
+            ),
+            Expanded(
+              child: InstructorScheduleList(
+                snapshot: snapshot,
+                widget: widget,
+                documentCount: documentCount,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class InstructorScheduleList extends StatelessWidget {
+  final AsyncSnapshot<QuerySnapshot> snapshot;
+  final ScheduleMainScreen widget;
+  final int documentCount;
+
+  InstructorScheduleList({
+    required this.snapshot,
+    required this.widget,
+    required this.documentCount,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: documentCount,
+      itemBuilder: (context, index) {
+        final DocumentSnapshot doc = snapshot.data!.docs[index];
+        final ListItem item =
+            (doc.data() as Map<String, dynamic>).containsKey("class")
+                ? ScheduleItem.fromMap(doc.data() as Map<String, dynamic>)
+                : HeadingItem(doc['date'].toDate());
+
         final CollectionReference classParticipants =
             doc.reference.collection("class-participants");
+
         if (item is HeadingItem) {
-          Widget header = Container(
-              color: Colors.blue,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Text(
-                  item.day,
-                  style: TextStyle(color: Colors.white, fontSize: 18.0),
-                ),
-              ));
-          return header;
+          return HeadingItemWidget(item: item);
         } else if (item is ScheduleItem) {
-          var formatter = new DateFormat('EEEE');
-          var day = formatter.format(item.rawDateTime);
-          Widget row = GestureDetector(
-            onTap: () {
-              msg.cancel();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SelectedScheduleScreen(
-                        locationName: widget.locationName,
-                        user: widget.user,
-                        scheduleItem: item,
-                        classParticipants: classParticipants,
-                      ),
-                ),
-              );
-            },
-            child: ListTile(
-                leading: CircleAvatar(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(item.displayDateTime),
-                      Text(
-                        day,
-                        style: TextStyle(fontSize: 10.0),
-                      ),
-                    ],
-                  ),
-                  radius: 28.0,
-                ),
-                title: new Text(item.className),
-                subtitle: Text(item.instructor)),
+          return ScheduleItemWidget(
+            context: context,
+            widget: widget,
+            item: item,
+            classParticipants: classParticipants,
           );
-          return row;
         }
+
+        return Container(); // Fallback for unexpected cases
       },
-      itemCount: documentCount,
-    ),
-  );
+    );
+  }
+}
+
+class HeadingItemWidget extends StatelessWidget {
+  final HeadingItem item;
+
+  HeadingItemWidget({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.blue,
+      padding: const EdgeInsets.all(10.0),
+      child: Text(
+        item.day,
+        style: TextStyle(color: Colors.white, fontSize: 18.0),
+      ),
+    );
+  }
+}
+
+class ScheduleItemWidget extends StatelessWidget {
+  final BuildContext context;
+  final ScheduleMainScreen widget;
+  final ScheduleItem item;
+  final CollectionReference classParticipants;
+
+  ScheduleItemWidget({
+    required this.context,
+    required this.widget,
+    required this.item,
+    required this.classParticipants,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final formatter = DateFormat('EEEE');
+    final String day = formatter.format(item.rawDateTime);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SelectedScheduleScreen(
+              locationName: widget.locationName,
+              user: widget.user,
+              scheduleItem: item,
+              classParticipants: classParticipants,
+            ),
+          ),
+        );
+      },
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 28.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(item.displayDateTime),
+              Text(day, style: TextStyle(fontSize: 10.0)),
+            ],
+          ),
+        ),
+        title: Text(item.className),
+        subtitle: Text(item.instructor),
+      ),
+    );
+  }
 }

@@ -1,57 +1,43 @@
 import 'package:flutter/material.dart';
 import 'StickyHeaderList.dart';
 
-/// Represents row for StickyList.
+/// Represents a row for StickyList.
 ///
-/// Check [HeaderRow] and [RegularRow]
+/// Check [HeaderRow] and [RegularRow].
 abstract class StickyListRow {
-  Widget child;
-  double _height;
-  GlobalKey _key;
+  final Widget child;
+  double? _height;
+  final GlobalKey _key = GlobalKey();
 
-  StickyListRow(Widget child, double height) {
-    if (height == null) {
-      this._key = new GlobalKey();
-      this.child = new WrapStickyWidget(key: _key, child: child,);
-    } else {
-      this._height = height;
-      this.child = child;
-    }
-  }
+  StickyListRow({required Widget child, double? height})
+      : _height = height,
+        this.child = height == null
+            ? WrapStickyWidget(key: GlobalKey(), child: child)
+            : child;
 
   double getHeight() {
     if (_height == null) {
-      if (_key.currentContext != null) {
-        _height = _key.currentContext.size.height;
+      final context = _key.currentContext;
+      if (context != null) {
+        _height = context.size?.height ?? 0.0;
       } else {
-        throw new Exception("Tried to get context height of non-visible row");
+        throw Exception("Tried to get context height of non-visible row");
       }
     }
-
-    return _height;
+    return _height!;
   }
 
-  bool isSticky() {
-    if (this is HeaderRow) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  bool isSticky() => this is HeaderRow;
 }
 
-/// Header row for list that sticks to top when scrolled
+/// Header row for list that sticks to top when scrolled.
 class HeaderRow extends StickyListRow {
-
-  HeaderRow({Widget child, double height}) :
-        super(child, height);
+  HeaderRow({required Widget child, double? height})
+      : super(child: child, height: height);
 }
 
-/// Regular row for list
+/// Regular row for list.
 class RegularRow extends StickyListRow {
-
-  RegularRow({Widget child, double height}) :
-        super(child, height);
+  RegularRow({required Widget child, double? height})
+      : super(child: child, height: height);
 }
-
-

@@ -7,7 +7,8 @@ import 'package:memphisbjj/services/validations.dart';
 class MemberDependentsScreen extends StatefulWidget {
   final String parentFbUid;
 
-  MemberDependentsScreen({this.parentFbUid});
+  MemberDependentsScreen({required this.parentFbUid});
+
   @override
   _MemberDependentsScreenState createState() => _MemberDependentsScreenState();
 }
@@ -15,24 +16,24 @@ class MemberDependentsScreen extends StatefulWidget {
 class _MemberDependentsScreenState extends State<MemberDependentsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Validations _validations = Validations();
-
-  String fullDependentName;
+  final Validations _validations = Validations();
+  String? fullDependentName;
 
   void _addDependent() async {
-    final FormState form = _formKey.currentState;
-    if (form.validate()) {
+    final FormState? form = _formKey.currentState;
+    if (form != null && form.validate()) {
       form.save();
-      var dependentCollection = Firestore.instance
+      CollectionReference dependents = FirebaseFirestore.instance
           .collection("users")
-          .document(widget.parentFbUid)
+          .doc(widget.parentFbUid)
           .collection("dependents");
-      var child = Map.of({"displayName": this.fullDependentName});
-      var newDependentDoc = await dependentCollection.add(child);
 
-      await dependentCollection
-          .document(newDependentDoc.documentID)
-          .updateData(Map.of({"firebaseId": newDependentDoc.documentID}));
+      var child = {"displayName": this.fullDependentName};
+      var newDependentDoc = await dependents.add(child);
+
+      await dependents
+          .doc(newDependentDoc.id)
+          .update({"firebaseId": newDependentDoc.id});
 
       Navigator.of(context).pop();
     }
@@ -40,42 +41,49 @@ class _MemberDependentsScreenState extends State<MemberDependentsScreen> {
 
   void _promptAddDependentDialog() {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Add Dependent'),
-            content: Form(
-              key: _formKey,
-              child: Container(
-                height: 75,
-                child: Column(
-                  children: <Widget>[
-                    InputField(
-                      hintText: "Dependents Full Name",
-                      obscureText: false,
-                      textInputType: TextInputType.text,
-                      icon: Icons.perm_identity,
-                      iconColor: Colors.black54,
-                      bottomMargin: 20.0,
-                      validateFunction: _validations.validateEmpty,
-                      onSaved: (String first) {
-                        this.fullDependentName = first;
-                      },
-                    ),
-                  ],
-                ),
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add Dependent'),
+          content: Form(
+            key: _formKey,
+            child: SizedBox(
+              height: 75,
+              child: Column(
+                children: <Widget>[
+                  InputField(
+                    hintText: "Dependent's Full Name",
+                    obscureText: false,
+                    textInputType: TextInputType.text,
+                    icon: Icons.perm_identity,
+                    iconColor: Colors.black54,
+                    bottomMargin: 20.0,
+                    validateFunction: (String? value) =>
+                        _validations.validateEmpty(value!),
+                    onSaved: (String? name) {
+                      this.fullDependentName = name;
+                    },
+                    textStyle: TextStyle(),
+                    hintStyle: TextStyle(), // Provide an empty TextStyle object
+                  ),
+                ],
               ),
             ),
-            actions: <Widget>[
-              new FlatButton(
-                  child: new Text('CANCEL'),
-                  onPressed: () => Navigator.of(context).pop()),
-              new FlatButton(
-                  child: new Text('SAVE'), onPressed: () => _addDependent())
-            ],
-          );
-        });
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('CANCEL'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: Text('SAVE'),
+              onPressed: () => _addDependent(),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -87,7 +95,7 @@ class _MemberDependentsScreenState extends State<MemberDependentsScreen> {
           title: Text("Manage Dependents"),
         ),
         floatingActionButton: FloatingActionButton.extended(
-          onPressed: () => _promptAddDependentDialog(),
+          onPressed: _promptAddDependentDialog,
           icon: Icon(FontAwesomeIcons.plus),
           label: Text("ADD DEPENDENT"),
         ),
@@ -96,22 +104,27 @@ class _MemberDependentsScreenState extends State<MemberDependentsScreen> {
             children: <Widget>[
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
-                  stream: Firestore.instance
+                  stream: FirebaseFirestore.instance
                       .collection("users")
-                      .document(widget.parentFbUid)
+                      .doc(widget.parentFbUid)
                       .collection("dependents")
                       .snapshots(),
-                  builder: (
-                    BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot,
-                  ) {
-                    if (!snapshot.hasData) return CircularProgressIndicator();
-                    final int collectionSize = snapshot.data.documents.length;
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+
+                    final dependents = snapshot.data?.docs ?? [];
+
+                    if (dependents.isEmpty) {
+                      return Center(child: Text("No dependents added."));
+                    }
+
                     return ListView.builder(
-                      itemCount: collectionSize,
+                      itemCount: dependents.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final DocumentSnapshot document =
-                            snapshot.data.documents[index];
+                        final DocumentSnapshot document = dependents[index];
                         return ListTile(
                           title: Text(document["displayName"]),
                         );
@@ -119,7 +132,7 @@ class _MemberDependentsScreenState extends State<MemberDependentsScreen> {
                     );
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

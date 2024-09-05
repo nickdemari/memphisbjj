@@ -6,5 +6,12 @@ class UserInformation {
   final String state;
   final String zip;
 
-  UserInformation({this.phoneNumber, this.address1, this.address2, this.city, this.state, this.zip});
+  UserInformation({
+    required this.phoneNumber,
+    required this.address1,
+    required this.address2,
+    required this.city,
+    required this.state,
+    required this.zip,
+  });
 }

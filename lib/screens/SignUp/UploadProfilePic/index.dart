@@ -10,65 +10,70 @@ import 'package:flutter_native_image/flutter_native_image.dart';
 
 class UploadProfilePicScreen extends StatefulWidget {
   final bool isEdit;
-  UploadProfilePicScreen({this.isEdit});
+  UploadProfilePicScreen({this.isEdit = false});
 
   @override
   _UploadProfilePicScreenState createState() => _UploadProfilePicScreenState();
 }
 
 class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
-  File userImage;
+  File? userImage;
   bool _isLoading = false;
   bool _isDoneLoading = false;
   double _progress = 0.0;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-  Future _getImage() async {
-    var tempImage = await ImagePicker.pickImage(source: ImageSource.gallery);
-    print(tempImage.path);
+  Future<void> _getImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
 
-    var result = await FlutterNativeImage.compressImage(
-      tempImage.path,
+    print(pickedFile.path);
+
+    final compressedImage = await FlutterNativeImage.compressImage(
+      pickedFile.path,
       quality: 80,
       percentage: 50,
     );
 
     setState(() {
-      userImage = result;
+      userImage = File(compressedImage.path);
     });
   }
 
-  Future _uploadImage() async {
-    FirebaseUser user = await auth.currentUser();
-    final StorageReference storageRef =
-        storage.ref().child("users/${user.uid}.jpg");
-    final StorageUploadTask task = storageRef.putFile(userImage);
-    task.events.listen((event) {
+  Future<void> _uploadImage() async {
+    final user = auth.currentUser;
+    if (user == null || userImage == null) return;
+
+    final storageRef = storage.ref().child("users/${user.uid}.jpg");
+    final uploadTask = storageRef.putFile(userImage!);
+
+    uploadTask.snapshotEvents.listen((event) {
       setState(() {
         _isLoading = true;
-        _progress = event.snapshot.bytesTransferred.toDouble() /
-            event.snapshot.totalByteCount.toDouble();
+        _progress =
+            event.bytesTransferred.toDouble() / event.totalBytes.toDouble();
       });
     }, onError: (error) {
-      _scaffoldKey.currentState.showSnackBar(new SnackBar(
-        content: new Text(error.toString()),
-        backgroundColor: Colors.red,
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+          backgroundColor: Colors.red,
+        ),
+      );
     });
-    var url = await (await task.onComplete).ref.getDownloadURL();
 
-    UserUpdateInfo info = new UserUpdateInfo();
-    info.photoUrl = url;
-    user.updateProfile(info);
+    final snapshot = await uploadTask;
+    final url = await snapshot.ref.getDownloadURL();
 
-    if (widget.isEdit != null && widget.isEdit) {
-      Firestore.instance.collection("users").document(user.uid).updateData(
-            Map.from(
-              {"photoUrl": url},
-            ),
-          );
+    user.updateProfile(photoURL: url);
+
+    if (widget.isEdit) {
+      FirebaseFirestore.instance.collection("users").doc(user.uid).update(
+        {"photoUrl": url},
+      );
     }
 
     setState(() {
@@ -77,7 +82,7 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
   }
 
   void _nextScreen() {
-    if (widget.isEdit != null && widget.isEdit) {
+    if (widget.isEdit) {
       Navigator.pop(context);
     } else {
       Navigator.pushReplacement(
@@ -92,6 +97,7 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         bottom: _isLoading
             ? PreferredSize(
@@ -104,13 +110,13 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
             : null,
       ),
       body: Center(
-        child: userImage == null ? needsUpload() : enableUpload(),
+        child: userImage == null ? _needsUpload() : _enableUpload(),
       ),
-      floatingActionButton: userImage == null ? addPhoto() : uploadPhoto(),
+      floatingActionButton: userImage == null ? _addPhoto() : _uploadPhoto(),
     );
   }
 
-  FloatingActionButton addPhoto() {
+  FloatingActionButton _addPhoto() {
     return FloatingActionButton(
       child: Icon(Icons.add),
       onPressed: _getImage,
@@ -118,7 +124,7 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
     );
   }
 
-  FloatingActionButton uploadPhoto() {
+  FloatingActionButton _uploadPhoto() {
     return FloatingActionButton(
       child:
           _isDoneLoading ? Icon(Icons.navigate_next) : Icon(Icons.file_upload),
@@ -127,41 +133,35 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
     );
   }
 
-  Widget needsUpload() {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Icon(
-            Icons.camera_alt,
-            size: 100.0,
-          ),
-          Container(
-            child: Text("Add Profile Picture"),
-          )
-        ],
-      ),
+  Widget _needsUpload() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.camera_alt,
+          size: 100.0,
+        ),
+        Text("Add Profile Picture"),
+      ],
     );
   }
 
-  Widget enableUpload() {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(200.0),
-            child: Image.file(
-              userImage,
-              width: 200.0,
-              height: 200.0,
-              fit: BoxFit.cover,
-            ),
+  Widget _enableUpload() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(200.0),
+          child: Image.file(
+            userImage!,
+            width: 200.0,
+            height: 200.0,
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -15,35 +15,47 @@ class _StylesScreenState extends State<StylesScreen> {
         title: Text("Styles"),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: Firestore.instance.collection("styles").snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (!snapshot.hasData)
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        final int collectionCount = snapshot.data.documents.length;
-        if (collectionCount == 0) return ListTile(title: Text("No styles available"),);
-
-        return ListView.builder(
-          itemCount: collectionCount,
-          itemBuilder: (BuildContext context, int index) {
-            final DocumentSnapshot doc = snapshot.data.documents[index];
-            if(doc["name"] == "None") return Container(height: 0, width: 0,);
-            return ListTile(
-              onTap: () {
-                String uid = doc.documentID;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SelectedStyleScreen(styleId: uid, name: doc['name'],),
-                  ),
-                );
-              },
-              title: Text(doc['name']),
+        stream: FirebaseFirestore.instance.collection("styles").snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          },
-        );
-      },),
+          }
+
+          final int collectionCount = snapshot.data!.docs.length;
+          if (collectionCount == 0) {
+            return ListTile(
+              title: Text("No styles available"),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: collectionCount,
+            itemBuilder: (BuildContext context, int index) {
+              final DocumentSnapshot doc = snapshot.data!.docs[index];
+              if (doc["name"] == "None") {
+                return SizedBox.shrink();
+              }
+              return ListTile(
+                onTap: () {
+                  String uid = doc.id;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SelectedStyleScreen(
+                        styleId: uid,
+                        name: doc['name'],
+                      ),
+                    ),
+                  );
+                },
+                title: Text(doc['name']),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

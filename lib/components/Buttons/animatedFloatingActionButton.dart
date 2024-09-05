@@ -9,12 +9,12 @@ class AnimatedFloatingActionButton extends StatefulWidget {
   final bool checkedIn;
 
   AnimatedFloatingActionButton({
-    this.checkInToClass,
-    this.addToSchedule,
-    this.removeFromSchedule,
-    this.meters,
-    this.onSchedule,
-    this.checkedIn
+    required this.checkInToClass,
+    required this.addToSchedule,
+    required this.removeFromSchedule,
+    required this.meters,
+    required this.onSchedule,
+    required this.checkedIn,
   });
 
   @override
@@ -25,116 +25,122 @@ class AnimatedFloatingActionButton extends StatefulWidget {
 class _AnimatedFloatingActionButtonState
     extends State<AnimatedFloatingActionButton>
     with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Color?> _buttonColor;
+  late Animation<double> _animateIcon;
+  late Animation<double> _translateButton;
   bool isOpened = false;
-  AnimationController _animationController;
-  Animation<Color> _buttonColor;
-  Animation<double> _animateIcon;
-  Animation<double> _translateButton;
-  Curve _curve = Curves.easeOut;
-  double _fabHeight = 56.0;
+
+  final double _fabHeight = 56.0;
+  final Curve _curve = Curves.easeOut;
 
   @override
-  initState() {
+  void initState() {
+    super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(
-        milliseconds: 500,
-      ),
+      duration: Duration(milliseconds: 500),
     )..addListener(() {
         setState(() {});
       });
+
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+
     _buttonColor = ColorTween(
       begin: Colors.blue,
       end: Colors.red,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Interval(
-        0.00,
-        1.00,
-        curve: Curves.linear,
-      ),
+      curve: Curves.linear,
     ));
+
     _translateButton = Tween<double>(
       begin: _fabHeight,
       end: -14.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: Interval(
-        0.0,
-        0.75,
-        curve: _curve,
-      ),
+      curve: Interval(0.0, 0.75, curve: _curve),
     ));
-    super.initState();
   }
 
   @override
-  dispose() {
+  void dispose() {
     _animationController.dispose();
     super.dispose();
   }
 
-  animate() {
-    if (!isOpened) {
-      _animationController.forward();
-    } else {
+  void animate() {
+    if (isOpened) {
       _animationController.reverse();
+    } else {
+      _animationController.forward();
     }
-    isOpened = !isOpened;
+    setState(() {
+      isOpened = !isOpened;
+    });
+  }
+
+  Widget _buildFloatingActionButton(
+      {required Icon icon,
+      required String label,
+      required Color? backgroundColor,
+      required VoidCallback? onPressed}) {
+    return FloatingActionButton.extended(
+      heroTag: label,
+      onPressed: onPressed,
+      icon: icon,
+      label: Text(label),
+      backgroundColor: backgroundColor,
+    );
   }
 
   Widget add() {
-    return Container(
-      child: FloatingActionButton.extended(
-        heroTag: "add",
-        onPressed: !widget.onSchedule ?  widget.addToSchedule : null,
-        tooltip: 'Add',
-        icon: Icon(Icons.add),
-        label: Text("SIGN UP"),
-        backgroundColor: widget.meters == null && !widget.onSchedule ? null : Colors.grey,
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      ),
+    return _buildFloatingActionButton(
+      icon: Icon(Icons.add),
+      label: "SIGN UP",
+      backgroundColor: (!widget.onSchedule && widget.meters != null)
+          ? Colors.blue
+          : Colors.grey,
+      onPressed: !widget.onSchedule && widget.meters != null
+          ? widget.addToSchedule
+          : null,
     );
   }
 
   Widget checkIn() {
-    return Container(
-      child: FloatingActionButton.extended(
-        heroTag: "image",
-        onPressed: widget.meters != null || widget.onSchedule ? widget.checkInToClass : null,
-        tooltip: 'Image',
-        icon: Icon(Icons.check),
-        label: Text("CHECK-IN"),
-        backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
-      ),
+    return _buildFloatingActionButton(
+      icon: Icon(Icons.check),
+      label: "CHECK-IN",
+      backgroundColor: (widget.meters != null && widget.onSchedule)
+          ? Colors.blue
+          : Colors.grey,
+      onPressed: widget.meters != null && widget.onSchedule
+          ? widget.checkInToClass
+          : null,
     );
   }
 
   Widget remove() {
-    return Container(
-      child: FloatingActionButton.extended(
-        heroTag: "inbox",
-        onPressed: widget.meters != null || (widget.onSchedule && !widget.checkedIn) ? widget.removeFromSchedule : null,
-        tooltip: 'Inbox',
-        icon: Icon(Icons.remove),
-        label: Text("CANCEL"),
-        backgroundColor: widget.meters != null || widget.onSchedule ? null : Colors.grey,
-      ),
+    return _buildFloatingActionButton(
+      icon: Icon(Icons.remove),
+      label: "CANCEL",
+      backgroundColor:
+          widget.onSchedule && !widget.checkedIn ? Colors.blue : Colors.grey,
+      onPressed: widget.onSchedule && !widget.checkedIn
+          ? widget.removeFromSchedule
+          : null,
     );
   }
 
   Widget toggle() {
-    return Container(
-      child: FloatingActionButton(
-        backgroundColor: _buttonColor.value,
-        onPressed: animate,
-        tooltip: 'Toggle',
-        child: AnimatedIcon(
-          icon: AnimatedIcons.menu_close,
-          progress: _animateIcon,
-        ),
+    return FloatingActionButton(
+      backgroundColor: _buttonColor.value,
+      onPressed: animate,
+      tooltip: 'Toggle',
+      child: AnimatedIcon(
+        icon: AnimatedIcons.menu_close,
+        progress: _animateIcon,
       ),
     );
   }
@@ -143,43 +149,27 @@ class _AnimatedFloatingActionButtonState
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
-      children: isOpened ? _renderTools() : _renderBlank(),
+      children: isOpened ? _renderActionButtons() : [toggle()],
     );
   }
 
-  List<Widget> _renderBlank() {
-    return <Widget>[
-      toggle()
-    ];
-  }
-
-  List<Widget> _renderTools() {
+  List<Widget> _renderActionButtons() {
     return <Widget>[
       Transform(
-        transform: Matrix4.translationValues(
-          0.0,
-          _translateButton.value * 3.0,
-          0.0,
-        ),
+        transform:
+            Matrix4.translationValues(0.0, _translateButton.value * 3.0, 0.0),
         child: add(),
       ),
       Transform(
-        transform: Matrix4.translationValues(
-          0.0,
-          _translateButton.value * 2.0,
-          0.0,
-        ),
+        transform:
+            Matrix4.translationValues(0.0, _translateButton.value * 2.0, 0.0),
         child: checkIn(),
       ),
       Transform(
-        transform: Matrix4.translationValues(
-          0.0,
-          _translateButton.value,
-          0.0,
-        ),
+        transform: Matrix4.translationValues(0.0, _translateButton.value, 0.0),
         child: remove(),
       ),
-      toggle()
+      toggle(),
     ];
   }
 }

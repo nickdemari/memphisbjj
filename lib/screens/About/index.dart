@@ -22,124 +22,10 @@ class _AboutScreenState extends State<AboutScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Mission",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: StreamBuilder(
-                          stream: Firestore.instance
-                              .collection("about")
-                              .document("mission")
-                              .snapshots(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            if (!snapshot.hasData)
-                              return Center(child: CircularProgressIndicator());
-
-                            DocumentSnapshot doc = snapshot.data;
-                            return Text(doc["body"]);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Card(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "History",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: StreamBuilder(
-                          stream: Firestore.instance
-                              .collection("about")
-                              .document("history")
-                              .snapshots(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<DocumentSnapshot> snapshot) {
-                            if (!snapshot.hasData)
-                              return Center(child: CircularProgressIndicator());
-
-                            DocumentSnapshot doc = snapshot.data;
-                            var history = doc["body"];
-                            return Text(
-                              history.toString().replaceAll("\\n", "\n"),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          _launchURL("https://m.facebook.com/MemphisJudoandJiuJitsu/",);
-                        },
-                        child: Icon(FontAwesomeIcons.facebook),
-                      ),
-                      SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {
-                          _launchURL("https://www.instagram.com/explore/locations/264327003/memphis-judo-and-jiu-jitsu/",);
-                        },
-                        child: Icon(FontAwesomeIcons.instagram),
-                      ),
-                      SizedBox(width: 20),
-                      GestureDetector(
-                        onTap: () {
-                          _launchURL("https://twitter.com/memphisbjj",);
-                        },
-                        child: Icon(FontAwesomeIcons.twitter),
-                      )
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 8, 32, 8),
-                  child: StreamBuilder(
-                    stream:
-                        Firestore.instance.collection("versioning").snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData)
-                        return Center(child: CircularProgressIndicator());
-
-                      DocumentSnapshot doc = snapshot.data.documents[0];
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(doc["displayVersion"]),
-                          Text(doc["details"])
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                _buildSectionCard("Mission", "mission"),
+                _buildSectionCard("History", "history"),
+                _buildSocialMediaLinks(),
+                _buildVersionInfo(),
               ],
             ),
           ),
@@ -148,7 +34,105 @@ class _AboutScreenState extends State<AboutScreen> {
     );
   }
 
-  _launchURL(String url) async {
+  Widget _buildSectionCard(String title, String documentId) {
+    return Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StreamBuilder<DocumentSnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection("about")
+                  .doc(documentId)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return Center(child: CircularProgressIndicator());
+
+                var data = snapshot.data?.data();
+                if (data == null) return Text("No data available");
+
+                return Text((data as Map<String, dynamic>)["body"]
+                    .toString()
+                    .replaceAll("\\n", "\n"));
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaLinks() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _buildSocialMediaIcon(
+            icon: FontAwesomeIcons.facebook,
+            url: "https://m.facebook.com/MemphisJudoandJiuJitsu/",
+          ),
+          SizedBox(width: 20),
+          _buildSocialMediaIcon(
+            icon: FontAwesomeIcons.instagram,
+            url:
+                "https://www.instagram.com/explore/locations/264327003/memphis-judo-and-jiu-jitsu/",
+          ),
+          SizedBox(width: 20),
+          _buildSocialMediaIcon(
+            icon: FontAwesomeIcons.twitter,
+            url: "https://twitter.com/memphisbjj",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSocialMediaIcon({required IconData icon, required String url}) {
+    return GestureDetector(
+      onTap: () => _launchURL(url),
+      child: Icon(icon, size: 30),
+    );
+  }
+
+  Widget _buildVersionInfo() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32, 8, 32, 8),
+      child: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection("versioning").snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
+
+          var versionData = snapshot.data?.docs.first.data();
+          if (versionData == null)
+            return Text("No version information available");
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text((versionData as Map<String, dynamic>)["displayVersion"]),
+              Text((versionData)["details"]),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
     } else {

@@ -1,127 +1,127 @@
 import 'dart:async';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByClass/index.dart';
-import 'package:memphisbjj/screens/ScheduleMain/ByDate//index.dart';
+import 'package:memphisbjj/screens/ScheduleMain/ByDate/index.dart';
 import 'package:memphisbjj/screens/ScheduleMain/ByInstructor/index.dart';
 import 'package:memphisbjj/services/messaging.dart';
 
 class ScheduleMainScreen extends StatefulWidget {
   final String locationName;
-  final FirebaseUser user;
+  final User user;
 
-  ScheduleMainScreen({this.locationName, this.user});
+  ScheduleMainScreen({required this.locationName, required this.user});
 
   @override
   _ScheduleMainScreenState createState() => _ScheduleMainScreenState();
 }
 
 class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
-  BuildContext context;
-  StreamSubscription<Map<String, dynamic>> _msgStream;
-  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  StreamSubscription<Map<String, dynamic>>? _msgStream;
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
-    Messaging.subscribeToTopic("testing");
-    _msgStream = Messaging.onFcmMessage.listen((data) {
-      print("FCM TRIGGERED schedule main");
-      var alert = Messaging.getAlert(data);
-      var snackBar = SnackBar(
-        content: Text(alert),
-        backgroundColor: Colors.deepOrange,
-      );
-      _globalKey.currentState.showSnackBar(snackBar);
-
-      _msgStream.cancel();
-    });
     super.initState();
+    _subscribeToFCM();
   }
 
   @override
   void dispose() {
-    print("SCHEDULE MAIN DISPOSED");
-
+    _msgStream?.cancel(); // Properly cancel the subscription
     super.dispose();
+  }
+
+  void _subscribeToFCM() {
+    Messaging.subscribeToTopic("testing");
+    _msgStream = Messaging.onFcmMessage.listen((data) {
+      print("FCM TRIGGERED in schedule main");
+      var alert = Messaging.getAlert(data);
+      _showSnackBar(alert, Colors.deepOrange);
+    });
+  }
+
+  void _showSnackBar(String message, Color color) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: color,
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
-
     final now = DateTime.now();
-    final lastMidnight = new DateTime(now.year, now.month, now.day);
+    final lastMidnight = DateTime(now.year, now.month, now.day);
 
-    return Container(
-      child: DefaultTabController(
-        length: 3,
-        child: Scaffold(
-          key: _globalKey,
-          body: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                innerBoxIsScrolled = true;
-                return <Widget>[
-                  SliverAppBar(
-                    expandedHeight: 125.0,
-                    floating: false,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Text("${widget.locationName} Schedule",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                          )),
-                      background: Image.asset(
-                        "assets/member-benefits.jpg",
-                        fit: BoxFit.cover,
-                        color: Color(0xff3e4b60),
-                        colorBlendMode: BlendMode.hardLight,
-                      ),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        key: _globalKey,
+        body: NestedScrollView(
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                expandedHeight: 125.0,
+                floating: false,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  centerTitle: true,
+                  title: Text(
+                    "${widget.locationName} Schedule",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
                     ),
                   ),
-                  SliverPersistentHeader(
-                    delegate: _SliverAppBarDelegate(
-                      TabBar(
-                        indicatorColor: Colors.black,
-                        labelColor: Colors.white,
-                        unselectedLabelColor: Colors.white30,
-                        tabs: [
-                          Tab(
-                            child: AutoSizeText(
-                              "BY DATE",
-                              style: TextStyle(fontSize: 10.0),
-                            ),
-                          ),
-                          Tab(
-                            child: AutoSizeText(
-                              "BY INSTRUCTOR",
-                              style: TextStyle(fontSize: 10.0),
-                            ),
-                          ),
-                          Tab(
-                            child: AutoSizeText(
-                              "BY CLASS",
-                              style: TextStyle(fontSize: 10.0),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    pinned: true,
-                  )
-                ];
-              },
-              body: TabBarView(
-                children: <Widget>[
-                  buildByDateTab(lastMidnight, widget, _msgStream),
-                  buildByInstructorTab(lastMidnight, widget, _msgStream),
-                  buildByClassTab(lastMidnight, widget, _msgStream),
-                ],
-              )),
+                  background: Image.asset(
+                    "assets/member-benefits.jpg",
+                    fit: BoxFit.cover,
+                    color: Color(0xff3e4b60),
+                    colorBlendMode: BlendMode.hardLight,
+                  ),
+                ),
+              ),
+              SliverPersistentHeader(
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    indicatorColor: Colors.black,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.white30,
+                    tabs: [
+                      Tab(
+                          child: AutoSizeText("BY DATE",
+                              style: TextStyle(fontSize: 10.0))),
+                      Tab(
+                          child: AutoSizeText("BY INSTRUCTOR",
+                              style: TextStyle(fontSize: 10.0))),
+                      Tab(
+                          child: AutoSizeText("BY CLASS",
+                              style: TextStyle(fontSize: 10.0))),
+                    ],
+                  ),
+                ),
+                pinned: true,
+              )
+            ];
+          },
+          body: TabBarView(
+            children: <Widget>[
+              DateTabBuilder(
+                lastMidnight: lastMidnight,
+                widget: widget,
+              ),
+              InstructorTabBuilder(
+                lastMidnight: lastMidnight,
+                widget: widget,
+              ),
+              ClassTabBuilder(
+                lastMidnight: lastMidnight,
+                widget: widget,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -129,9 +129,9 @@ class _ScheduleMainScreenState extends State<ScheduleMainScreen> {
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  _SliverAppBarDelegate(this._tabBar);
-
   final TabBar _tabBar;
+
+  _SliverAppBarDelegate(this._tabBar);
 
   @override
   double get minExtent => _tabBar.preferredSize.height;
@@ -142,7 +142,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return new Material(
+    return Material(
       color: Colors.black,
       child: _tabBar,
     );

@@ -3,73 +3,54 @@ import 'package:flutter/material.dart';
 class RoundedButton extends StatelessWidget {
   final String buttonName;
   final VoidCallback onTap;
-
   final double height;
   final double width;
   final double bottomMargin;
   final double borderWidth;
   final Color buttonColor;
 
-  final TextStyle textStyle = const TextStyle(
-      color: const Color(0XFF000000),
-      fontSize: 16.0,
-      fontWeight: FontWeight.bold);
+  final TextStyle textStyle;
 
-  //passing props in react style
-  RoundedButton(
-      {this.buttonName,
-      this.onTap,
-      this.height,
-      this.bottomMargin,
-      this.borderWidth,
-      this.width,
-      this.buttonColor});
+  const RoundedButton({
+    Key? key,
+    required this.buttonName,
+    required this.onTap,
+    this.height = 50.0,
+    this.width = 200.0,
+    this.bottomMargin = 10.0,
+    this.borderWidth = 0.0,
+    this.buttonColor = Colors.blue,
+    this.textStyle = const TextStyle(
+      color: Colors.white,
+      fontSize: 16.0,
+      fontWeight: FontWeight.bold,
+    ),
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (borderWidth != 0.0)
-      return (new InkWell(
-        onTap: onTap,
-        child: new Container(
-          width: width,
-          height: height,
-          margin: new EdgeInsets.only(bottom: bottomMargin),
-          alignment: FractionalOffset.center,
-          decoration: new BoxDecoration(
-            color: buttonColor,
-            borderRadius: new BorderRadius.all(
-              const Radius.circular(30.0),
-            ),
-            border: new Border.all(
-                color: const Color.fromRGBO(221, 221, 221, 1.0),
-                width: borderWidth),
-          ),
-          child: new Text(
-            buttonName,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-            ),
-          ),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: height,
+        margin: EdgeInsets.only(bottom: bottomMargin),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(30.0),
+          border: borderWidth > 0
+              ? Border.all(
+                  color: const Color.fromRGBO(221, 221, 221, 1.0),
+                  width: borderWidth,
+                )
+              : null,
         ),
-      ));
-    else
-      return (new InkWell(
-        onTap: onTap,
-        child: new Container(
-          width: width,
-          height: height,
-          margin: new EdgeInsets.only(bottom: bottomMargin),
-          alignment: FractionalOffset.center,
-          decoration: new BoxDecoration(
-            color: buttonColor,
-            borderRadius: new BorderRadius.all(
-              const Radius.circular(30.0),
-            ),
-          ),
-          child: new Text(buttonName, style: textStyle),
+        child: Text(
+          buttonName,
+          style: textStyle,
         ),
-      ));
+      ),
+    );
   }
 }

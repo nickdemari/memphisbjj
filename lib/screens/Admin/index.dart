@@ -14,108 +14,135 @@ class _AdminScreenState extends State<AdminScreen> {
     var list = _createAdminList(context: context, widget: widget);
 
     return Scaffold(
-      body: CustomScrollView(slivers: <Widget>[
-        SliverAppBar(
-          title: Text("Admin"),
-          expandedHeight: 200.0,
-          flexibleSpace: FlexibleSpaceBar(
-            background: Image.asset(
-              "assets/app-drawer-main.jpg",
-              fit: BoxFit.cover,
-            ),
+        body: CustomScrollView(slivers: <Widget>[
+      SliverAppBar(
+        title: Text("Admin"),
+        expandedHeight: 200.0,
+        flexibleSpace: FlexibleSpaceBar(
+          background: Image.asset(
+            "assets/app-drawer-main.jpg",
+            fit: BoxFit.cover,
           ),
         ),
-        SliverFixedExtentList(
-          itemExtent: 100.0,
-          delegate: SliverChildListDelegate(list),
-        ),
-      ])
-    );
+      ),
+      SliverFixedExtentList(
+        itemExtent: 100.0,
+        delegate: SliverChildListDelegate(list),
+      ),
+    ]));
   }
 
-  List<Widget> _createAdminList({BuildContext context, AdminScreen widget}) {
-    return
-      [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserAdminScreen()));
-            },
-            child: Container(
-              color: Colors.grey,
-              child: Center(
-                child: Text(
-                  "Users",
-                  style: const TextStyle(color: const Color(0XFFFFFFFF), fontSize: 32.0, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),
-                ),
+  List<Widget> _createAdminList(
+      {required BuildContext context, required AdminScreen widget}) {
+    return [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserAdminScreen(
+                          userUid: '',
+                          displayName: '',
+                        )));
+          },
+          child: Container(
+            color: Colors.grey,
+            child: Center(
+              child: Text(
+                "Users",
+                style: const TextStyle(
+                    color: const Color(0XFFFFFFFF),
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Roboto'),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserAdminScreen()));
-            },
-            child: Container(
-              color: Colors.grey,
-              child: Center(
-                child: Text(
-                  "Events",
-                  style: const TextStyle(color: const Color(0XFFFFFFFF), fontSize: 32.0, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),
-                ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserAdminScreen(
+                          userUid: '',
+                          displayName: '',
+                        )));
+          },
+          child: Container(
+            color: Colors.grey,
+            child: Center(
+              child: Text(
+                "Events",
+                style: const TextStyle(
+                    color: const Color(0XFFFFFFFF),
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Roboto'),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserAdminScreen()));
-            },
-            child: Container(
-              color: Colors.grey,
-              child: Center(
-                child: Text(
-                  "Instructors",
-                  style: const TextStyle(color: const Color(0XFFFFFFFF), fontSize: 32.0, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),
-                ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserAdminScreen(
+                          userUid: '',
+                          displayName: '',
+                        )));
+          },
+          child: Container(
+            color: Colors.grey,
+            child: Center(
+              child: Text(
+                "Instructors",
+                style: const TextStyle(
+                    color: const Color(0XFFFFFFFF),
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Roboto'),
               ),
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => UserAdminScreen()));
-            },
-            child: Container(
-              color: Colors.grey,
-              child: Center(
-                child: Text(
-                  "Manage Schedule",
-                  style: const TextStyle(color: const Color(0XFFFFFFFF), fontSize: 32.0, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),
-                ),
+      ),
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => UserAdminScreen(
+                          userUid: '',
+                          displayName: '',
+                        )));
+          },
+          child: Container(
+            color: Colors.grey,
+            child: Center(
+              child: Text(
+                "Manage Schedule",
+                style: const TextStyle(
+                    color: const Color(0XFFFFFFFF),
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'Roboto'),
               ),
             ),
           ),
-        )
-      ];
+        ),
+      )
+    ];
   }
 }

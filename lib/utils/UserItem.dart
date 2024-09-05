@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserItem {
-  final FirebaseUser fbUser;
+  final User fbUser;
   final Roles roles;
-  UserItem({this.roles, this.fbUser});
+  UserItem({required this.roles, required this.fbUser});
 }
 
 class Roles {
@@ -14,7 +13,7 @@ class Roles {
   final bool admin;
   final Map<dynamic, dynamic> reference;
 
-  Roles.fromMap(Map<dynamic, dynamic> map, {this.reference})
+  Roles.fromMap(Map<dynamic, dynamic> map, {required this.reference})
       : assert(map['instructor'] != null),
         assert(map['member'] != null),
         assert(map['guardian'] != null),

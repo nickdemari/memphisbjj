@@ -1,5 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:memphisbjj/Routes.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:memphisbjj/firebase_options.dart';
 
-void main() {
-  new Routes();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  runApp(App());
 }

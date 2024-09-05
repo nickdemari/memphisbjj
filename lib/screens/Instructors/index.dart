@@ -39,27 +39,39 @@ class _InstructorsScreenState extends State<InstructorsScreen> {
           ];
         },
         body: StreamBuilder<QuerySnapshot>(
-          stream: Firestore.instance.collection("instructors").snapshots(),
+          stream:
+              FirebaseFirestore.instance.collection("instructors").snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData)
+            if (!snapshot.hasData) {
               return Center(
                 child: CircularProgressIndicator(),
               );
+            }
 
-            final int collectionCount = snapshot.data.documents.length;
+            final int collectionCount = snapshot.data!.docs.length;
+            if (collectionCount == 0) {
+              return Center(
+                child: Text("No instructors available"),
+              );
+            }
+
             return ListView.builder(
               itemCount: collectionCount,
               itemBuilder: (BuildContext context, int index) {
-                final DocumentSnapshot doc = snapshot.data.documents[index];
-                if(doc["name"] == "None") return Container(height: 0, width: 0,);
+                final DocumentSnapshot doc = snapshot.data!.docs[index];
+                if (doc["name"] == "None") return SizedBox.shrink();
+
                 return ListTile(
                   onTap: () {
-                    String uid = doc.documentID;
+                    String uid = doc.id;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SelectedInstructorScreen(instructorId: uid, name: doc['name'],),
+                        builder: (context) => SelectedInstructorScreen(
+                          instructorId: uid,
+                          name: doc['name'],
+                        ),
                       ),
                     );
                   },

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,105 +14,109 @@ import 'package:memphisbjj/utils/UserItem.dart';
 import 'package:memphisbjj/utils/bubble_indication_painter.dart';
 
 class LoginScreen extends StatefulWidget {
-  LoginScreen({Key key}) : super(key: key);
-
   @override
-  _LoginScreeneState createState() => new _LoginScreeneState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderStateMixin {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  UserAuth userAuth = UserAuth();
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final UserAuth userAuth = UserAuth();
 
   final FocusNode myFocusNodeEmailLogin = FocusNode();
   final FocusNode myFocusNodePasswordLogin = FocusNode();
-
   final FocusNode myFocusNodePassword = FocusNode();
   final FocusNode myFocusNodeEmail = FocusNode();
   final FocusNode myFocusNodeName = FocusNode();
 
-  TextEditingController loginEmailController = new TextEditingController();
-  TextEditingController loginPasswordController = new TextEditingController();
+  final TextEditingController loginEmailController = TextEditingController();
+  final TextEditingController loginPasswordController = TextEditingController();
+  final TextEditingController signupEmailController = TextEditingController();
+  final TextEditingController signupNameController = TextEditingController();
+  final TextEditingController signupPasswordController =
+      TextEditingController();
+  final TextEditingController signupConfirmPasswordController =
+      TextEditingController();
+
+  late PageController _pageController;
 
   bool _obscureTextLogin = true;
   bool _obscureTextSignup = true;
   bool _obscureTextSignupConfirm = true;
 
-  TextEditingController signupEmailController = new TextEditingController();
-  TextEditingController signupNameController = new TextEditingController();
-  TextEditingController signupPasswordController = new TextEditingController();
-  TextEditingController signupConfirmPasswordController =
-      new TextEditingController();
-
-  PageController _pageController;
-
   Color left = Colors.black;
   Color right = Colors.white;
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  }
+
+  @override
+  void dispose() {
+    myFocusNodePassword.dispose();
+    myFocusNodeEmail.dispose();
+    myFocusNodeName.dispose();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void showInSnackBar(String value, {Color? color}) {
+    FocusScope.of(context).requestFocus(FocusNode());
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        value,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 16.0,
+            fontFamily: "WorkSansSemiBold"),
+      ),
+      backgroundColor: color ?? Colors.blue,
+      duration: Duration(seconds: 3),
+    ));
+  }
+
+  @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
-    return new Scaffold(
+    return Scaffold(
       key: _scaffoldKey,
       body: NotificationListener<OverscrollIndicatorNotification>(
         onNotification: (overscroll) {
-          overscroll.disallowGlow();
+          overscroll.disallowIndicator();
+          return true;
         },
         child: SingleChildScrollView(
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: screenHeight,
-            decoration: new BoxDecoration(
-              gradient: new LinearGradient(
-                  colors: [
-                    Theme.LoginColors.loginGradientStart,
-                    Theme.LoginColors.loginGradientEnd
-                  ],
-                  begin: const FractionalOffset(0.0, 0.0),
-                  end: const FractionalOffset(1.0, 1.0),
-                  stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.LoginColors.loginGradientStart,
+                  Theme.LoginColors.loginGradientEnd
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: const FractionalOffset(1.0, 1.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
+              ),
             ),
             child: Column(
-              mainAxisSize: MainAxisSize.max,
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(top: 80),
-                  child: screenHeight > 600
-                      ? Container(
-                          height: screenHeight > 750
-                              ? 200 + (screenHeight - 800)
-                              : 100,
-                          width: screenHeight > 750
-                              ? 200 + (screenHeight - 800)
-                              : 100,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.white,
-                                    blurRadius: 55,
-                                    spreadRadius: 55),
-                              ],
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  "assets/memphisbjj-large.jpg",
-                                ),
-                              )),
-                        )
-                      : Container(
-                          child: Text(
-                            "MEMPHIS JUDO & JIU-JITSU",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                  child: _buildLogo(screenHeight),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 20.0),
                   child: _buildMenuBar(context),
                 ),
                 Expanded(
-                  flex: 2,
                   child: PageView(
                     controller: _pageController,
                     onPageChanged: (i) {
@@ -130,14 +133,8 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
                       }
                     },
                     children: <Widget>[
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignIn(context),
-                      ),
-                      new ConstrainedBox(
-                        constraints: const BoxConstraints.expand(),
-                        child: _buildSignUp(context),
-                      ),
+                      _buildSignIn(context),
+                      _buildSignUp(context),
                     ],
                   ),
                 ),
@@ -149,42 +146,27 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
     );
   }
 
-  @override
-  void dispose() {
-    myFocusNodePassword.dispose();
-    myFocusNodeEmail.dispose();
-    myFocusNodeName.dispose();
-    _pageController?.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
-
-    _pageController = PageController();
-    super.initState();
-  }
-
-  void showInSnackBar(String value, {Color color}) {
-    FocusScope.of(context).requestFocus(new FocusNode());
-    _scaffoldKey.currentState?.removeCurrentSnackBar();
-    _scaffoldKey.currentState.showSnackBar(new SnackBar(
-      content: new Text(
-        value,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-            fontFamily: "WorkSansSemiBold"),
-      ),
-      backgroundColor: color == null ? Colors.blue : color,
-      duration: Duration(seconds: 3),
-    ));
+  Widget _buildLogo(double screenHeight) {
+    return screenHeight > 600
+        ? Container(
+            height: screenHeight > 750 ? 200 + (screenHeight - 800) : 100,
+            width: screenHeight > 750 ? 200 + (screenHeight - 800) : 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(color: Colors.white, blurRadius: 55, spreadRadius: 55)
+              ],
+              image: DecorationImage(
+                image: AssetImage("assets/memphisbjj-large.jpg"),
+              ),
+            ),
+          )
+        : Container(
+            child: Text(
+              "MEMPHIS JUDO & JIU-JITSU",
+              style: TextStyle(color: Colors.white),
+            ),
+          );
   }
 
   Widget _buildMenuBar(BuildContext context) {
@@ -201,9 +183,7 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Expanded(
-              child: FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+              child: TextButton(
                 onPressed: _onSignInButtonPress,
                 child: Text(
                   "Existing",
@@ -214,11 +194,8 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
                 ),
               ),
             ),
-            //Container(height: 33.0, width: 1.0, color: Colors.white),
             Expanded(
-              child: FlatButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
+              child: TextButton(
                 onPressed: _onSignUpButtonPress,
                 child: Text(
                   "New",
@@ -241,229 +218,226 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
       child: Column(
         children: <Widget>[
           Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
             children: <Widget>[
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Container(
-                  width: 300.0,
-                  height: 190.0,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodeEmailLogin,
-                          controller: loginEmailController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.envelope,
-                              color: Colors.black,
-                              size: 22.0,
-                            ),
-                            hintText: "Email Address",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 17.0),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 250.0,
-                        height: 1.0,
-                        color: Colors.grey[400],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodePasswordLogin,
-                          controller: loginPasswordController,
-                          obscureText: _obscureTextLogin,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              size: 22.0,
-                              color: Colors.black,
-                            ),
-                            hintText: "Password",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 17.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleLogin,
-                              child: Icon(
-                                FontAwesomeIcons.eye,
-                                size: 15.0,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 170.0),
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.LoginColors.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
-                      color: Theme.LoginColors.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                  ],
-                  gradient: new LinearGradient(
-                      colors: [Color(0xFF333b72), Color(0xFF333b72)],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Theme.LoginColors.loginGradientEnd,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "LOGIN",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "WorkSansBold"),
-                      ),
-                    ),
-                    onPressed: () => _loginWithEmailAndPassword()),
-              ),
+              _buildSignInCard(),
+              _buildSignInButton(),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: FlatButton(
-                onPressed: () {}, //TODO Set up "Forgot password"
-                child: Text(
-                  "Forgot Password?",
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      color: Colors.white,
-                      fontSize: 16.0,
-                      fontFamily: "WorkSansMedium"),
-                )),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.white10,
-                          Colors.white,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0, right: 15.0),
-                  child: Text(
-                    "Or",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontFamily: "WorkSansMedium"),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: new LinearGradient(
-                        colors: [
-                          Colors.white,
-                          Colors.white10,
-                        ],
-                        begin: const FractionalOffset(0.0, 0.0),
-                        end: const FractionalOffset(1.0, 1.0),
-                        stops: [0.0, 1.0],
-                        tileMode: TileMode.clamp),
-                  ),
-                  width: 100.0,
-                  height: 1.0,
-                ),
-              ],
+          _buildForgotPassword(),
+          _buildOrSeparator(),
+          _buildSocialLogin(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignInCard() {
+    return Card(
+      elevation: 2.0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      child: Container(
+        width: 300.0,
+        height: 190.0,
+        child: Column(
+          children: <Widget>[
+            _buildEmailField(loginEmailController, myFocusNodeEmailLogin),
+            _buildSeparator(),
+            _buildPasswordField(
+              controller: loginPasswordController,
+              focusNode: myFocusNodePasswordLogin,
+              obscureText: _obscureTextLogin,
+              toggleVisibility: _toggleLogin,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmailField(
+      TextEditingController controller, FocusNode focusNode) {
+    return Padding(
+      padding:
+          EdgeInsets.only(top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+      child: TextField(
+        focusNode: focusNode,
+        controller: controller,
+        keyboardType: TextInputType.emailAddress,
+        style: TextStyle(
+            fontFamily: "WorkSansSemiBold",
+            fontSize: 16.0,
+            color: Colors.black),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          icon:
+              Icon(FontAwesomeIcons.envelope, color: Colors.black, size: 22.0),
+          hintText: "Email Address",
+          hintStyle: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 17.0),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required FocusNode focusNode,
+    required bool obscureText,
+    required VoidCallback toggleVisibility,
+    String? hintText, // Add the 'hintText' named parameter
+  }) {
+    return Padding(
+      padding:
+          EdgeInsets.only(top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
+      child: TextField(
+        focusNode: focusNode,
+        controller: controller,
+        obscureText: obscureText,
+        style: TextStyle(
+            fontFamily: "WorkSansSemiBold",
+            fontSize: 16.0,
+            color: Colors.black),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          icon: Icon(FontAwesomeIcons.lock, size: 22.0, color: Colors.black),
+          hintText: hintText, // Use the 'hintText' parameter
+          hintStyle: TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 17.0),
+          suffixIcon: GestureDetector(
+            onTap: toggleVisibility,
+            child: Icon(FontAwesomeIcons.eye, size: 15.0, color: Colors.black),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 10.0, right: 40.0),
-                child: GestureDetector(
-                  onTap: () => showInSnackBar(
-                      "Coming soon! :P"), //TODO Set up facebook login
-                  child: Container(
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: new Icon(
-                      FontAwesomeIcons.facebookF,
-                      color: Color(0xFF0084ff),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10.0),
-                child: GestureDetector(
-                  onTap: () => _signInWithGoogle(),
-                  child: Container(
-                    padding: const EdgeInsets.all(15.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: new Icon(
-                      FontAwesomeIcons.google,
-                      color: Color(0xFF0084ff),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSignInButton() {
+    return Container(
+      margin: EdgeInsets.only(top: 170.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.LoginColors.loginGradientStart,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
+          ),
+          BoxShadow(
+            color: Theme.LoginColors.loginGradientEnd,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
           ),
         ],
+        gradient: LinearGradient(
+          colors: [Color(0xFF333b72), Color(0xFF333b72)],
+          begin: FractionalOffset(0.2, 0.2),
+          end: FractionalOffset(1.0, 1.0),
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      child: MaterialButton(
+        splashColor:
+            Colors.transparent, // Add the 'splashColor' named parameter
+        highlightColor: Colors.transparent,
+        color: Theme.LoginColors.loginGradientEnd,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+          child: Text(
+            "LOGIN",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 25.0,
+                fontFamily: "WorkSansBold"),
+          ),
+        ),
+        onPressed: _loginWithEmailAndPassword,
+      ),
+    );
+  }
+
+  Widget _buildForgotPassword() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: TextButton(
+        onPressed: () {}, //TODO: Set up "Forgot password"
+        child: Text(
+          "Forgot Password?",
+          style: TextStyle(
+              decoration: TextDecoration.underline,
+              color: Colors.white,
+              fontSize: 16.0,
+              fontFamily: "WorkSansMedium"),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOrSeparator() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _buildHorizontalLine(Colors.white10, Colors.white, 100.0),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0),
+            child: Text(
+              "Or",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontFamily: "WorkSansMedium"),
+            ),
+          ),
+          _buildHorizontalLine(Colors.white, Colors.white10, 100.0),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHorizontalLine(Color startColor, Color endColor, double width) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [startColor, endColor],
+          begin: const FractionalOffset(0.0, 0.0),
+          end: const FractionalOffset(1.0, 1.0),
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      width: width,
+      height: 1.0,
+    );
+  }
+
+  Widget _buildSocialLogin() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        _buildSocialButton(FontAwesomeIcons.facebookF,
+            "Coming soon! :P"), //TODO: Implement Facebook login
+        _buildSocialButton(FontAwesomeIcons.google, _signInWithGoogle),
+      ],
+    );
+  }
+
+  Widget _buildSocialButton(IconData icon, dynamic onTap) {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0, right: 40.0),
+      child: GestureDetector(
+        onTap: () => onTap is String ? showInSnackBar(onTap) : onTap(),
+        child: Container(
+          padding: const EdgeInsets.all(15.0),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: Icon(icon, color: Color(0xFF0084ff)),
+        ),
       ),
     );
   }
@@ -474,161 +448,97 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
       child: Column(
         children: <Widget>[
           Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
-            overflow: Overflow.visible,
             children: <Widget>[
-              Card(
-                elevation: 2.0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: Container(
-                  width: 300.0,
-                  height: 280.0,
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodeEmail,
-                          controller: signupEmailController,
-                          keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.envelope,
-                              color: Colors.black,
-                            ),
-                            hintText: "Email Address",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 250.0,
-                        height: 1.0,
-                        color: Colors.grey[400],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          focusNode: myFocusNodePassword,
-                          controller: signupPasswordController,
-                          obscureText: _obscureTextSignup,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              color: Colors.black,
-                            ),
-                            hintText: "Password",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleSignup,
-                              child: Icon(
-                                FontAwesomeIcons.eye,
-                                size: 15.0,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: 250.0,
-                        height: 1.0,
-                        color: Colors.grey[400],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 20.0, bottom: 20.0, left: 25.0, right: 25.0),
-                        child: TextField(
-                          controller: signupConfirmPasswordController,
-                          obscureText: _obscureTextSignupConfirm,
-                          style: TextStyle(
-                              fontFamily: "WorkSansSemiBold",
-                              fontSize: 16.0,
-                              color: Colors.black),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            icon: Icon(
-                              FontAwesomeIcons.lock,
-                              color: Colors.black,
-                            ),
-                            hintText: "Confirmation",
-                            hintStyle: TextStyle(
-                                fontFamily: "WorkSansSemiBold", fontSize: 16.0),
-                            suffixIcon: GestureDetector(
-                              onTap: _toggleSignupConfirm,
-                              child: Icon(
-                                FontAwesomeIcons.eye,
-                                size: 15.0,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.only(top: 260.0),
-                decoration: new BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                  boxShadow: <BoxShadow>[
-                    BoxShadow(
-                      color: Theme.LoginColors.loginGradientStart,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                    BoxShadow(
-                      color: Theme.LoginColors.loginGradientEnd,
-                      offset: Offset(1.0, 6.0),
-                      blurRadius: 20.0,
-                    ),
-                  ],
-                  gradient: new LinearGradient(
-                      colors: [Color(0xFF333b72), Color(0xFF333b72)],
-                      begin: const FractionalOffset(0.2, 0.2),
-                      end: const FractionalOffset(1.0, 1.0),
-                      stops: [0.0, 1.0],
-                      tileMode: TileMode.clamp),
-                ),
-                child: MaterialButton(
-                    highlightColor: Colors.transparent,
-                    splashColor: Theme.LoginColors.loginGradientEnd,
-                    //shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 42.0),
-                      child: Text(
-                        "SIGN UP",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25.0,
-                            fontFamily: "WorkSansBold"),
-                      ),
-                    ),
-                    onPressed: () => _signUpWithEmailAndPassword()),
-              ),
+              _buildSignUpCard(),
+              _buildSignUpButton(),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSignUpCard() {
+    return Card(
+      elevation: 2.0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      child: Container(
+        width: 300.0,
+        height: 280.0,
+        child: Column(
+          children: <Widget>[
+            _buildEmailField(signupEmailController, myFocusNodeEmail),
+            _buildSeparator(),
+            _buildPasswordField(
+              controller: signupPasswordController,
+              focusNode: myFocusNodePassword,
+              obscureText: _obscureTextSignup,
+              toggleVisibility: _toggleSignup,
+            ),
+            _buildSeparator(),
+            _buildPasswordField(
+              controller: signupConfirmPasswordController,
+              focusNode: FocusNode(),
+              obscureText: _obscureTextSignupConfirm,
+              toggleVisibility: _toggleSignupConfirm,
+              hintText: "Confirmation",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSeparator() {
+    return Container(
+      width: 250.0,
+      height: 1.0,
+      color: Colors.grey[400],
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return Container(
+      margin: EdgeInsets.only(top: 260.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.LoginColors.loginGradientStart,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
+          ),
+          BoxShadow(
+            color: Theme.LoginColors.loginGradientEnd,
+            offset: Offset(1.0, 6.0),
+            blurRadius: 20.0,
+          ),
+        ],
+        gradient: LinearGradient(
+          colors: [Color(0xFF333b72), Color(0xFF333b72)],
+          begin: FractionalOffset(0.2, 0.2),
+          end: FractionalOffset(1.0, 1.0),
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
+      ),
+      child: MaterialButton(
+        highlightColor: Colors.transparent,
+        splashColor: Theme.LoginColors.loginGradientEnd,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
+          child: Text(
+            "SIGN UP",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 25.0,
+                fontFamily: "WorkSansBold"),
+          ),
+        ),
+        onPressed: _signUpWithEmailAndPassword,
       ),
     );
   }
@@ -639,7 +549,7 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
   }
 
   void _onSignUpButtonPress() {
-    _pageController?.animateToPage(1,
+    _pageController.animateToPage(1,
         duration: Duration(milliseconds: 500), curve: Curves.decelerate);
   }
 
@@ -661,13 +571,19 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
     });
   }
 
-  void _loginWithEmailAndPassword() async {
+  Future<void> _loginWithEmailAndPassword() async {
     var email = loginEmailController.text;
     var password = loginPasswordController.text;
     userAuth.signInWithEmail(email, password).then((user) {
-      Future<DocumentSnapshot> fbUser =
-          Firestore.instance.collection("users").document(user.uid).get();
-      fbUser.then((doc) {
+      if (user == null) {
+        showInSnackBar("Invalid email or password", color: Colors.redAccent);
+        return;
+      }
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(user!.uid)
+          .get()
+          .then((doc) {
         Navigator.pop(context);
         Roles _roles = Roles.fromSnapshot(doc["roles"]);
         var _user = UserItem(roles: _roles, fbUser: user);
@@ -683,73 +599,71 @@ class _LoginScreeneState extends State<LoginScreen> with SingleTickerProviderSta
     });
   }
 
-  void _signUpWithEmailAndPassword() async {
+  Future<void> _signUpWithEmailAndPassword() async {
     var email = signupEmailController.text;
     var password = signupPasswordController.text;
     var confirmPassword = signupConfirmPasswordController.text;
+
     if (password != confirmPassword) {
-      showInSnackBar("Password does not match!!", color: Colors.redAccent);
+      showInSnackBar("Passwords do not match!", color: Colors.redAccent);
+      return;
     }
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: Duration(seconds: 4),
       content: Row(
         children: <Widget>[CircularProgressIndicator(), Text("  Loading...")],
       ),
     ));
+
     userAuth.createUserFromEmail(email, password).then((signedIn) {
-      signedIn.sendEmailVerification().then((value) {
-        Firestore.instance.collection("users").document(signedIn.uid).setData(Map.from({
+      signedIn?.sendEmailVerification().then((_) {
+        FirebaseFirestore.instance.collection("users").doc(signedIn.uid).set({
           "email": signedIn.email,
-          "emailVerified": signedIn.isEmailVerified,
-          "isOnboardingComplete": false
-        }));
+          "emailVerified": signedIn.emailVerified,
+          "isOnboardingComplete": false,
+        });
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => VerifyEmailScreen()));
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => VerifyEmailScreen(),
+          ),
+        );
       });
-    }).catchError((PlatformException onError) {
+    }).catchError((onError) {
       showInSnackBar(onError.message);
     });
   }
 
-  static const String TAG = "AUTH";
-
-  Future<Null> _signInWithGoogle() async {
-    Logger.log(TAG, message: "Signed in with google called");
+  Future<void> _signInWithGoogle() async {
+    Logger.log("AUTH", message: "Signed in with Google called");
     userAuth.signInWithGoogle().then((user) {
-      Logger.log(TAG, message: user.toString());
-      _scaffoldKey.currentState.showBottomSheet((BuildContext context) => Row(
-            children: [
-              new CircularProgressIndicator(),
-              new Text("Loading"),
-            ],
-          ));
-      Timer(Duration(seconds: 2), () {
-        Future<DocumentSnapshot> fbUser =
-            Firestore.instance.collection("users").document(user.uid).get();
-        fbUser.then((doc) {
-          Navigator.pop(context);
-          Roles _roles = Roles.fromSnapshot(doc["roles"]);
-          var _user = UserItem(roles: _roles, fbUser: user);
+      FirebaseFirestore.instance
+          .collection("users")
+          .doc(user!.uid)
+          .get()
+          .then((doc) {
+        Navigator.pop(context);
+        Roles _roles = Roles.fromSnapshot(doc["roles"]);
+        var _user = UserItem(roles: _roles, fbUser: user);
 
-          UserInformation userInfo = UserInformation(
-            phoneNumber: "",
-            address1: "",
-            address2: "",
-            city: "",
-            state: "",
-            zip: "",
-          );
+        UserInformation userInfo = UserInformation(
+          phoneNumber: "",
+          address1: "",
+          address2: "",
+          city: "",
+          state: "",
+          zip: "",
+        );
 
-          Logger.log("LOGIN", message: _user.toString());
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => UploadGeneralDetailsScreen(info: userInfo,),
-            ),
-          );
-        });
+        Logger.log("LOGIN", message: _user.toString());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) =>
+                UploadGeneralDetailsScreen(info: userInfo, isEdit: false),
+          ),
+        );
       });
     });
   }
