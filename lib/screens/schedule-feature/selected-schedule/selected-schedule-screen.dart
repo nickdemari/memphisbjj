@@ -164,7 +164,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   Text _getClassSubtitle() {
-    return widget.scheduleItem.capacity == null
+    return widget.scheduleItem.capacity == 0
         ? const Text('No sign up limits')
         : Text('${widget.scheduleItem.capacity} Spots Left');
   }

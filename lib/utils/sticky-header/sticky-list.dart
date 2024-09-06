@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'sticky-list-row.dart';
 
 typedef StickyWidgetBuilder = StickyListRow Function(
-    BuildContext context, int index,);
+  BuildContext context,
+  int index,
+);
 
 /// Widget that operates likes [ListView] with type of header rows that
 /// sticks to top when scrolled.
@@ -136,7 +138,7 @@ class _StickyListState extends State<StickyList> {
 
   ScrollController _getScrollController() {
     // If a ScrollController is provided use it, otherwise create a new ScrollController
-    var controller = widget.controller ?? ScrollController();
+    var controller = widget.controller;
     controller.addListener(() {
       var pixels = controller.offset;
       var newPosition = _getPositionForOffset(context, pixels);

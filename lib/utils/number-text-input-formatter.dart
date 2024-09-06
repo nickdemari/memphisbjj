@@ -1,8 +1,6 @@
 import 'package:flutter/services.dart';
 
 class NumberTextInputFormatter extends TextInputFormatter {
-  final RegExp _regExp = RegExp(r'\d+');
-
   @override
   TextEditingValue formatEditUpdate(
     TextEditingValue oldValue,
