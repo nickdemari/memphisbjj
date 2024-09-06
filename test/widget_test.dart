@@ -7,26 +7,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:memphisbjj/Routes.dart';
 
 import 'package:memphisbjj/main.dart';
-import 'package:memphisbjj/screens/SplashScreen/index.dart';
+import 'package:memphisbjj/screens/splash-screen/splash-screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Verify logo is shown', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(SplashScreenPage());
+    await tester.pumpWidget(App());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
-  },
-  skip: true);
+    // Verify that our logo is shown
+    expect(find.byType(Image), findsOneWidget);
+  });
 }
