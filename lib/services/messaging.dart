@@ -13,7 +13,7 @@ class Messaging {
   static void setupFCMListeners() {
     if (Platform.isIOS) _requestIOSPermission();
 
-    print("Registered FCM Listeners");
+    print('Registered FCM Listeners');
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _onMessageStreamController.add(message.data);
@@ -27,12 +27,13 @@ class Messaging {
   }
 
   static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+    RemoteMessage message,
+  ) async {
     _onMessageStreamController.add(message.data);
   }
 
   static void subscribeToTopic(String topic) {
-    print("Subscribed to TOPIC: $topic");
+    print('Subscribed to TOPIC: $topic');
     _firebaseMessaging.subscribeToTopic(topic);
   }
 
@@ -46,9 +47,9 @@ class Messaging {
 
   static String getAlert(Map<String, dynamic> message) {
     if (Platform.isIOS) {
-      return message["aps"]["alert"]["body"] ?? "No message body";
+      return message['aps']['alert']['body'] ?? 'No message body';
     } else {
-      return message["notification"]["body"] ?? "No message body";
+      return message['notification']['body'] ?? 'No message body';
     }
   }
 
@@ -60,7 +61,7 @@ class Messaging {
       alert: true,
     )
         .then((settings) {
-      print("Settings registered: $settings");
+      print('Settings registered: $settings');
     });
   }
 }

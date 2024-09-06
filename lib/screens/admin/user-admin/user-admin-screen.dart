@@ -21,16 +21,17 @@ class _UserAdminScreenState extends State<UserAdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin"),
+        title: const Text('Admin'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("users")
-            .orderBy("displayName")
+            .collection('users')
+            .orderBy('displayName')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
+          }
 
           final users = snapshot.data?.docs ?? [];
 
@@ -40,35 +41,38 @@ class _UserAdminScreenState extends State<UserAdminScreen> {
               final userDoc = users[index];
 
               return FutureBuilder<QuerySnapshot>(
-                future: userDoc.reference.collection("registeredClasses").get(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> classSnapshot) {
-                  if (!classSnapshot.hasData)
+                future: userDoc.reference.collection('registeredClasses').get(),
+                builder: (
+                  BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> classSnapshot,
+                ) {
+                  if (!classSnapshot.hasData) {
                     return const CircularProgressIndicator();
+                  }
 
                   final userClasses = classSnapshot.data?.docs ?? [];
 
                   return ListTile(
                     leading: CircleAvatar(
+                      radius: 27.0,
                       child: ClipOval(
                         child: Image.network(
-                          userDoc["photoUrl"] ?? "",
+                          userDoc['photoUrl'] ?? '',
                           fit: BoxFit.cover,
                           width: 90.0,
                           height: 90.0,
                         ),
                       ),
-                      radius: 27.0,
                     ),
-                    title: Text(userDoc["displayName"] ?? "Unknown"),
-                    subtitle: Text(userDoc["email"] ?? "No email"),
+                    title: Text(userDoc['displayName'] ?? 'Unknown'),
+                    subtitle: Text(userDoc['email'] ?? 'No email'),
                     trailing: Text(userClasses.length.toString()),
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => UserClassesScreen(
-                          userUid: userDoc["firebaseUid"] ?? "",
-                          displayName: userDoc["displayName"] ?? "",
+                          userUid: userDoc['firebaseUid'] ?? '',
+                          displayName: userDoc['displayName'] ?? '',
                         ),
                       ),
                     ),

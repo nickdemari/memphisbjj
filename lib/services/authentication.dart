@@ -62,7 +62,7 @@ class UserData {
 }
 
 class UserAuth {
-  String statusMsg = "Account Created Successfully";
+  String statusMsg = 'Account Created Successfully';
   final FirebaseAuth auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
@@ -87,26 +87,26 @@ class UserAuth {
 
     if (user != null) {
       final Map<String, dynamic> newUser = {
-        "displayName": user.displayName,
-        "email": user.email,
-        "emailVerified": user.emailVerified,
-        "firebaseUid": user.uid,
-        "photoUrl": user.photoURL,
-        "roles": {
-          "admin": false,
-          "guardian": false,
-          "member": false,
-          "instructor": false,
-          "subscriber": true,
+        'displayName': user.displayName,
+        'email': user.email,
+        'emailVerified': user.emailVerified,
+        'firebaseUid': user.uid,
+        'photoUrl': user.photoURL,
+        'roles': {
+          'admin': false,
+          'guardian': false,
+          'member': false,
+          'instructor': false,
+          'subscriber': true,
         },
-        "socialData": {
-          "type": user.providerData[0].providerId,
-          "uid": user.providerData[0].uid,
+        'socialData': {
+          'type': user.providerData[0].providerId,
+          'uid': user.providerData[0].uid,
         },
       };
 
       await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
           .set(newUser);
 
@@ -121,7 +121,7 @@ class UserAuth {
     final User? user = userCredential.user;
 
     if (user != null) {
-      await _analytics.logEvent(name: "anonymous_user_login");
+      await _analytics.logEvent(name: 'anonymous_user_login');
     }
 
     return user;

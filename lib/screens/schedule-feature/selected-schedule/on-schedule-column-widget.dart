@@ -7,13 +7,13 @@ Column onScheduleColumn(
   BuildContext context,
   double cWidth,
   SelectedScheduleScreen widget,
-  Text _getClassSubtitle,
+  Text getClassSubtitle,
   String status,
   GlobalKey<ScaffoldState> scaffoldKey,
 ) {
   return Column(
     children: <Widget>[
-      _buildClassCard(widget, _getClassSubtitle),
+      _buildClassCard(widget, getClassSubtitle),
       _buildInstructorCard(context, widget),
       _buildDependentsCard(context, widget, scaffoldKey),
       _buildStatusCard(status),
@@ -27,9 +27,9 @@ Widget _buildClassCard(SelectedScheduleScreen widget, Text subtitle) {
     child: ListTile(
       title: Text(
         widget.scheduleItem.className,
-        style: TextStyle(fontSize: 18.0),
+        style: const TextStyle(fontSize: 18.0),
       ),
-      trailing: AnimatedOpacity(
+      trailing: const AnimatedOpacity(
         opacity: 1.0,
         duration: Duration(milliseconds: 500),
         child: Icon(Icons.schedule),
@@ -50,7 +50,9 @@ Widget _buildClassCard(SelectedScheduleScreen widget, Text subtitle) {
 }
 
 Widget _buildInstructorCard(
-    BuildContext context, SelectedScheduleScreen widget) {
+  BuildContext context,
+  SelectedScheduleScreen widget,
+) {
   return Card(
     child: ListTile(
       onTap: () {
@@ -65,7 +67,7 @@ Widget _buildInstructorCard(
         );
       },
       title: Text(widget.scheduleItem.instructor),
-      subtitle: Text("Tap here to read more about your coach"),
+      subtitle: const Text('Tap here to read more about your coach'),
     ),
   );
 }
@@ -78,35 +80,36 @@ Widget _buildDependentsCard(
   return Card(
     child: StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(widget.user.uid)
-          .collection("dependents")
+          .collection('dependents')
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final int collectionSize = snapshot.data!.docs.length;
 
         if (collectionSize == 0) {
-          return ListTile(
-            title: Text("No Dependents"),
-            subtitle: Text("Tap here to add dependents"),
+          return const ListTile(
+            title: Text('No Dependents'),
+            subtitle: Text('Tap here to add dependents'),
           );
         }
 
-        return Container(
+        return SizedBox(
           height: 180,
           child: ListView.builder(
             itemCount: collectionSize,
             itemBuilder: (_, int index) {
               var doc = snapshot.data!.docs[index];
               return ListTile(
-                title: Text(doc["displayName"]),
+                title: Text(doc['displayName']),
                 trailing: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlueAccent),
+                    backgroundColor: Colors.lightBlueAccent,
+                  ),
                   onPressed: () {
                     final snackBar = SnackBar(
                       backgroundColor: Colors.greenAccent,
@@ -115,7 +118,7 @@ Widget _buildDependentsCard(
                     );
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   },
-                  child: Text("REGISTER"),
+                  child: const Text('REGISTER'),
                 ),
               );
             },
@@ -145,11 +148,11 @@ Widget _buildDescription(SelectedScheduleScreen widget, double cWidth) {
       bottom: 20.0,
       left: 20.0,
     ),
-    child: Container(
+    child: SizedBox(
       width: cWidth,
       child: Text(
         widget.scheduleItem.description,
-        style: TextStyle(fontSize: 22.0),
+        style: const TextStyle(fontSize: 22.0),
       ),
     ),
   );

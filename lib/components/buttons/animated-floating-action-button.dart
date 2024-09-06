@@ -8,14 +8,15 @@ class AnimatedFloatingActionButton extends StatefulWidget {
   final bool onSchedule;
   final bool checkedIn;
 
-  AnimatedFloatingActionButton({
+  const AnimatedFloatingActionButton({
+    Key? key,
     required this.checkInToClass,
     required this.addToSchedule,
     required this.removeFromSchedule,
     required this.meters,
     required this.onSchedule,
     required this.checkedIn,
-  });
+  }) : super(key: key);
 
   @override
   _AnimatedFloatingActionButtonState createState() =>
@@ -39,7 +40,7 @@ class _AnimatedFloatingActionButtonState
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     )..addListener(() {
         setState(() {});
       });
@@ -50,18 +51,22 @@ class _AnimatedFloatingActionButtonState
     _buttonColor = ColorTween(
       begin: Colors.blue,
       end: Colors.red,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.linear,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.linear,
+      ),
+    );
 
     _translateButton = Tween<double>(
       begin: _fabHeight,
       end: -14.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Interval(0.0, 0.75, curve: _curve),
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.0, 0.75, curve: _curve),
+      ),
+    );
   }
 
   @override
@@ -81,11 +86,12 @@ class _AnimatedFloatingActionButtonState
     });
   }
 
-  Widget _buildFloatingActionButton(
-      {required Icon icon,
-      required String label,
-      required Color? backgroundColor,
-      required VoidCallback? onPressed}) {
+  Widget _buildFloatingActionButton({
+    required Icon icon,
+    required String label,
+    required Color? backgroundColor,
+    required VoidCallback? onPressed,
+  }) {
     return FloatingActionButton.extended(
       heroTag: label,
       onPressed: onPressed,
@@ -97,34 +103,26 @@ class _AnimatedFloatingActionButtonState
 
   Widget add() {
     return _buildFloatingActionButton(
-      icon: Icon(Icons.add),
-      label: "SIGN UP",
-      backgroundColor: (!widget.onSchedule && widget.meters != null)
-          ? Colors.blue
-          : Colors.grey,
-      onPressed: !widget.onSchedule && widget.meters != null
-          ? widget.addToSchedule
-          : null,
+      icon: const Icon(Icons.add),
+      label: 'SIGN UP',
+      backgroundColor: (!widget.onSchedule) ? Colors.blue : Colors.grey,
+      onPressed: !widget.onSchedule ? widget.addToSchedule : null,
     );
   }
 
   Widget checkIn() {
     return _buildFloatingActionButton(
-      icon: Icon(Icons.check),
-      label: "CHECK-IN",
-      backgroundColor: (widget.meters != null && widget.onSchedule)
-          ? Colors.blue
-          : Colors.grey,
-      onPressed: widget.meters != null && widget.onSchedule
-          ? widget.checkInToClass
-          : null,
+      icon: const Icon(Icons.check),
+      label: 'CHECK-IN',
+      backgroundColor: (widget.onSchedule) ? Colors.blue : Colors.grey,
+      onPressed: widget.onSchedule ? widget.checkInToClass : null,
     );
   }
 
   Widget remove() {
     return _buildFloatingActionButton(
-      icon: Icon(Icons.remove),
-      label: "CANCEL",
+      icon: const Icon(Icons.remove),
+      label: 'CANCEL',
       backgroundColor:
           widget.onSchedule && !widget.checkedIn ? Colors.blue : Colors.grey,
       onPressed: widget.onSchedule && !widget.checkedIn

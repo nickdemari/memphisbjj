@@ -38,6 +38,7 @@ dependencies:
   flutter_lints: ^4.0.0
   timezone: ^0.9.4
 
+  firebase_core: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

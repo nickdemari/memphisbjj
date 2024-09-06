@@ -11,7 +11,9 @@ class ScheduleScreen extends StatefulWidget {
   final String locationName;
   final User user;
 
-  ScheduleScreen({required this.locationName, required this.user});
+  const ScheduleScreen(
+      {Key? key, required this.locationName, required this.user,})
+      : super(key: key);
 
   @override
   _ScheduleScreenState createState() => _ScheduleScreenState();
@@ -34,9 +36,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   void _subscribeToFCM() {
-    Messaging.subscribeToTopic("testing");
+    Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print("FCM TRIGGERED in schedule main");
+      print('FCM TRIGGERED in schedule main');
       var alert = Messaging.getAlert(data);
       _showSnackBar(alert, Colors.deepOrange);
     });
@@ -69,41 +71,50 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 flexibleSpace: FlexibleSpaceBar(
                   centerTitle: true,
                   title: Text(
-                    "${widget.locationName} Schedule",
-                    style: TextStyle(
+                    '${widget.locationName} Schedule',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
                     ),
                   ),
                   background: Image.asset(
-                    "assets/member-benefits.jpg",
+                    'assets/member-benefits.jpg',
                     fit: BoxFit.cover,
-                    color: Color(0xff3e4b60),
+                    color: const Color(0xff3e4b60),
                     colorBlendMode: BlendMode.hardLight,
                   ),
                 ),
               ),
               SliverPersistentHeader(
                 delegate: _SliverAppBarDelegate(
-                  TabBar(
+                  const TabBar(
                     indicatorColor: Colors.black,
                     labelColor: Colors.white,
                     unselectedLabelColor: Colors.white30,
                     tabs: [
                       Tab(
-                          child: AutoSizeText("BY DATE",
-                              style: TextStyle(fontSize: 10.0))),
+                        child: AutoSizeText(
+                          'BY DATE',
+                          style: TextStyle(fontSize: 10.0),
+                        ),
+                      ),
                       Tab(
-                          child: AutoSizeText("BY INSTRUCTOR",
-                              style: TextStyle(fontSize: 10.0))),
+                        child: AutoSizeText(
+                          'BY INSTRUCTOR',
+                          style: TextStyle(fontSize: 10.0),
+                        ),
+                      ),
                       Tab(
-                          child: AutoSizeText("BY CLASS",
-                              style: TextStyle(fontSize: 10.0))),
+                        child: AutoSizeText(
+                          'BY CLASS',
+                          style: TextStyle(fontSize: 10.0),
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 pinned: true,
-              )
+              ),
             ];
           },
           body: TabBarView(
@@ -141,7 +152,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Material(
       color: Colors.black,
       child: _tabBar,

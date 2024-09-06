@@ -10,7 +10,8 @@ import 'package:flutter_native_image/flutter_native_image.dart';
 
 class UploadProfilePicScreen extends StatefulWidget {
   final bool isEdit;
-  UploadProfilePicScreen({this.isEdit = false});
+  const UploadProfilePicScreen({Key? key, this.isEdit = false})
+      : super(key: key);
 
   @override
   _UploadProfilePicScreenState createState() => _UploadProfilePicScreenState();
@@ -47,23 +48,26 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
     final user = auth.currentUser;
     if (user == null || userImage == null) return;
 
-    final storageRef = storage.ref().child("users/${user.uid}.jpg");
+    final storageRef = storage.ref().child('users/${user.uid}.jpg');
     final uploadTask = storageRef.putFile(userImage!);
 
-    uploadTask.snapshotEvents.listen((event) {
-      setState(() {
-        _isLoading = true;
-        _progress =
-            event.bytesTransferred.toDouble() / event.totalBytes.toDouble();
-      });
-    }, onError: (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Colors.red,
-        ),
-      );
-    });
+    uploadTask.snapshotEvents.listen(
+      (event) {
+        setState(() {
+          _isLoading = true;
+          _progress =
+              event.bytesTransferred.toDouble() / event.totalBytes.toDouble();
+        });
+      },
+      onError: (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      },
+    );
 
     final snapshot = await uploadTask;
     final url = await snapshot.ref.getDownloadURL();
@@ -71,8 +75,8 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
     user.updateProfile(photoURL: url);
 
     if (widget.isEdit) {
-      FirebaseFirestore.instance.collection("users").doc(user.uid).update(
-        {"photoUrl": url},
+      FirebaseFirestore.instance.collection('users').doc(user.uid).update(
+        {'photoUrl': url},
       );
     }
 
@@ -88,7 +92,7 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (BuildContext context) => UploadContactInfoScreen(),
+          builder: (BuildContext context) => const UploadContactInfoScreen(),
         ),
       );
     }
@@ -101,11 +105,11 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
       appBar: AppBar(
         bottom: _isLoading
             ? PreferredSize(
+                preferredSize: Size(MediaQuery.of(context).size.width, 5.0),
                 child: LinearProgressIndicator(
                   value: _progress,
                   backgroundColor: Colors.white,
                 ),
-                preferredSize: Size(MediaQuery.of(context).size.width, 5.0),
               )
             : null,
       ),
@@ -118,23 +122,24 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
 
   FloatingActionButton _addPhoto() {
     return FloatingActionButton(
-      child: Icon(Icons.add),
       onPressed: _getImage,
-      tooltip: "Get Profile Picture",
+      tooltip: 'Get Profile Picture',
+      child: const Icon(Icons.add),
     );
   }
 
   FloatingActionButton _uploadPhoto() {
     return FloatingActionButton(
-      child:
-          _isDoneLoading ? Icon(Icons.navigate_next) : Icon(Icons.file_upload),
       onPressed: _isDoneLoading ? _nextScreen : _uploadImage,
-      tooltip: _isDoneLoading ? "Next: Update Contact Info" : "Upload Picture",
+      tooltip: _isDoneLoading ? 'Next: Update Contact Info' : 'Upload Picture',
+      child: _isDoneLoading
+          ? const Icon(Icons.navigate_next)
+          : const Icon(Icons.file_upload),
     );
   }
 
   Widget _needsUpload() {
-    return Column(
+    return const Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
@@ -142,7 +147,7 @@ class _UploadProfilePicScreenState extends State<UploadProfilePicScreen> {
           Icons.camera_alt,
           size: 100.0,
         ),
-        Text("Add Profile Picture"),
+        Text('Add Profile Picture'),
       ],
     );
   }

@@ -25,9 +25,9 @@ class _UserClassesScreenState extends State<UserClassesScreen> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("users")
+            .collection('users')
             .doc(widget.userUid)
-            .collection("registeredClasses")
+            .collection('registeredClasses')
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
@@ -37,7 +37,7 @@ class _UserClassesScreenState extends State<UserClassesScreen> {
           final classes = snapshot.data?.docs ?? [];
 
           if (classes.isEmpty) {
-            return const Center(child: Text("No registered classes found."));
+            return const Center(child: Text('No registered classes found.'));
           }
 
           return ListView.builder(
@@ -45,20 +45,20 @@ class _UserClassesScreenState extends State<UserClassesScreen> {
             itemBuilder: (context, index) {
               final classData = classes[index];
               final String className =
-                  classData["className"] ?? "Unknown Class";
+                  classData['className'] ?? 'Unknown Class';
               final String instructor =
-                  classData["instructor"] ?? "Unknown Instructor";
+                  classData['instructor'] ?? 'Unknown Instructor';
               final String displayDateTime =
-                  classData["displayDateTime"] ?? "Unknown Time";
-              final bool checkedIn = classData["checkedIn"] ?? false;
+                  classData['displayDateTime'] ?? 'Unknown Time';
+              final bool checkedIn = classData['checkedIn'] ?? false;
 
-              DateTime? rawDateTime = classData["rawDateTime"] != null
-                  ? (classData["rawDateTime"] as Timestamp).toDate()
+              DateTime? rawDateTime = classData['rawDateTime'] != null
+                  ? (classData['rawDateTime'] as Timestamp).toDate()
                   : null;
 
               var displayDay = rawDateTime != null
                   ? DateFormat('MM/dd').format(rawDateTime)
-                  : "Unknown Date";
+                  : 'Unknown Date';
 
               return ListTile(
                 title: Text(

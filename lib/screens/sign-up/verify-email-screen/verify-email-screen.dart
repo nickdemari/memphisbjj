@@ -6,6 +6,8 @@ import 'package:memphisbjj/screens/sign-up/upload-profile-picture-screen/upload-
 import 'package:url_launcher/url_launcher.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
+  const VerifyEmailScreen({Key? key}) : super(key: key);
+
   @override
   _VerifyEmailScreenState createState() => _VerifyEmailScreenState();
 }
@@ -43,17 +45,17 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
       User? reloadedUser = FirebaseAuth.instance.currentUser;
       if (reloadedUser?.emailVerified ?? false) {
         FirebaseFirestore.instance
-            .collection("users")
+            .collection('users')
             .doc(reloadedUser!.uid)
-            .update({"emailVerified": reloadedUser.emailVerified});
+            .update({'emailVerified': reloadedUser.emailVerified});
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (BuildContext context) => UploadProfilePicScreen(),
+            builder: (BuildContext context) => const UploadProfilePicScreen(),
           ),
         );
       } else {
-        showInSnackBar("Email is not verified", Colors.redAccent);
+        showInSnackBar('Email is not verified', Colors.redAccent);
       }
     }
   }
@@ -62,11 +64,11 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
     if (Theme.of(context).platform == TargetPlatform.android) {
       const AndroidIntent intent = AndroidIntent(
         action: 'android.intent.action.MAIN',
-        category: "android.intent.category.APP_EMAIL",
+        category: 'android.intent.category.APP_EMAIL',
       );
       intent.launch();
     } else {
-      launch("message:");
+      launch('message:');
     }
   }
 
@@ -75,21 +77,21 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen>
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Verify Email"),
+        title: const Text('Verify Email'),
       ),
       body: Center(
         child: Container(
           padding: const EdgeInsets.all(14.0),
-          child: Text(
-            "Tap the button below to open your default email app and verify your email",
+          child: const Text(
+            'Tap the button below to open your default email app and verify your email',
             style: TextStyle(fontSize: 24.0),
             textAlign: TextAlign.center,
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.email),
         onPressed: _openEmail,
+        child: const Icon(Icons.email),
       ),
     );
   }

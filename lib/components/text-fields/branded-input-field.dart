@@ -46,7 +46,7 @@ class BrandedInputField extends StatelessWidget {
       margin: EdgeInsets.only(bottom: bottomMargin),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
           color: textFieldColor,
         ),
         child: TextFormField(

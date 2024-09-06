@@ -10,7 +10,8 @@ class ViewScheduleScreen extends StatefulWidget {
   final User user;
   final bool getAll;
 
-  ViewScheduleScreen({required this.user, required this.getAll});
+  const ViewScheduleScreen({Key? key, required this.user, required this.getAll})
+      : super(key: key);
 
   @override
   _ViewScheduleScreenState createState() => _ViewScheduleScreenState();
@@ -33,7 +34,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
   }
 
   void _subscribeToFCM() {
-    Messaging.subscribeToTopic("testing");
+    Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
       var alert = Messaging.getAlert(data);
       _showSnackBar(alert, Colors.deepOrange);
@@ -58,7 +59,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
-        title: Text("My Classes"),
+        title: const Text('My Classes'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: widget.getAll
@@ -66,7 +67,7 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
             : _getUpcomingClassesStream(lastMidnight),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final documents = snapshot.data!.docs;
@@ -89,20 +90,20 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
 
   Stream<QuerySnapshot> _getAllClassesStream() {
     return FirebaseFirestore.instance
-        .collection("users")
+        .collection('users')
         .doc(widget.user.uid)
-        .collection("registeredClasses")
-        .orderBy("rawDateTime")
+        .collection('registeredClasses')
+        .orderBy('rawDateTime')
         .snapshots();
   }
 
   Stream<QuerySnapshot> _getUpcomingClassesStream(DateTime lastMidnight) {
     return FirebaseFirestore.instance
-        .collection("users")
+        .collection('users')
         .doc(widget.user.uid)
-        .collection("registeredClasses")
-        .where("rawDateTime", isGreaterThanOrEqualTo: lastMidnight)
-        .orderBy("rawDateTime")
+        .collection('registeredClasses')
+        .where('rawDateTime', isGreaterThanOrEqualTo: lastMidnight)
+        .orderBy('rawDateTime')
         .snapshots();
   }
 
@@ -114,41 +115,41 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
           MaterialPageRoute(
             builder: (BuildContext context) => ScheduleScreen(
               user: widget.user,
-              locationName: "Bartlett",
+              locationName: 'Bartlett',
             ),
           ),
         );
       },
-      title: Text("No classes found. Tap here to add a class."),
+      title: const Text('No classes found. Tap here to add a class.'),
     );
   }
 
   Widget _buildClassTile(DocumentSnapshot document) {
     var displayDate =
-        DateFormat('MM/dd').format(document["rawDateTime"].toDate());
+        DateFormat('MM/dd').format(document['rawDateTime'].toDate());
     return ListTile(
       title: Text(
-        document["className"],
-        style: TextStyle(fontSize: 18.0),
+        document['className'],
+        style: const TextStyle(fontSize: 18.0),
       ),
-      trailing: document["checkedIn"]
-          ? Icon(Icons.check_box, color: Colors.green)
-          : Icon(Icons.check_box_outline_blank),
+      trailing: document['checkedIn']
+          ? const Icon(Icons.check_box, color: Colors.green)
+          : const Icon(Icons.check_box_outline_blank),
       leading: CircleAvatar(
         radius: 28.0,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(document["displayDateTime"]),
+            Text(document['displayDateTime']),
             Text(
               displayDate,
-              style: TextStyle(fontSize: 10.0),
+              style: const TextStyle(fontSize: 10.0),
             ),
           ],
         ),
       ),
-      subtitle: Text(document["instructor"]),
+      subtitle: Text(document['instructor']),
     );
   }
 }

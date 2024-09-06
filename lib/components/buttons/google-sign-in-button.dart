@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class GoogleSignInButton extends StatelessWidget {
   final Function onPressed;
 
-  GoogleSignInButton({
+  const GoogleSignInButton({
     Key? key,
     required this.onPressed,
   }) : super(key: key);
@@ -18,20 +18,20 @@ class GoogleSignInButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            "assets/glogo.png",
+            'assets/glogo.png',
             height: 18.0,
             width: 18.0,
           ),
-          SizedBox(width: 8.0),
-          Text(
-            "Sign in with Google",
+          const SizedBox(width: 8.0),
+          const Text(
+            'Sign in with Google',
             style: TextStyle(
               fontFamily: 'Roboto',
               fontWeight: FontWeight.w500,

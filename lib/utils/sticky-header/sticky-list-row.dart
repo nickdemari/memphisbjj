@@ -11,7 +11,7 @@ abstract class StickyListRow {
 
   StickyListRow({required Widget child, double? height})
       : _height = height,
-        this.child = height == null
+        child = height == null
             ? WrapStickyWidget(key: GlobalKey(), child: child)
             : child;
 
@@ -21,7 +21,7 @@ abstract class StickyListRow {
       if (context != null) {
         _height = context.size?.height ?? 0.0;
       } else {
-        throw Exception("Tried to get context height of non-visible row");
+        throw Exception('Tried to get context height of non-visible row');
       }
     }
     return _height!;

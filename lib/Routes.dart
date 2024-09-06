@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/splash-screen/splash-screen.dart';
 
 class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreenPage(key: Key("SplashScreen"), seconds: 2),
+      home: const SplashScreenPage(key: Key('SplashScreen'), seconds: 2),
       theme: ThemeData(
-        scaffoldBackgroundColor: Color(0xFFe1e4e5),
-        primaryColor: Color(0xFF1a256f),
-        appBarTheme: AppBarTheme(
+        scaffoldBackgroundColor: const Color(0xFFe1e4e5),
+        primaryColor: const Color(0xFF1a256f),
+        appBarTheme: const AppBarTheme(
           color: Color.fromARGB(255, 26, 26, 28),
         ),
       ),

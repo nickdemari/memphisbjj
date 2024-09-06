@@ -18,14 +18,14 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashScreenPage extends StatefulWidget {
   final int seconds;
-  SplashScreenPage({required Key key, required this.seconds});
+  const SplashScreenPage({Key? key, required this.seconds}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreenPage> {
-  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   PackageInfo _packageInfo = PackageInfo(
     appName: 'Unknown',
@@ -64,7 +64,7 @@ class _SplashScreenState extends State<SplashScreenPage> {
           fit: StackFit.expand,
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(color: Colors.white),
+              decoration: const BoxDecoration(color: Colors.white),
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -72,22 +72,23 @@ class _SplashScreenState extends State<SplashScreenPage> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                      child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage:
-                            AssetImage('assets/memphisbjj-large.jpg'),
-                        radius: 150.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10.0),
-                      ),
-                    ],
-                  )),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          backgroundImage:
+                              AssetImage('assets/memphisbjj-large.jpg'),
+                          radius: 150.0,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                Expanded(
+                const Expanded(
                   flex: 1,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,11 +98,11 @@ class _SplashScreenState extends State<SplashScreenPage> {
                             AlwaysStoppedAnimation<Color>(Colors.black12),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
+                        padding: EdgeInsets.only(top: 20.0),
                       ),
-                      Text("Loading", style: TextStyle()),
+                      Text('Loading', style: TextStyle()),
                       Center(
-                        child: Text("Now", style: TextStyle()),
+                        child: Text('Now', style: TextStyle()),
                       ),
                     ],
                   ),
@@ -125,98 +126,124 @@ class _SplashScreenState extends State<SplashScreenPage> {
     try {
       if (isInDebugMode == false) {
         DocumentSnapshot fbVersionObject = await FirebaseFirestore.instance
-            .collection("versioning")
-            .doc("XzvMRYCsyDXlxXTEVMac")
+            .collection('versioning')
+            .doc('XzvMRYCsyDXlxXTEVMac')
             .get();
-        if (_packageInfo.version != fbVersionObject["displayVersion"] ||
-            _packageInfo.buildNumber != fbVersionObject["build"]) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => ErrorScreen(
-                    title: "Update Required",
-                    message: "Please update to get the newest content",
-                  )));
+        if (_packageInfo.version != fbVersionObject['displayVersion'] ||
+            _packageInfo.buildNumber != fbVersionObject['build']) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const ErrorScreen(
+                title: 'Update Required',
+                message: 'Please update to get the newest content',
+              ),
+            ),
+          );
           return;
         }
       }
-      final _currentUser = await FirebaseAuth.instance.currentUser;
-      if (_currentUser != null) await _currentUser.reload();
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) await currentUser.reload();
 
-      if (_currentUser == null) {
+      if (currentUser == null) {
         _analytics.logLogin();
 
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => LoginScreen()));
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        );
       } else {
         DocumentSnapshot fbUser = await FirebaseFirestore.instance
-            .collection("users")
-            .doc(_currentUser.uid)
+            .collection('users')
+            .doc(currentUser.uid)
             .get();
         if (!fbUser.exists) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (BuildContext context) => LoginScreen()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (BuildContext context) => const LoginScreen(),
+            ),
+          );
           return;
         } else {
           final msgToken = await Messaging.getMessagingToken();
           final Map<String, dynamic> userVersion = Map.from({
-            "usersCurrentApp": Map.from({
-              "device": Map.from({
-                "android": Map.from({
-                  "installed": Platform.isAndroid,
-                  "lastOpened": Platform.isAndroid ? DateTime.now() : null,
-                  "version":
-                      Platform.isAndroid ? "${_packageInfo.version}" : "",
-                  "build": Platform.isAndroid ? _packageInfo.buildNumber : "",
-                  "fcmToken": Platform.isAndroid ? msgToken : ""
+            'usersCurrentApp': Map.from({
+              'device': Map.from({
+                'android': Map.from({
+                  'installed': Platform.isAndroid,
+                  'lastOpened': Platform.isAndroid ? DateTime.now() : null,
+                  'version': Platform.isAndroid ? _packageInfo.version : '',
+                  'build': Platform.isAndroid ? _packageInfo.buildNumber : '',
+                  'fcmToken': Platform.isAndroid ? msgToken : '',
                 }),
-                "iOS": Map.from({
-                  "installed": Platform.isIOS,
-                  "lastOpened": Platform.isIOS ? DateTime.now() : null,
-                  "version": Platform.isIOS ? _packageInfo.version : "",
-                  "build": Platform.isIOS ? _packageInfo.buildNumber : "",
-                  "fcmToken": Platform.isIOS ? msgToken : ""
-                })
-              })
-            })
+                'iOS': Map.from({
+                  'installed': Platform.isIOS,
+                  'lastOpened': Platform.isIOS ? DateTime.now() : null,
+                  'version': Platform.isIOS ? _packageInfo.version : '',
+                  'build': Platform.isIOS ? _packageInfo.buildNumber : '',
+                  'fcmToken': Platform.isIOS ? msgToken : '',
+                }),
+              }),
+            }),
           });
           await fbUser.reference.update(userVersion);
 
-          if (!fbUser["emailVerified"]) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-                builder: (BuildContext context) => VerifyEmailScreen()));
+          if (!fbUser['emailVerified']) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (BuildContext context) => const VerifyEmailScreen(),
+              ),
+            );
             return;
           }
 
-          if (fbUser["isOnboardingComplete"] != null) {
-            if (fbUser["isOnboardingComplete"]) {
-              Roles _roles = Roles.fromSnapshot(fbUser["roles"]);
-              var _user = UserItem(roles: _roles, fbUser: _currentUser);
+          if (fbUser['isOnboardingComplete'] != null) {
+            if (fbUser['isOnboardingComplete']) {
+              Roles roles = Roles.fromSnapshot(fbUser['roles']);
+              var user = UserItem(roles: roles, fbUser: currentUser);
 
               _analytics.logLogin();
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => HomeScreen(user: _user)));
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (BuildContext context) => HomeScreen(user: user),
+                ),
+              );
               return;
             } else {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(
-                  builder: (BuildContext context) => UploadProfilePicScreen()));
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      const UploadProfilePicScreen(),
+                ),
+              );
               return;
             }
           }
         }
       }
     } on PlatformException catch (e) {
-      if (e.code == "sign_in_failed") {
+      if (e.code == 'sign_in_failed') {
         _analytics.logEvent(
-            name: "login-error",
-            parameters: Map.from({"code": e.code, "message": e.message}));
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => LoginScreen()));
+          name: 'login-error',
+          parameters: Map.from({'code': e.code, 'message': e.message}),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        );
         return;
       } else {
         _analytics.logEvent(
-            name: "unknown-error",
-            parameters: Map.from({"code": e.code, "message": e.message}));
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => LoginScreen()));
+          name: 'unknown-error',
+          parameters: Map.from({'code': e.code, 'message': e.message}),
+        );
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (BuildContext context) => const LoginScreen(),
+          ),
+        );
         return;
       }
     }

@@ -15,7 +15,9 @@ class UploadGeneralDetailsScreen extends StatefulWidget {
   final bool isEdit;
   final UserInformation info;
 
-  UploadGeneralDetailsScreen({required this.isEdit, required this.info});
+  const UploadGeneralDetailsScreen(
+      {Key? key, required this.isEdit, required this.info,})
+      : super(key: key);
 
   @override
   _UploadGeneralDetailsState createState() => _UploadGeneralDetailsState();
@@ -38,8 +40,8 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
     password: '',
   );
   bool _autovalidate = false;
-  Validations _validations = Validations();
-  NumberTextInputFormatter _mobileFormatter = NumberTextInputFormatter();
+  final Validations _validations = Validations();
+  final NumberTextInputFormatter _mobileFormatter = NumberTextInputFormatter();
 
   void showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
@@ -61,29 +63,29 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
       if (user == null) return;
 
       DocumentSnapshot doc = await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
           .get();
 
       Map<String, dynamic> userInfo = {
-        "information": {
-          "phoneNumber": newUser.phoneNumber,
-          "address1": newUser.address1.trim(),
-          "address2": newUser.address2.trim(),
-          "city": newUser.city.trim(),
-          "state": newUser.state.trim().toUpperCase(),
-          "zip": newUser.zip,
+        'information': {
+          'phoneNumber': newUser.phoneNumber,
+          'address1': newUser.address1.trim(),
+          'address2': newUser.address2.trim(),
+          'city': newUser.city.trim(),
+          'state': newUser.state.trim().toUpperCase(),
+          'zip': newUser.zip,
         },
-        "isOnboardingComplete": true
+        'isOnboardingComplete': true,
       };
 
       await FirebaseFirestore.instance
-          .collection("users")
+          .collection('users')
           .doc(user.uid)
           .update(userInfo);
 
       // Navigate to the next screen
-      Roles roles = Roles.fromSnapshot(doc["roles"]);
+      Roles roles = Roles.fromSnapshot(doc['roles']);
       var userItem = UserItem(roles: roles, fbUser: user);
 
       if (widget.isEdit) {
@@ -108,25 +110,25 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
       key: _scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 height: screenSize.height / 15,
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "How can we contact you?",
+                      'How can we contact you?',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.black87,
                         fontSize: 22.0,
                         fontWeight: FontWeight.bold,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -143,7 +145,7 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                       child: Column(
                         children: <Widget>[
                           BrandedInputField(
-                            hintText: "Phone",
+                            hintText: 'Phone',
                             obscureText: false,
                             textInputType: TextInputType.phone,
                             icon: Icons.phone,
@@ -160,12 +162,12 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                           ),
                           BrandedInputField(
-                            hintText: "Address 1",
+                            hintText: 'Address 1',
                             obscureText: false,
                             textInputType: TextInputType.text,
                             icon: Icons.location_on,
@@ -179,12 +181,12 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                           ),
                           BrandedInputField(
-                            hintText: "Address 2",
+                            hintText: 'Address 2',
                             obscureText: false,
                             textInputType: TextInputType.text,
                             icon: Icons.location_on,
@@ -196,13 +198,13 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             fromProfile: widget.info.address2,
                           ),
                           BrandedInputField(
-                            hintText: "City",
+                            hintText: 'City',
                             obscureText: false,
                             textInputType: TextInputType.text,
                             icon: Icons.location_city,
@@ -215,13 +217,13 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             fromProfile: widget.info.city,
                           ),
                           BrandedInputField(
-                            hintText: "State",
+                            hintText: 'State',
                             obscureText: false,
                             textInputType: TextInputType.text,
                             icon: Icons.location_city,
@@ -234,13 +236,13 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             fromProfile: widget.info.state,
                           ),
                           BrandedInputField(
-                            hintText: "Zip",
+                            hintText: 'Zip',
                             obscureText: false,
                             textInputType: TextInputType.text,
                             icon: Icons.location_city,
@@ -253,26 +255,26 @@ class _UploadGeneralDetailsState extends State<UploadGeneralDetailsScreen> {
                               );
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             hintStyle:
-                                TextStyle(), // Provide a non-null TextStyle value
+                                const TextStyle(), // Provide a non-null TextStyle value
                             fromProfile: widget.info.zip,
                           ),
                           RoundedButton(
-                            buttonName: "Continue",
+                            buttonName: 'Continue',
                             onTap: _handleSubmitted,
                             width: screenSize.width,
                             height: 50.0,
                             bottomMargin: 0.0,
                             borderWidth: 1.0,
-                            buttonColor: Color(0xFF1a256f),
-                          )
+                            buttonColor: const Color(0xFF1a256f),
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

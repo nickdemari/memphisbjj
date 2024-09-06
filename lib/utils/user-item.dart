@@ -4,6 +4,19 @@ class UserItem {
   final User fbUser;
   final Roles roles;
   UserItem({required this.roles, required this.fbUser});
+
+  bool get isGuardian => roles.guardian;
+  bool get isAdmin => roles.admin;
+  bool get isInstructor => roles.instructor;
+  bool get isSubscriber => roles.subscriber;
+  bool get isMember => roles.subscriber;
+  bool get isAnonymous => fbUser.isAnonymous;
+  bool get isEmailVerified => fbUser.emailVerified;
+
+  // from json
+  UserItem.fromJson(Map<String, dynamic> json)
+      : fbUser = json['fbUser'],
+        roles = json['roles'];
 }
 
 class Roles {

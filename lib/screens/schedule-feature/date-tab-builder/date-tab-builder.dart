@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/schedule-feature/selected-schedule/selected-schedule-screen.dart';
@@ -9,25 +8,26 @@ class DateTabBuilder extends StatelessWidget {
   final DateTime lastMidnight;
   final ScheduleScreen widget;
 
-  DateTabBuilder({
+  const DateTabBuilder({
+    Key? key,
     required this.lastMidnight,
     required this.widget,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("schedules")
-          .doc("bartlett")
-          .collection("dates")
+          .collection('schedules')
+          .doc('bartlett')
+          .collection('dates')
           .where('date', isGreaterThanOrEqualTo: lastMidnight)
-          .orderBy("date")
+          .orderBy('date')
           .limit(600)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final int documentCount = snapshot.data!.docs.length;
@@ -41,9 +41,13 @@ class DateTabBuilder extends StatelessWidget {
               return _buildHeadingItem(item);
             } else if (item is ScheduleItem) {
               final CollectionReference classParticipants =
-                  FirebaseFirestore.instance.collection("class-participants");
+                  FirebaseFirestore.instance.collection('class-participants');
               return _buildScheduleItem(
-                  context, widget, item, classParticipants);
+                context,
+                widget,
+                item,
+                classParticipants,
+              );
             }
 
             return Container(); // Default fallback in case of unexpected types
@@ -56,7 +60,7 @@ class DateTabBuilder extends StatelessWidget {
   // Helper function to extract ListItem type
   ListItem _getListItem(DocumentSnapshot doc) {
     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return data.containsKey("class")
+    return data.containsKey('class')
         ? ScheduleItem.fromMap(data)
         : HeadingItem(doc['date'].toDate());
   }
@@ -68,7 +72,7 @@ class DateTabBuilder extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: Text(
         item.day,
-        style: TextStyle(color: Colors.white, fontSize: 18.0),
+        style: const TextStyle(color: Colors.white, fontSize: 18.0),
       ),
     );
   }
@@ -81,8 +85,8 @@ class DateTabBuilder extends StatelessWidget {
     CollectionReference classParticipants,
   ) {
     final Query userQuery = classParticipants
-        .where("userUid", isEqualTo: widget.user.uid)
-        .where("classUid", isEqualTo: item.uid);
+        .where('userUid', isEqualTo: widget.user.uid)
+        .where('classUid', isEqualTo: item.uid);
 
     return ListTile(
       onTap: () {
@@ -99,8 +103,8 @@ class DateTabBuilder extends StatelessWidget {
         );
       },
       leading: CircleAvatar(
-        child: Text(item.displayDateTime),
         radius: 27.0,
+        child: Text(item.displayDateTime),
       ),
       title: Text(item.className),
       subtitle: Text(item.instructor),
@@ -119,8 +123,8 @@ class DateTabBuilder extends StatelessWidget {
   Widget _buildScheduleIcon(int opacity) {
     return AnimatedOpacity(
       opacity: opacity.toDouble(),
-      duration: Duration(milliseconds: 500),
-      child: Icon(Icons.schedule),
+      duration: const Duration(milliseconds: 500),
+      child: const Icon(Icons.schedule),
     );
   }
 }

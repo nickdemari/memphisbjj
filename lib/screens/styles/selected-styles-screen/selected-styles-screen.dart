@@ -5,7 +5,9 @@ class SelectedStyleScreen extends StatefulWidget {
   final String name;
   final String styleId;
 
-  SelectedStyleScreen({required this.styleId, required this.name});
+  const SelectedStyleScreen(
+      {Key? key, required this.styleId, required this.name,})
+      : super(key: key);
 
   @override
   _SelectedStyleScreenState createState() => _SelectedStyleScreenState();
@@ -16,19 +18,19 @@ class _SelectedStyleScreenState extends State<SelectedStyleScreen> {
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("styles")
+          .collection('styles')
           .doc(widget.styleId)
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final DocumentSnapshot doc = snapshot.data!;
-        var description = doc["description"]?.isNotEmpty == true
-            ? doc["description"]
-            : "No description available...";
+        var description = doc['description']?.isNotEmpty == true
+            ? doc['description']
+            : 'No description available...';
 
         return Scaffold(
           appBar: AppBar(
@@ -43,8 +45,8 @@ class _SelectedStyleScreenState extends State<SelectedStyleScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          description.toString().replaceAll("\\n", "\n"),
-                          style: TextStyle(fontSize: 16),
+                          description.toString().replaceAll('\\n', '\n'),
+                          style: const TextStyle(fontSize: 16),
                         ),
                       ),
                     ),

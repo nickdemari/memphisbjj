@@ -5,7 +5,9 @@ class NumberTextInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     // Return early if the text hasn't changed
     if (oldValue.text == newValue.text) {
       return newValue;
@@ -21,11 +23,11 @@ class NumberTextInputFormatter extends TextInputFormatter {
 
     // Format text as 123-456-...
     if (newTextLength >= 3) {
-      newText.write(filteredText.substring(0, usedSubstringIndex = 3) + '-');
+      newText.write('${filteredText.substring(0, usedSubstringIndex = 3)}-');
       selectionIndex += 1;
     }
     if (newTextLength >= 6) {
-      newText.write(filteredText.substring(3, usedSubstringIndex = 6) + '-');
+      newText.write('${filteredText.substring(3, usedSubstringIndex = 6)}-');
       selectionIndex += 1;
     }
 

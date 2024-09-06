@@ -33,7 +33,7 @@ class SignUpScreenState extends State<SignUpScreen>
   );
   UserAuth auth = UserAuth();
   bool _autovalidate = false;
-  Validations _validations = Validations();
+  final Validations _validations = Validations();
 
   void showInSnackBar(String value) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value)));
@@ -49,27 +49,27 @@ class SignUpScreenState extends State<SignUpScreen>
     } else {
       form.save();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           duration: Duration(seconds: 4),
           content: Row(
             children: <Widget>[
               CircularProgressIndicator(),
               SizedBox(width: 20),
-              Text("Loading..."),
+              Text('Loading...'),
             ],
           ),
         ),
       );
 
       try {
-        await auth.createUserFromEmail(newUser.email!, newUser.password!);
+        await auth.createUserFromEmail(newUser.email, newUser.password);
         final User? user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           await user.sendEmailVerification();
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => VerifyEmailScreen(),
+              builder: (BuildContext context) => const VerifyEmailScreen(),
             ),
           );
         }
@@ -89,18 +89,18 @@ class SignUpScreenState extends State<SignUpScreen>
       key: _scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 height: screenSize.height / 2,
-                child: Column(
+                child: const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "CREATE ACCOUNT",
+                      'CREATE ACCOUNT',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
@@ -123,7 +123,7 @@ class SignUpScreenState extends State<SignUpScreen>
                       child: Column(
                         children: <Widget>[
                           BrandedInputField(
-                            hintText: "Email",
+                            hintText: 'Email',
                             obscureText: false,
                             textInputType: TextInputType.emailAddress,
                             icon: Icons.mail_outline,
@@ -134,11 +134,11 @@ class SignUpScreenState extends State<SignUpScreen>
                               newUser.copy(email: email);
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null value for textStyle
-                            hintStyle: TextStyle(),
+                                const TextStyle(), // Provide a non-null value for textStyle
+                            hintStyle: const TextStyle(),
                           ),
                           BrandedInputField(
-                            hintText: "Password",
+                            hintText: 'Password',
                             obscureText: true,
                             textInputType: TextInputType.text,
                             icon: Icons.lock_open,
@@ -149,11 +149,11 @@ class SignUpScreenState extends State<SignUpScreen>
                               newUser.copy(password: password);
                             },
                             textStyle:
-                                TextStyle(), // Provide a non-null value for textStyle
-                            hintStyle: TextStyle(),
+                                const TextStyle(), // Provide a non-null value for textStyle
+                            hintStyle: const TextStyle(),
                           ),
                           RoundedButton(
-                            buttonName: "Continue",
+                            buttonName: 'Continue',
                             onTap: _handleSubmitted,
                             width: screenSize.width,
                             height: 50.0,

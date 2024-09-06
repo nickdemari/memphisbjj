@@ -5,7 +5,9 @@ class SelectedInstructorScreen extends StatefulWidget {
   final String name;
   final String instructorId;
 
-  SelectedInstructorScreen({required this.instructorId, required this.name});
+  const SelectedInstructorScreen(
+      {Key? key, required this.instructorId, required this.name,})
+      : super(key: key);
 
   @override
   _SelectedInstructorScreenState createState() =>
@@ -17,19 +19,19 @@ class _SelectedInstructorScreenState extends State<SelectedInstructorScreen> {
   Widget build(BuildContext context) {
     return StreamBuilder<DocumentSnapshot>(
       stream: FirebaseFirestore.instance
-          .collection("instructors")
+          .collection('instructors')
           .doc(widget.instructorId)
           .snapshots(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final doc = snapshot.data;
-        var bio = doc != null && doc["bio"] != null && doc["bio"].isNotEmpty
-            ? doc["bio"]
-            : "No bio available...";
+        var bio = doc != null && doc['bio'] != null && doc['bio'].isNotEmpty
+            ? doc['bio']
+            : 'No bio available...';
 
         return Scaffold(
           appBar: AppBar(

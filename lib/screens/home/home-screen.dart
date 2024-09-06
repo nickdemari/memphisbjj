@@ -26,13 +26,13 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   StreamSubscription<Map<String, dynamic>>? _msgStream;
-  GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    print("HOME");
-    Messaging.subscribeToTopic("testing");
+    print('HOME');
+    Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
       var alert = Messaging.getAlert(data);
       Messaging.cancelFcmMessaging();
@@ -69,28 +69,28 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _globalKey,
       floatingActionButton: widget.anonymousUser != null
-          ? Container(
+          ? SizedBox(
               height: 85.0,
               width: 85.0,
               child: FloatingActionButton(
-                child: Text("SIGN UP"),
+                child: const Text('SIGN UP'),
                 onPressed: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(),
+                    builder: (context) => const LoginScreen(),
                   ),
                 ),
               ),
             )
-          : SizedBox.shrink(),
+          : const SizedBox.shrink(),
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
             pinned: true,
             floating: true,
-            title: Text("Memphis Judo & Jiu-Jitsu"),
+            title: const Text('Memphis Judo & Jiu-Jitsu'),
             expandedHeight: 175.0,
-            titleTextStyle: TextStyle(
+            titleTextStyle: const TextStyle(
               color: Colors.white,
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
@@ -98,7 +98,7 @@ class HomeScreenState extends State<HomeScreen> {
             flexibleSpace: FlexibleSpaceBar(
               centerTitle: true,
               background: Image.asset(
-                "assets/app-drawer-main.jpg",
+                'assets/app-drawer-main.jpg',
                 fit: BoxFit.cover,
               ),
             ),
@@ -121,15 +121,15 @@ List<Widget> _createAdminList({
   return [
     _buildHomeCard(
       context: context,
-      title: "SCHEDULE",
-      imagePath: "assets/member-benefits.jpg",
+      title: 'SCHEDULE',
+      imagePath: 'assets/member-benefits.jpg',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ScheduleScreen(
               user: widget.user!.fbUser,
-              locationName: "Bartlett",
+              locationName: 'Bartlett',
             ),
           ),
         );
@@ -137,31 +137,31 @@ List<Widget> _createAdminList({
     ),
     _buildHomeCard(
       context: context,
-      title: "JITSU LABS",
-      imagePath: "assets/styles.jpg",
+      title: 'JITSU LABS',
+      imagePath: 'assets/styles.jpg',
     ),
     _buildHomeCard(
       context: context,
-      title: "INSTRUCTORS",
-      imagePath: "assets/about-us.jpg",
+      title: 'INSTRUCTORS',
+      imagePath: 'assets/about-us.jpg',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => InstructorsScreen(),
+            builder: (context) => const InstructorsScreen(),
           ),
         );
       },
     ),
     _buildHomeCard(
       context: context,
-      title: "STYLES",
-      imagePath: "assets/styles.jpg",
+      title: 'STYLES',
+      imagePath: 'assets/styles.jpg',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StylesScreen(),
+            builder: (context) => const StylesScreen(),
           ),
         );
       },
@@ -178,8 +178,8 @@ List<Widget> _createMemberList({
   return [
     _buildHomeCard(
       context: context,
-      title: "SCHEDULE",
-      imagePath: "assets/member-benefits.jpg",
+      title: 'SCHEDULE',
+      imagePath: 'assets/member-benefits.jpg',
       onTap: () {
         msg?.cancel();
         Navigator.push(
@@ -187,7 +187,7 @@ List<Widget> _createMemberList({
           MaterialPageRoute(
             builder: (context) => ScheduleScreen(
               user: widget.user!.fbUser,
-              locationName: "Bartlett",
+              locationName: 'Bartlett',
             ),
           ),
         );
@@ -195,31 +195,31 @@ List<Widget> _createMemberList({
     ),
     _buildHomeCard(
       context: context,
-      title: "JITSU LABS",
-      imagePath: "assets/styles.jpg",
+      title: 'JITSU LABS',
+      imagePath: 'assets/styles.jpg',
     ),
     _buildHomeCard(
       context: context,
-      title: "INSTRUCTORS",
-      imagePath: "assets/about-us.jpg",
+      title: 'INSTRUCTORS',
+      imagePath: 'assets/about-us.jpg',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => InstructorsScreen(),
+            builder: (context) => const InstructorsScreen(),
           ),
         );
       },
     ),
     _buildHomeCard(
       context: context,
-      title: "STYLES",
-      imagePath: "assets/styles.jpg",
+      title: 'STYLES',
+      imagePath: 'assets/styles.jpg',
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => StylesScreen(),
+            builder: (context) => const StylesScreen(),
           ),
         );
       },
@@ -274,10 +274,10 @@ Widget _buildProfileTools(BuildContext context, HomeScreen widget) {
           },
           child: _buildProfileOptionRow(
             icon: FontAwesomeIcons.user,
-            label: "My Profile",
+            label: 'My Profile',
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -292,22 +292,22 @@ Widget _buildProfileTools(BuildContext context, HomeScreen widget) {
           },
           child: _buildProfileOptionRow(
             icon: FontAwesomeIcons.tasks,
-            label: "My Classes",
+            label: 'My Classes',
           ),
         ),
-        SizedBox(height: 15),
+        const SizedBox(height: 15),
         GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (BuildContext context) => AboutScreen(),
+                builder: (BuildContext context) => const AboutScreen(),
               ),
             );
           },
           child: _buildProfileOptionRow(
             icon: FontAwesomeIcons.infoCircle,
-            label: "About",
+            label: 'About',
           ),
         ),
       ],
@@ -322,10 +322,10 @@ Widget _buildProfileOptionRow({
   return Row(
     children: <Widget>[
       Icon(icon),
-      SizedBox(width: 10),
+      const SizedBox(width: 10),
       Text(
         label,
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
     ],
   );

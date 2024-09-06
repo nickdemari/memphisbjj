@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/styles/selected-styles-screen/selected-styles-screen.dart';
 
 class StylesScreen extends StatefulWidget {
+  const StylesScreen({Key? key}) : super(key: key);
+
   @override
   _StylesScreenState createState() => _StylesScreenState();
 }
@@ -12,21 +14,21 @@ class _StylesScreenState extends State<StylesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Styles"),
+        title: const Text('Styles'),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection("styles").snapshots(),
+        stream: FirebaseFirestore.instance.collection('styles').snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
           final int collectionCount = snapshot.data!.docs.length;
           if (collectionCount == 0) {
-            return ListTile(
-              title: Text("No styles available"),
+            return const ListTile(
+              title: Text('No styles available'),
             );
           }
 
@@ -34,8 +36,8 @@ class _StylesScreenState extends State<StylesScreen> {
             itemCount: collectionCount,
             itemBuilder: (BuildContext context, int index) {
               final DocumentSnapshot doc = snapshot.data!.docs[index];
-              if (doc["name"] == "None") {
-                return SizedBox.shrink();
+              if (doc['name'] == 'None') {
+                return const SizedBox.shrink();
               }
               return ListTile(
                 onTap: () {

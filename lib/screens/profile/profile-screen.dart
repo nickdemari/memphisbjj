@@ -41,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   /// Subscribes to FCM topic and listens for incoming messages
   void _subscribeToFCM() {
-    Messaging.subscribeToTopic("testing");
+    Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
       final alert = Messaging.getAlert(data);
       // Use ScaffoldMessenger to show SnackBar
@@ -66,8 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection("users")
-            .where("firebaseUid", isEqualTo: widget.user.uid)
+            .collection('users')
+            .where('firebaseUid', isEqualTo: widget.user.uid)
             .snapshots(),
         builder: (
           BuildContext context,
@@ -78,18 +78,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text("No user data found."));
+            return const Center(child: Text('No user data found.'));
           }
 
           DocumentSnapshot document = snapshot.data!.docs.first;
 
           UserInformation userInfo = UserInformation(
-            phoneNumber: document["information"]["phoneNumber"] ?? '',
-            address1: document["information"]["address1"] ?? '',
-            address2: document["information"]["address2"] ?? '',
-            city: document["information"]["city"] ?? '',
-            state: document["information"]["state"] ?? '',
-            zip: document["information"]["zip"] ?? '',
+            phoneNumber: document['information']['phoneNumber'] ?? '',
+            address1: document['information']['address1'] ?? '',
+            address2: document['information']['address2'] ?? '',
+            city: document['information']['city'] ?? '',
+            state: document['information']['state'] ?? '',
+            zip: document['information']['zip'] ?? '',
           );
 
           return SingleChildScrollView(
@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    _buildProfileImage(document["photoUrl"]),
+                    _buildProfileImage(document['photoUrl']),
                     const SizedBox(width: 25),
                     _buildUserInfo(document),
                   ],
@@ -133,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 blurRadius: 7.0,
                 color: Colors.black26,
-              )
+              ),
             ],
           ),
         ),
@@ -166,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => UploadProfilePicScreen(
+        builder: (BuildContext context) => const UploadProfilePicScreen(
           isEdit: true,
         ),
       ),
@@ -183,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           AutoSizeText(
-            document["displayName"] ?? 'No Name',
+            document['displayName'] ?? 'No Name',
             maxLines: 1,
             style: const TextStyle(
               fontSize: 28,
@@ -207,15 +207,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           const SizedBox(height: 15),
-          Row(
+          const Row(
             children: <Widget>[
-              const Icon(
+              Icon(
                 FontAwesomeIcons.listCheck,
                 color: Colors.blueGrey,
               ),
-              const SizedBox(width: 10),
-              const Text(
-                "Brazilian Jiu-Jitsu",
+              SizedBox(width: 10),
+              Text(
+                'Brazilian Jiu-Jitsu',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -233,8 +233,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
-        _buildStatisticItem("73", "Checked-In"),
-        _buildStatisticItem("930", "Ju-Jiu Points"),
+        _buildStatisticItem('73', 'Checked-In'),
+        _buildStatisticItem('930', 'Ju-Jiu Points'),
       ],
     );
   }
@@ -263,25 +263,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       children: <Widget>[
         _buildProfileToolItem(
           icon: FontAwesomeIcons.clockRotateLeft,
-          label: "Class History",
+          label: 'Class History',
           onTap: _navigateToClassHistory,
         ),
         const Divider(),
         _buildProfileToolItem(
           icon: FontAwesomeIcons.userGroup,
-          label: "Manage Dependents",
+          label: 'Manage Dependents',
           onTap: _navigateToManageDependents,
         ),
         const Divider(),
         _buildProfileToolItem(
           icon: FontAwesomeIcons.pencil,
-          label: "Edit Profile",
+          label: 'Edit Profile',
           onTap: () => _navigateToEditProfile(userInfo),
         ),
         const Divider(),
         _buildProfileToolItem(
           icon: FontAwesomeIcons.rightFromBracket,
-          label: "Logout",
+          label: 'Logout',
           onTap: _logout,
         ),
       ],
@@ -310,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: const TextStyle(
                 fontSize: 28,
                 color: Color(0xFF1a256f),
-                fontFamily: "OpenSans",
+                fontFamily: 'OpenSans',
               ),
             ),
           ],
@@ -363,7 +363,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => LoginScreen(),
+        builder: (BuildContext context) => const LoginScreen(),
       ),
     );
   }

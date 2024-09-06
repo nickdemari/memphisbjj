@@ -9,13 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memphisbjj/Routes.dart';
 
-import 'package:memphisbjj/main.dart';
-import 'package:memphisbjj/screens/splash-screen/splash-screen.dart';
-
 void main() {
   testWidgets('Verify logo is shown', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(App());
+    await tester.pumpWidget(const App());
 
     // Verify that our logo is shown
     expect(find.byType(Image), findsOneWidget);

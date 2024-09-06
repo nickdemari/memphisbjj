@@ -14,49 +14,57 @@ class _AdminScreenState extends State<AdminScreen> {
     var list = _createAdminList(context: context, widget: widget);
 
     return Scaffold(
-        body: CustomScrollView(slivers: <Widget>[
-      SliverAppBar(
-        title: const Text("Admin"),
-        expandedHeight: 200.0,
-        flexibleSpace: FlexibleSpaceBar(
-          background: Image.asset(
-            "assets/app-drawer-main.jpg",
-            fit: BoxFit.cover,
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            title: const Text('Admin'),
+            expandedHeight: 200.0,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Image.asset(
+                'assets/app-drawer-main.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
+          SliverFixedExtentList(
+            itemExtent: 100.0,
+            delegate: SliverChildListDelegate(list),
+          ),
+        ],
       ),
-      SliverFixedExtentList(
-        itemExtent: 100.0,
-        delegate: SliverChildListDelegate(list),
-      ),
-    ]));
+    );
   }
 
-  List<Widget> _createAdminList(
-      {required BuildContext context, required AdminScreen widget}) {
+  List<Widget> _createAdminList({
+    required BuildContext context,
+    required AdminScreen widget,
+  }) {
     return [
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserAdminScreen(
-                          userUid: '',
-                          displayName: '',
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserAdminScreen(
+                  userUid: '',
+                  displayName: '',
+                ),
+              ),
+            );
           },
           child: Container(
             color: Colors.grey,
             child: const Center(
               child: Text(
-                "Users",
+                'Users',
                 style: TextStyle(
-                    color: Color(0XFFFFFFFF),
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Roboto'),
+                  color: Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto',
+                ),
               ),
             ),
           ),
@@ -67,23 +75,26 @@ class _AdminScreenState extends State<AdminScreen> {
         child: GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserAdminScreen(
-                          userUid: '',
-                          displayName: '',
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserAdminScreen(
+                  userUid: '',
+                  displayName: '',
+                ),
+              ),
+            );
           },
           child: Container(
             color: Colors.grey,
             child: const Center(
               child: Text(
-                "Events",
+                'Events',
                 style: TextStyle(
-                    color: Color(0XFFFFFFFF),
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Roboto'),
+                  color: Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto',
+                ),
               ),
             ),
           ),
@@ -94,23 +105,26 @@ class _AdminScreenState extends State<AdminScreen> {
         child: GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserAdminScreen(
-                          userUid: '',
-                          displayName: '',
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserAdminScreen(
+                  userUid: '',
+                  displayName: '',
+                ),
+              ),
+            );
           },
           child: Container(
             color: Colors.grey,
             child: const Center(
               child: Text(
-                "Instructors",
+                'Instructors',
                 style: TextStyle(
-                    color: Color(0XFFFFFFFF),
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Roboto'),
+                  color: Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto',
+                ),
               ),
             ),
           ),
@@ -121,28 +135,31 @@ class _AdminScreenState extends State<AdminScreen> {
         child: GestureDetector(
           onTap: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UserAdminScreen(
-                          userUid: '',
-                          displayName: '',
-                        )));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserAdminScreen(
+                  userUid: '',
+                  displayName: '',
+                ),
+              ),
+            );
           },
           child: Container(
             color: Colors.grey,
             child: const Center(
               child: Text(
-                "Manage Schedule",
+                'Manage Schedule',
                 style: TextStyle(
-                    color: Color(0XFFFFFFFF),
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.normal,
-                    fontFamily: 'Roboto'),
+                  color: Color(0XFFFFFFFF),
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: 'Roboto',
+                ),
               ),
             ),
           ),
         ),
-      )
+      ),
     ];
   }
 }

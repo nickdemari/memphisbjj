@@ -45,7 +45,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       device.DeviceCalendarPlugin();
   bool _addedToSchedule = false;
   bool _checkedIn = false;
-  String status = "REGISTERED!";
+  String status = 'REGISTERED!';
 
   @override
   void initState() {
@@ -66,7 +66,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   void _subscribeToMessages() {
-    Messaging.subscribeToTopic("testing");
+    Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
       var alert = Messaging.getAlert(data);
       showSnackBar(alert, Colors.deepOrange);
@@ -79,14 +79,17 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     return Scaffold(
       key: _globalKey,
       appBar: AppBar(
-        title: Text(widget.scheduleItem.className,
-            style: TextStyle(color: Colors.white)),
+        title: Text(
+          widget.scheduleItem.className,
+          style: const TextStyle(color: Colors.white),
+        ),
         leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.pop(context)),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: _buildColumn(context),
       ),
       floatingActionButton: AnimatedFloatingActionButton(
@@ -104,17 +107,17 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   Widget _buildColumn(BuildContext context) {
     double cWidth = MediaQuery.of(context).size.width * 0.8;
     _registered = FirebaseFirestore.instance
-        .collection("users")
+        .collection('users')
         .doc(widget.user.uid)
-        .collection("registeredClasses");
+        .collection('registeredClasses');
 
     return StreamBuilder<QuerySnapshot>(
       stream: _getClassParticipantsStream(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
-          return ListTile(
+          return const ListTile(
             leading: CircularProgressIndicator(),
-            title: Text("Loading..."),
+            title: Text('Loading...'),
           );
         }
 
@@ -122,11 +125,22 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
           _setAddToClassIndicator(true);
           usersClass = snapshot.data!.docs.first;
           return onScheduleColumn(
-              context, cWidth, widget, _getClassSubtitle(), status, _globalKey);
+            context,
+            cWidth,
+            widget,
+            _getClassSubtitle(),
+            status,
+            _globalKey,
+          );
         } else {
           _setAddToClassIndicator(false);
           return notOnScheduleColumn(
-              context, cWidth, widget, _getClassSubtitle(), _globalKey);
+            context,
+            cWidth,
+            widget,
+            _getClassSubtitle(),
+            _globalKey,
+          );
         }
       },
     );
@@ -134,8 +148,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   Stream<QuerySnapshot> _getClassParticipantsStream() {
     return widget.classParticipants
-        .where("userUid", isEqualTo: widget.user.uid)
-        .where("classUid", isEqualTo: widget.scheduleItem.uid)
+        .where('userUid', isEqualTo: widget.user.uid)
+        .where('classUid', isEqualTo: widget.scheduleItem.uid)
         .snapshots();
   }
 
@@ -151,8 +165,8 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
 
   Text _getClassSubtitle() {
     return widget.scheduleItem.capacity == null
-        ? Text("No sign up limits")
-        : Text("${widget.scheduleItem.capacity} Spots Left");
+        ? const Text('No sign up limits')
+        : Text('${widget.scheduleItem.capacity} Spots Left');
   }
 
   Future<void> _initPlatformState() async {
@@ -196,19 +210,22 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     double meters = 200; // replace with actual calculation
     if (meters <= 275.0) {
       usersClass!.reference.update({
-        "checkedIn": true,
-        "lastUpdatedOn": DateTime.now(),
+        'checkedIn': true,
+        'lastUpdatedOn': DateTime.now(),
       });
       setState(() {
         _checkedIn = true;
-        status = "CHECKED-IN!";
+        status = 'CHECKED-IN!';
       });
       showSnackBar(
-          "Checked into ${widget.scheduleItem.className}.", Colors.greenAccent);
+        'Checked into ${widget.scheduleItem.className}.',
+        Colors.greenAccent,
+      );
     } else {
       showSnackBar(
-          "You must be at Memphis Judo and Jiu-Jitsu to check into this class. Try again at the gym.",
-          Colors.red);
+        'You must be at Memphis Judo and Jiu-Jitsu to check into this class. Try again at the gym.',
+        Colors.red,
+      );
     }
   }
 
@@ -223,20 +240,21 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       await test.delete();
     }
     await _registered.doc(widget.scheduleItem.uid).update({
-      "visible": false,
-      "lastUpdatedOn": DateTime.now(),
+      'visible': false,
+      'lastUpdatedOn': DateTime.now(),
     });
 
     _updateClassCapacity(false);
     showSnackBar(
-        "${widget.scheduleItem.className} removed from ${widget.user.displayName}'s schedule",
-        Colors.blueAccent);
+      "${widget.scheduleItem.className} removed from ${widget.user.displayName}'s schedule",
+      Colors.blueAccent,
+    );
   }
 
   Future<DocumentReference?> _getClassParticipantDoc() async {
     QuerySnapshot doc = await widget.classParticipants
-        .where("userUid", isEqualTo: widget.user.uid)
-        .where("classUid", isEqualTo: widget.scheduleItem.uid)
+        .where('userUid', isEqualTo: widget.user.uid)
+        .where('classUid', isEqualTo: widget.scheduleItem.uid)
         .get();
     return doc.docs.isNotEmpty ? doc.docs.first.reference : null;
   }
@@ -245,7 +263,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     await _initPlatformState();
     setState(() {
       _onScheduleDistance = _meters;
-      status = "REGISTERED!";
+      status = 'REGISTERED!';
     });
 
     final Participant participant = Participant(
@@ -280,21 +298,19 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
   }
 
   Future<void> _updateClassCapacity(bool isAdded) async {
-    if (widget.scheduleItem.capacity == null) return;
-
-    int newCapacity = widget.scheduleItem.capacity! + (isAdded ? -1 : 1);
+    int newCapacity = widget.scheduleItem.capacity + (isAdded ? -1 : 1);
     if (newCapacity < 0) {
-      showSnackBar("This class is full", Colors.red);
+      showSnackBar('This class is full', Colors.red);
       return;
     }
 
     await FirebaseFirestore.instance
-        .collection("schedules")
-        .doc("bartlett")
-        .collection("dates")
+        .collection('schedules')
+        .doc('bartlett')
+        .collection('dates')
         .doc(widget.scheduleItem.classId)
         .update({
-      "capacity": newCapacity,
+      'capacity': newCapacity,
     });
 
     setState(() {
@@ -316,7 +332,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       var calendars = calendarsResult.data;
 
       var homeCalendar = calendars!.firstWhere(
-        (calendar) => calendar.name == "Home",
+        (calendar) => calendar.name == 'Home',
         orElse: () => calendars.first,
       );
 
@@ -337,7 +353,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
     final snackBar = SnackBar(
       backgroundColor: color,
       content: Text(message),
-      duration: Duration(seconds: 3),
+      duration: const Duration(seconds: 3),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
@@ -348,7 +364,7 @@ class _SelectedScheduleScreenState extends State<SelectedScheduleScreen> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            ErrorScreen(title: "Error on Event Details", message: message),
+            ErrorScreen(title: 'Error on Event Details', message: message),
       ),
     );
   }

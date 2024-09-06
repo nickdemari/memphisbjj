@@ -10,30 +10,31 @@ class InstructorTabBuilder extends StatelessWidget {
   final DateTime lastMidnight;
   final ScheduleScreen widget;
 
-  InstructorTabBuilder({
+  const InstructorTabBuilder({
+    Key? key,
     required this.lastMidnight,
     required this.widget,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> instructorsRef = FirebaseFirestore.instance
-        .collection("instructors")
-        .orderBy("name")
+        .collection('instructors')
+        .orderBy('name')
         .snapshots();
-    final GlobalKey<ScaffoldState> _globalKey = GlobalKey<ScaffoldState>();
+    final GlobalKey<ScaffoldState> globalKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
-      key: _globalKey,
+      key: globalKey,
       body: StreamBuilder<QuerySnapshot>(
         stream: instructorsRef,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           return InstructorList(
             snapshot: snapshot,
-            globalKey: _globalKey,
+            globalKey: globalKey,
             lastMidnight: lastMidnight,
             widget: widget,
           );
@@ -49,12 +50,13 @@ class InstructorList extends StatelessWidget {
   final DateTime lastMidnight;
   final ScheduleScreen widget;
 
-  InstructorList({
+  const InstructorList({
+    Key? key,
     required this.snapshot,
     required this.globalKey,
     required this.lastMidnight,
     required this.widget,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +64,7 @@ class InstructorList extends StatelessWidget {
       itemCount: snapshot.data!.docs.length,
       itemBuilder: (context, index) {
         final DocumentSnapshot document = snapshot.data!.docs[index];
-        final String name = document["name"];
+        final String name = document['name'];
 
         return ListTile(
           title: Text(name),
@@ -84,28 +86,29 @@ class InstructorScheduleBottomSheet extends StatelessWidget {
   final DateTime lastMidnight;
   final ScheduleScreen widget;
 
-  InstructorScheduleBottomSheet({
+  const InstructorScheduleBottomSheet({
+    Key? key,
     required this.name,
     required this.lastMidnight,
     required this.widget,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> scheduleStream = FirebaseFirestore.instance
-        .collection("schedules")
-        .doc("bartlett")
-        .collection("dates")
-        .where("instructor.name", isEqualTo: name)
+        .collection('schedules')
+        .doc('bartlett')
+        .collection('dates')
+        .where('instructor.name', isEqualTo: name)
         .where('date', isGreaterThanOrEqualTo: lastMidnight)
-        .orderBy("date")
+        .orderBy('date')
         .snapshots();
 
     return StreamBuilder<QuerySnapshot>(
       stream: scheduleStream,
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
         final int documentCount = snapshot.data!.docs.length;
@@ -115,7 +118,7 @@ class InstructorScheduleBottomSheet extends StatelessWidget {
               color: Colors.black12,
               child: ListTile(
                 leading: Text(name),
-                trailing: Icon(Icons.drag_handle),
+                trailing: const Icon(Icons.drag_handle),
               ),
             ),
             Expanded(
@@ -137,11 +140,12 @@ class InstructorScheduleList extends StatelessWidget {
   final ScheduleScreen widget;
   final int documentCount;
 
-  InstructorScheduleList({
+  const InstructorScheduleList({
+    Key? key,
     required this.snapshot,
     required this.widget,
     required this.documentCount,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -150,12 +154,12 @@ class InstructorScheduleList extends StatelessWidget {
       itemBuilder: (context, index) {
         final DocumentSnapshot doc = snapshot.data!.docs[index];
         final ListItem item =
-            (doc.data() as Map<String, dynamic>).containsKey("class")
+            (doc.data() as Map<String, dynamic>).containsKey('class')
                 ? ScheduleItem.fromMap(doc.data() as Map<String, dynamic>)
                 : HeadingItem(doc['date'].toDate());
 
         final CollectionReference classParticipants =
-            doc.reference.collection("class-participants");
+            doc.reference.collection('class-participants');
 
         if (item is HeadingItem) {
           return HeadingItemWidget(item: item);
@@ -177,7 +181,7 @@ class InstructorScheduleList extends StatelessWidget {
 class HeadingItemWidget extends StatelessWidget {
   final HeadingItem item;
 
-  HeadingItemWidget({required this.item});
+  const HeadingItemWidget({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +190,7 @@ class HeadingItemWidget extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       child: Text(
         item.day,
-        style: TextStyle(color: Colors.white, fontSize: 18.0),
+        style: const TextStyle(color: Colors.white, fontSize: 18.0),
       ),
     );
   }
@@ -198,12 +202,13 @@ class ScheduleItemWidget extends StatelessWidget {
   final ScheduleItem item;
   final CollectionReference classParticipants;
 
-  ScheduleItemWidget({
+  const ScheduleItemWidget({
+    Key? key,
     required this.context,
     required this.widget,
     required this.item,
     required this.classParticipants,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +236,7 @@ class ScheduleItemWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(item.displayDateTime),
-              Text(day, style: TextStyle(fontSize: 10.0)),
+              Text(day, style: const TextStyle(fontSize: 10.0)),
             ],
           ),
         ),

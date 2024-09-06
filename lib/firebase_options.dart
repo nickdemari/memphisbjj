@@ -72,9 +72,10 @@ class DefaultFirebaseOptions {
     projectId: 'memphis-bjj',
     databaseURL: 'https://memphis-bjj.firebaseio.com',
     storageBucket: 'memphis-bjj.appspot.com',
-    androidClientId: '928741701529-qetg15v2u16829oleslpkcta220o8og1.apps.googleusercontent.com',
-    iosClientId: '928741701529-dtvq21uprbjf797m4sefv384akvff979.apps.googleusercontent.com',
+    androidClientId:
+        '928741701529-qetg15v2u16829oleslpkcta220o8og1.apps.googleusercontent.com',
+    iosClientId:
+        '928741701529-dtvq21uprbjf797m4sefv384akvff979.apps.googleusercontent.com',
     iosBundleId: 'com.demarily.memphisbjj',
   );
-
 }

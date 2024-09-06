@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 // The base class for the different types of items the List can contain
@@ -45,24 +44,29 @@ class ScheduleItem implements ListItem {
         description = map['class']['description'],
         uid = map['id'],
         rawDateTime = DateTime.fromMicrosecondsSinceEpoch(
-            map['date'].microsecondsSinceEpoch),
+          map['date'].microsecondsSinceEpoch,
+        ),
         rawEndDateTime = DateTime.fromMicrosecondsSinceEpoch(
-            map['endDate'].microsecondsSinceEpoch),
+          map['endDate'].microsecondsSinceEpoch,
+        ),
         capacity = map['capacity'],
         classId = map['class']['id'] {
-    displayDateTime = convertTime(DateTime.fromMicrosecondsSinceEpoch(
-        map['date'].microsecondsSinceEpoch));
+    displayDateTime = convertTime(
+      DateTime.fromMicrosecondsSinceEpoch(
+        map['date'].microsecondsSinceEpoch,
+      ),
+    );
   }
 
   String convertTime(DateTime date) {
-    var hFormatter = new DateFormat('h');
+    var hFormatter = DateFormat('h');
     var hour = hFormatter.format(date);
 
-    var mFormatter = new DateFormat('m');
-    var minutes = mFormatter.format(date) == "0" ? "" : mFormatter.format(date);
+    var mFormatter = DateFormat('m');
+    var minutes = mFormatter.format(date) == '0' ? '' : mFormatter.format(date);
 
-    var amPmFormatter = new DateFormat('a');
-    var amPm = amPmFormatter.format(date).toLowerCase().replaceAll("m", "");
+    var amPmFormatter = DateFormat('a');
+    var amPm = amPmFormatter.format(date).toLowerCase().replaceAll('m', '');
 
     return "$hour$minutes$amPm";
   }
