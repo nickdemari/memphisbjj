@@ -66,29 +66,27 @@ class _SplashScreenState extends State<SplashScreenPage> {
             Container(
               decoration: const BoxDecoration(color: Colors.white),
             ),
-            Column(
+            const Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Expanded(
                   flex: 2,
-                  child: Container(
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          backgroundImage:
-                              AssetImage('assets/memphisbjj-large.jpg'),
-                          radius: 150.0,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 10.0),
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        backgroundImage:
+                            AssetImage('assets/memphisbjj-large.jpg'),
+                        radius: 150.0,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 10.0),
+                      ),
+                    ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   flex: 1,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,

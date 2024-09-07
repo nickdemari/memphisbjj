@@ -20,12 +20,14 @@ TextStyle buttonTextStyle = const TextStyle(
 BoxDecoration buildBoxDecoration(Color color, String imageString) {
   return BoxDecoration(
     color: color,
-    borderRadius: BorderRadius.circular(12.0),
+    borderRadius: BorderRadius.circular(8.0),
     boxShadow: const <BoxShadow>[
+      // standard box shadow
       BoxShadow(
-        color: Colors.black12,
-        blurRadius: 10.0,
-        offset: Offset(0.0, 10.0),
+        color: Colors.black26,
+        blurRadius: 16.0,
+        spreadRadius: 4.0,
+        offset: Offset(0.0, 8.0),
       ),
     ],
     image: DecorationImage(

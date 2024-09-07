@@ -39,6 +39,7 @@ dependencies:
   timezone: ^0.9.4
 
   firebase_core: any
+  google_fonts: ^6.2.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -57,17 +58,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/logo.png
-    - assets/login-screen-background.png
-    - assets/signup-screen-background.png
-    - assets/glogo.png
-    - assets/memphisbjj.jpg
-    - assets/memphisbjj-large.jpg
-    - assets/mbjj-logo.jpg
-    - assets/app-drawer-main.jpg
-    - assets/about-us.jpg
-    - assets/styles.jpg
-    - assets/member-benefits.jpg
+    - assets/
 
   fonts:
     - family: WorkSansSemiBold
