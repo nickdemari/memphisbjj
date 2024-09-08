@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:memphisbjj/Routes.dart';
+import 'package:memphisbjj/app.dart';
 
 void main() {
   testWidgets('Verify logo is shown', (WidgetTester tester) async {
