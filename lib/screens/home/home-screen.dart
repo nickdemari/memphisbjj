@@ -132,6 +132,19 @@ class HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    // the word 'BARTLETT' ON THE BOTTOM LEFT
+                    Positioned(
+                      bottom: 16.0,
+                      left: 16.0,
+                      child: Text(
+                        'BARTLETT',
+                        style: GoogleFonts.anton(
+                          textStyle: Theme.of(context).textTheme.displayLarge,
+                          fontSize: 32,
+                          color: Colors.white54,
+                        ),
+                      ),
+                    ),
                     // up carat icon at the bottom of the flexible space bar
                     Positioned(
                       right: 16.0,
