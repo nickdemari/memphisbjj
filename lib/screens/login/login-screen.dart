@@ -8,7 +8,7 @@ import 'package:memphisbjj/screens/sign-up/upload-general-details-screen/upload-
 import 'package:memphisbjj/screens/sign-up/verify-email-screen/verify-email-screen.dart';
 import 'package:memphisbjj/services/authentication.dart';
 import 'package:memphisbjj/services/logger.dart';
-import 'package:memphisbjj/theme/style.dart' as Theme;
+import 'package:memphisbjj/theme/style.dart' as theme;
 import 'package:memphisbjj/utils/user-information.dart';
 import 'package:memphisbjj/utils/user-item.dart';
 import 'package:memphisbjj/utils/bubble-indication-painter.dart';
@@ -102,8 +102,8 @@ class _LoginScreenState extends State<LoginScreen>
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Theme.LoginColors.loginGradientStart,
-                  Theme.LoginColors.loginGradientEnd,
+                  theme.LoginColors.loginGradientStart,
+                  theme.LoginColors.loginGradientEnd,
                 ],
                 begin: FractionalOffset(0.0, 0.0),
                 end: FractionalOffset(1.0, 1.0),
@@ -160,7 +160,10 @@ class _LoginScreenState extends State<LoginScreen>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                    color: Colors.white, blurRadius: 55, spreadRadius: 55,),
+                  color: Colors.white,
+                  blurRadius: 55,
+                  spreadRadius: 55,
+                ),
               ],
               image: DecorationImage(
                 image: AssetImage('assets/memphisbjj-large.jpg'),
@@ -349,12 +352,12 @@ class _LoginScreenState extends State<LoginScreen>
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         boxShadow: [
           BoxShadow(
-            color: Theme.LoginColors.loginGradientStart,
+            color: theme.LoginColors.loginGradientStart,
             offset: Offset(1.0, 6.0),
             blurRadius: 20.0,
           ),
           BoxShadow(
-            color: Theme.LoginColors.loginGradientEnd,
+            color: theme.LoginColors.loginGradientEnd,
             offset: Offset(1.0, 6.0),
             blurRadius: 20.0,
           ),
@@ -371,7 +374,7 @@ class _LoginScreenState extends State<LoginScreen>
         splashColor:
             Colors.transparent, // Add the 'splashColor' named parameter
         highlightColor: Colors.transparent,
-        color: Theme.LoginColors.loginGradientEnd,
+        color: theme.LoginColors.loginGradientEnd,
         onPressed: () {
           _loginWithEmailAndPassword();
           Navigator.pop(context);
@@ -542,12 +545,12 @@ class _LoginScreenState extends State<LoginScreen>
         borderRadius: BorderRadius.all(Radius.circular(5.0)),
         boxShadow: [
           BoxShadow(
-            color: Theme.LoginColors.loginGradientStart,
+            color: theme.LoginColors.loginGradientStart,
             offset: Offset(1.0, 6.0),
             blurRadius: 20.0,
           ),
           BoxShadow(
-            color: Theme.LoginColors.loginGradientEnd,
+            color: theme.LoginColors.loginGradientEnd,
             offset: Offset(1.0, 6.0),
             blurRadius: 20.0,
           ),
@@ -562,7 +565,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
       child: MaterialButton(
         highlightColor: Colors.transparent,
-        splashColor: Theme.LoginColors.loginGradientEnd,
+        splashColor: theme.LoginColors.loginGradientEnd,
         onPressed: _signUpWithEmailAndPassword,
         child: const Padding(
           padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 42.0),
@@ -664,23 +667,34 @@ class _LoginScreenState extends State<LoginScreen>
       ),
     );
 
-    userAuth.createUserFromEmail(email, password).then((signedIn) {
-      signedIn?.sendEmailVerification().then((_) {
-        FirebaseFirestore.instance.collection('users').doc(signedIn.uid).set({
+    try {
+      final signedIn = await userAuth.createUserFromEmail(email, password);
+      if (signedIn != null) {
+        await signedIn.sendEmailVerification();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(signedIn.uid)
+            .set({
           'email': signedIn.email,
           'emailVerified': signedIn.emailVerified,
           'isOnboardingComplete': false,
         });
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (BuildContext context) => const VerifyEmailScreen(),
           ),
         );
-      });
-    }).catchError((onError) {
-      showInSnackBar(onError.message);
-    });
+      } else {
+        showInSnackBar('Error: User not created', color: Colors.redAccent);
+      }
+    } catch (e) {
+      Logger.log('SIGNUP_ERROR', message: e.toString());
+      showInSnackBar('Error: $e', color: Colors.redAccent);
+    }
   }
 
   void _signInWithGoogle(BuildContext context) async {

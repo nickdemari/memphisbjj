@@ -11,9 +11,11 @@ class ScheduleScreen extends StatefulWidget {
   final String locationName;
   final User user;
 
-  const ScheduleScreen(
-      {Key? key, required this.locationName, required this.user,})
-      : super(key: key);
+  const ScheduleScreen({
+    Key? key,
+    required this.locationName,
+    required this.user,
+  }) : super(key: key);
 
   @override
   _ScheduleScreenState createState() => _ScheduleScreenState();
@@ -38,7 +40,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void _subscribeToFCM() {
     Messaging.subscribeToTopic('testing');
     _msgStream = Messaging.onFcmMessage.listen((data) {
-      print('FCM TRIGGERED in schedule main');
       var alert = Messaging.getAlert(data);
       _showSnackBar(alert, Colors.deepOrange);
     });

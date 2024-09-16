@@ -38,8 +38,6 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
     _msgStream = Messaging.onFcmMessage.listen((data) {
       var alert = Messaging.getAlert(data);
       _showSnackBar(alert, Colors.deepOrange);
-      Messaging.cancelFcmMessaging();
-      _msgStream?.cancel();
     });
   }
 
@@ -56,34 +54,37 @@ class _ViewScheduleScreenState extends State<ViewScheduleScreen> {
     final DateTime now = DateTime.now();
     final DateTime lastMidnight = DateTime(now.year, now.month, now.day);
 
-    return Scaffold(
-      key: _globalKey,
-      appBar: AppBar(
-        title: const Text('My Classes'),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: widget.getAll
-            ? _getAllClassesStream()
-            : _getUpcomingClassesStream(lastMidnight),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    return SafeArea(
+      child: Scaffold(
+        key: _globalKey,
+        appBar: AppBar(
+          title: const Text('My Classes'),
+        ),
+        body: StreamBuilder<QuerySnapshot>(
+          stream: widget.getAll
+              ? _getAllClassesStream()
+              : _getUpcomingClassesStream(lastMidnight),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          final documents = snapshot.data!.docs;
+            final documents = snapshot.data!.docs;
 
-          if (documents.isEmpty) {
-            return _buildNoClassesTile(context);
-          }
+            if (documents.isEmpty) {
+              return _buildNoClassesTile(context);
+            }
 
-          return ListView.builder(
-            itemCount: documents.length,
-            itemBuilder: (BuildContext context, int index) {
-              final document = documents[index];
-              return _buildClassTile(document);
-            },
-          );
-        },
+            return ListView.builder(
+              itemCount: documents.length,
+              itemBuilder: (BuildContext context, int index) {
+                final document = documents[index];
+                return _buildClassTile(document);
+              },
+            );
+          },
+        ),
       ),
     );
   }

@@ -104,6 +104,7 @@ class DateTabBuilder extends StatelessWidget {
       },
       leading: CircleAvatar(
         radius: 27.0,
+        backgroundColor: const Color.fromARGB(255, 180, 207, 230),
         child: Text(item.displayDateTime),
       ),
       title: Text(item.className),
