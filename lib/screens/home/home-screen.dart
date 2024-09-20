@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:memphisbjj/screens/about/about-screen.dart';
 import 'package:memphisbjj/screens/admin/admin-screen.dart';
 import 'package:memphisbjj/screens/instructors/instructers-screen.dart';
-import 'package:memphisbjj/screens/login/login-screen.dart';
+import 'package:memphisbjj/screens/onboarding/login/view/login-screen.dart';
 import 'package:memphisbjj/screens/profile/profile-screen.dart';
 import 'package:memphisbjj/screens/schedule-feature/view-schedule-screen/view-schedule-screen.dart';
 import 'package:memphisbjj/screens/schedule-feature/schedule-screen.dart';

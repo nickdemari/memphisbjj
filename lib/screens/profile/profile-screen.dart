@@ -5,11 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:memphisbjj/screens/login/login-screen.dart';
+import 'package:memphisbjj/screens/onboarding/login/view/login-screen.dart';
 import 'package:memphisbjj/screens/profile/member-dependents/member-dependents.dart';
 import 'package:memphisbjj/screens/schedule-feature/view-schedule-screen/view-schedule-screen.dart';
-import 'package:memphisbjj/screens/sign-up/upload-general-details-screen/upload-general-details-screen.dart';
-import 'package:memphisbjj/screens/sign-up/upload-profile-picture-screen/upload-profile-picture-screen.dart';
+import 'package:memphisbjj/screens/onboarding/screens/upload-general-details-screen/upload-general-details-screen.dart';
+import 'package:memphisbjj/screens/onboarding/screens/upload-profile-picture-screen/upload-profile-picture-screen.dart';
 import 'package:memphisbjj/services/messaging.dart';
 import 'package:memphisbjj/utils/user-information.dart';
 

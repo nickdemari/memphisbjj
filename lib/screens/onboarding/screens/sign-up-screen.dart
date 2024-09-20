@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:memphisbjj/components/text-fields/branded-input-field.dart';
 import 'package:memphisbjj/components/buttons/rounded-button.dart';
-import 'package:memphisbjj/screens/sign-up/verify-email-screen/verify-email-screen.dart';
+import 'package:memphisbjj/screens/onboarding/screens/verify-email-screen/verify-email-screen.dart';
 import 'package:memphisbjj/services/validations.dart';
 import 'package:memphisbjj/services/authentication.dart';
 

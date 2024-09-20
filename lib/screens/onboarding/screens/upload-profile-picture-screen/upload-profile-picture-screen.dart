@@ -5,7 +5,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:memphisbjj/screens/sign-up/upload-contact-info-screen/upload-contact-info-screen.dart';
+import 'package:memphisbjj/screens/onboarding/screens/upload-contact-info-screen/upload-contact-info-screen.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 
 class UploadProfilePicScreen extends StatefulWidget {

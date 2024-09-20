@@ -45,7 +45,7 @@ class LoginColors {
   const LoginColors();
 
   static const Color loginGradientStart = Color(0xFF1a256f);
-  static const Color loginGradientEnd = Color(0xFF1a256f);
+  static const Color loginGradientEnd = Color.fromARGB(255, 55, 55, 55);
 
   static const primaryGradient = LinearGradient(
     colors: [loginGradientStart, loginGradientEnd],
