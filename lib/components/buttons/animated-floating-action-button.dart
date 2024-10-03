@@ -9,14 +9,14 @@ class AnimatedFloatingActionButton extends StatefulWidget {
   final bool checkedIn;
 
   const AnimatedFloatingActionButton({
-    Key? key,
+    super.key,
     required this.checkInToClass,
     required this.addToSchedule,
     required this.removeFromSchedule,
     required this.meters,
     required this.onSchedule,
     required this.checkedIn,
-  }) : super(key: key);
+  });
 
   @override
   _AnimatedFloatingActionButtonState createState() =>

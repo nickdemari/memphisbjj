@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/admin/user-admin/user-admin-screen.dart';
 
 class AdminScreen extends StatefulWidget {
-  const AdminScreen({Key? key}) : super(key: key);
+  const AdminScreen({super.key});
 
   @override
   _AdminScreenState createState() => _AdminScreenState();

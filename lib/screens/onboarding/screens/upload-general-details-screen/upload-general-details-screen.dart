@@ -16,8 +16,7 @@ class UploadGeneralDetailsScreen extends StatefulWidget {
   final UserInformation info;
 
   const UploadGeneralDetailsScreen(
-      {Key? key, required this.isEdit, required this.info,})
-      : super(key: key);
+      {super.key, required this.isEdit, required this.info,});
 
   @override
   _UploadGeneralDetailsState createState() => _UploadGeneralDetailsState();

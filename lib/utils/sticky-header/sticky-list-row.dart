@@ -32,12 +32,10 @@ abstract class StickyListRow {
 
 /// Header row for list that sticks to top when scrolled.
 class HeaderRow extends StickyListRow {
-  HeaderRow({required Widget child, double? height})
-      : super(child: child, height: height);
+  HeaderRow({required super.child, super.height});
 }
 
 /// Regular row for list.
 class RegularRow extends StickyListRow {
-  RegularRow({required Widget child, double? height})
-      : super(child: child, height: height);
+  RegularRow({required super.child, super.height});
 }

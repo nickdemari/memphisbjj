@@ -27,7 +27,7 @@ class StickyList extends StatefulWidget {
 
   /// Use this constructor for list of [StickyListRow]
   StickyList({
-    Key? key,
+    super.key,
     Color background = Colors.transparent,
     bool reverse = false,
     required ScrollController controller,
@@ -35,14 +35,13 @@ class StickyList extends StatefulWidget {
   })  : childrenDelegate = _StickyChildBuilderDelegate(children),
         reverse = reverse,
         background = background,
-        controller = controller,
-        super(key: key);
+        controller = controller;
 
   /// This constructor is appropriate for list views with a large (or infinite)
   /// number of children because the builder is called only for those children
   /// that are actually visible.
   StickyList.builder({
-    Key? key,
+    super.key,
     Color background = Colors.transparent,
     bool reverse = false,
     required int itemCount,
@@ -52,8 +51,7 @@ class StickyList extends StatefulWidget {
             _StickyChildBuilderDelegate.builder(builder, itemCount),
         reverse = reverse,
         background = background,
-        controller = controller,
-        super(key: key);
+        controller = controller;
 
   @override
   _StickyListState createState() => _StickyListState(background: background);
@@ -225,7 +223,7 @@ class _StickyListState extends State<StickyList> {
 class WrapStickyWidget extends StatelessWidget {
   final Widget child;
 
-  const WrapStickyWidget({required this.child, Key? key}) : super(key: key);
+  const WrapStickyWidget({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {

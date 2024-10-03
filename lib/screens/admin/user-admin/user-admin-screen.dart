@@ -7,10 +7,10 @@ class UserAdminScreen extends StatefulWidget {
   final String displayName;
 
   const UserAdminScreen({
-    Key? key,
+    super.key,
     required this.userUid,
     required this.displayName,
-  }) : super(key: key);
+  });
 
   @override
   _UserAdminScreenState createState() => _UserAdminScreenState();

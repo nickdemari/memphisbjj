@@ -11,10 +11,10 @@ class ClassTabBuilder extends StatelessWidget {
   final ScheduleScreen widget;
 
   const ClassTabBuilder({
-    Key? key,
+    super.key,
     required this.lastMidnight,
     required this.widget,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +52,12 @@ class ClassList extends StatelessWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   const ClassList({
-    Key? key,
+    super.key,
     required this.snapshot,
     required this.lastMidnight,
     required this.widget,
     required this.scaffoldKey,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +90,11 @@ class ClassBottomSheet extends StatelessWidget {
   final ScheduleScreen widget;
 
   const ClassBottomSheet({
-    Key? key,
+    super.key,
     required this.eventName,
     required this.lastMidnight,
     required this.widget,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -144,11 +144,11 @@ class ClassScheduleList extends StatelessWidget {
   final int documentCount;
 
   const ClassScheduleList({
-    Key? key,
+    super.key,
     required this.snapshot,
     required this.widget,
     required this.documentCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +184,7 @@ class ClassScheduleList extends StatelessWidget {
 class HeadingItemWidget extends StatelessWidget {
   final HeadingItem item;
 
-  const HeadingItemWidget({Key? key, required this.item}) : super(key: key);
+  const HeadingItemWidget({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -206,12 +206,12 @@ class ScheduleItemWidget extends StatelessWidget {
   final CollectionReference classParticipants;
 
   const ScheduleItemWidget({
-    Key? key,
+    super.key,
     required this.context,
     required this.widget,
     required this.item,
     required this.classParticipants,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

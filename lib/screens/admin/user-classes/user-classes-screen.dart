@@ -7,10 +7,10 @@ class UserClassesScreen extends StatefulWidget {
   final String displayName;
 
   const UserClassesScreen({
-    Key? key,
+    super.key,
     required this.userUid,
     required this.displayName,
-  }) : super(key: key);
+  });
 
   @override
   _UserClassesScreenState createState() => _UserClassesScreenState();

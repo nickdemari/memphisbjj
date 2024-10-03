@@ -8,7 +8,7 @@ import 'package:memphisbjj/services/validations.dart';
 import 'package:memphisbjj/services/authentication.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   SignUpScreenState createState() => SignUpScreenState();

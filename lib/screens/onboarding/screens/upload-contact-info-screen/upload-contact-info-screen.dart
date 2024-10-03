@@ -9,7 +9,7 @@ import 'package:memphisbjj/services/validations.dart';
 import 'package:memphisbjj/utils/user-information.dart';
 
 class UploadContactInfoScreen extends StatefulWidget {
-  const UploadContactInfoScreen({Key? key}) : super(key: key);
+  const UploadContactInfoScreen({super.key});
 
   @override
   _UploadContactInfoScreenState createState() =>

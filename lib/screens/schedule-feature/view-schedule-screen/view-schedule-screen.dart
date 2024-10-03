@@ -10,8 +10,7 @@ class ViewScheduleScreen extends StatefulWidget {
   final User user;
   final bool getAll;
 
-  const ViewScheduleScreen({Key? key, required this.user, required this.getAll})
-      : super(key: key);
+  const ViewScheduleScreen({super.key, required this.user, required this.getAll});
 
   @override
   _ViewScheduleScreenState createState() => _ViewScheduleScreenState();

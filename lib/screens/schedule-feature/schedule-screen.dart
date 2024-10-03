@@ -12,10 +12,10 @@ class ScheduleScreen extends StatefulWidget {
   final User user;
 
   const ScheduleScreen({
-    Key? key,
+    super.key,
     required this.locationName,
     required this.user,
-  }) : super(key: key);
+  });
 
   @override
   _ScheduleScreenState createState() => _ScheduleScreenState();
@@ -122,7 +122,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
             children: <Widget>[
               DateTabBuilder(
                 lastMidnight: lastMidnight,
-                widget: widget,
+                locationName: widget.locationName,
+                user: widget.user,
               ),
               InstructorTabBuilder(
                 lastMidnight: lastMidnight,

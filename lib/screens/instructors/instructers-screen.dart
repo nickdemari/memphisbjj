@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/instructors/selected-instructors/selected-instructers-screen.dart';
 
 class InstructorsScreen extends StatefulWidget {
-  const InstructorsScreen({Key? key}) : super(key: key);
+  const InstructorsScreen({super.key});
 
   @override
   _InstructorsScreenState createState() => _InstructorsScreenState();

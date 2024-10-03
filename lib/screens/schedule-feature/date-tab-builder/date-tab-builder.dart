@@ -1,21 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/schedule-feature/selected-schedule/selected-schedule-screen.dart';
-import 'package:memphisbjj/screens/schedule-feature/schedule-screen.dart';
 import 'package:memphisbjj/utils/list-item.dart';
 
 class DateTabBuilder extends StatelessWidget {
   final DateTime lastMidnight;
-  final ScheduleScreen widget;
+  final String locationName;
+  final User user;
 
   const DateTabBuilder({
-    Key? key,
+    super.key,
     required this.lastMidnight,
-    required this.widget,
-  }) : super(key: key);
+    required this.locationName,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final classParticipants =
+        FirebaseFirestore.instance.collection('class-participants');
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('schedules')
@@ -25,47 +30,38 @@ class DateTabBuilder extends StatelessWidget {
           .orderBy('date')
           .limit(600)
           .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final int documentCount = snapshot.data!.docs.length;
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+          return const Center(child: Text('No data available'));
+        }
+
         return ListView.builder(
-          itemCount: documentCount,
+          itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
-            final DocumentSnapshot doc = snapshot.data!.docs[index];
-            final ListItem item = _getListItem(doc);
+            final doc = snapshot.data!.docs[index];
+            final data = doc.data() as Map<String, dynamic>;
 
-            if (item is HeadingItem) {
+            if (data.containsKey('class')) {
+              final item = ScheduleItem.fromMap(data);
+              return _buildScheduleItem(context, item, classParticipants);
+            } else {
+              final item = HeadingItem.fromMap(data);
               return _buildHeadingItem(item);
-            } else if (item is ScheduleItem) {
-              final CollectionReference classParticipants =
-                  FirebaseFirestore.instance.collection('class-participants');
-              return _buildScheduleItem(
-                context,
-                widget,
-                item,
-                classParticipants,
-              );
             }
-
-            return Container(); // Default fallback in case of unexpected types
           },
         );
       },
     );
   }
 
-  // Helper function to extract ListItem type
-  ListItem _getListItem(DocumentSnapshot doc) {
-    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return data.containsKey('class')
-        ? ScheduleItem.fromMap(data)
-        : HeadingItem(doc['date'].toDate());
-  }
-
-  // Widget builder for heading items
   Widget _buildHeadingItem(HeadingItem item) {
     return Container(
       color: Colors.blue,
@@ -77,15 +73,13 @@ class DateTabBuilder extends StatelessWidget {
     );
   }
 
-  // Widget builder for schedule items
   Widget _buildScheduleItem(
     BuildContext context,
-    ScheduleScreen widget,
     ScheduleItem item,
     CollectionReference classParticipants,
   ) {
-    final Query userQuery = classParticipants
-        .where('userUid', isEqualTo: widget.user.uid)
+    final userQuery = classParticipants
+        .where('userUid', isEqualTo: user.uid)
         .where('classUid', isEqualTo: item.uid);
 
     return ListTile(
@@ -94,8 +88,8 @@ class DateTabBuilder extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => SelectedScheduleScreen(
-              locationName: widget.locationName,
-              user: widget.user,
+              locationName: locationName,
+              user: user,
               scheduleItem: item,
               classParticipants: classParticipants,
             ),
@@ -111,21 +105,91 @@ class DateTabBuilder extends StatelessWidget {
       subtitle: Text(item.instructor),
       trailing: FutureBuilder<QuerySnapshot>(
         future: userQuery.get(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          final int opacity =
-              (snapshot.hasData && snapshot.data!.docs.isNotEmpty) ? 1 : 0;
-          return _buildScheduleIcon(opacity);
+        builder: (context, snapshot) {
+          final opacity =
+              (snapshot.hasData && snapshot.data!.docs.isNotEmpty) ? 1.0 : 0.0;
+          return AnimatedOpacity(
+            opacity: opacity,
+            duration: const Duration(milliseconds: 500),
+            child: const Icon(Icons.schedule),
+          );
         },
       ),
     );
   }
+}
 
-  // Widget builder for the schedule icon with opacity animation
-  Widget _buildScheduleIcon(int opacity) {
-    return AnimatedOpacity(
-      opacity: opacity.toDouble(),
-      duration: const Duration(milliseconds: 500),
-      child: const Icon(Icons.schedule),
+class HeadingItemWidget extends StatelessWidget {
+  final String day;
+
+  const HeadingItemWidget({super.key, required this.day});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.blue,
+      padding: const EdgeInsets.all(10.0),
+      child: Text(
+        day,
+        style: const TextStyle(color: Colors.white, fontSize: 18.0),
+      ),
+    );
+  }
+}
+
+class ScheduleItemWidget extends StatelessWidget {
+  final ScheduleItem item;
+  final CollectionReference classParticipants;
+  final String locationName;
+  final User user;
+
+  Query get userQuery => classParticipants
+      .where('userUid', isEqualTo: user.uid)
+      .where('classUid', isEqualTo: item.uid);
+
+  const ScheduleItemWidget({
+    super.key,
+    required this.item,
+    required this.classParticipants,
+    required this.locationName,
+    required this.user,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SelectedScheduleScreen(
+              locationName: locationName,
+              user: user,
+              scheduleItem: item,
+              classParticipants: classParticipants,
+            ),
+          ),
+        );
+      },
+      leading: CircleAvatar(
+        radius: 27.0,
+        backgroundColor: const Color.fromARGB(255, 180, 207, 230),
+        child: Text(item.displayDateTime),
+      ),
+      title: Text(item.className),
+      subtitle: Text(item.instructor),
+      trailing: FutureBuilder<QuerySnapshot>(
+        future: userQuery.get(),
+        builder: (context, snapshot) {
+          final opacity =
+              (snapshot.hasData && snapshot.data!.docs.isNotEmpty) ? 1.0 : 0.0;
+          return AnimatedOpacity(
+            opacity: opacity,
+            duration: const Duration(milliseconds: 500),
+            child: const Icon(Icons.schedule),
+          );
+        },
+      ),
     );
   }
 }

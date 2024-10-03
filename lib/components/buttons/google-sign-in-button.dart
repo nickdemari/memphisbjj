@@ -4,9 +4,9 @@ class GoogleSignInButton extends StatelessWidget {
   final Function onPressed;
 
   const GoogleSignInButton({
-    Key? key,
+    super.key,
     required this.onPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

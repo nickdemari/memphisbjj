@@ -21,7 +21,7 @@ class BrandedInputField extends StatelessWidget {
 
   //passing props in the Constructor.
   const BrandedInputField({
-    Key? key,
+    super.key,
     this.fieldKey,
     required this.hintText,
     this.obscureText = false,
@@ -38,7 +38,7 @@ class BrandedInputField extends StatelessWidget {
     this.formatters,
     this.maxLength,
     this.fromProfile,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

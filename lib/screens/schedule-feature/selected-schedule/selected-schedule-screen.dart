@@ -23,12 +23,12 @@ class SelectedScheduleScreen extends StatefulWidget {
   final CollectionReference classParticipants;
 
   const SelectedScheduleScreen({
-    Key? key,
+    super.key,
     required this.locationName,
     required this.user,
     required this.scheduleItem,
     required this.classParticipants,
-  }) : super(key: key);
+  });
 
   @override
   _SelectedScheduleScreenState createState() => _SelectedScheduleScreenState();

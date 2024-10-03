@@ -6,7 +6,7 @@ class BrandedTextButton extends StatelessWidget {
   final TextStyle textStyle;
 
   const BrandedTextButton({
-    Key? key,
+    super.key,
     required this.buttonName,
     required this.onPressed,
     this.textStyle = const TextStyle(
@@ -14,7 +14,7 @@ class BrandedTextButton extends StatelessWidget {
       fontSize: 16.0,
       fontWeight: FontWeight.bold,
     ),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

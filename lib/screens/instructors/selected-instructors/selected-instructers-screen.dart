@@ -6,8 +6,7 @@ class SelectedInstructorScreen extends StatefulWidget {
   final String instructorId;
 
   const SelectedInstructorScreen(
-      {Key? key, required this.instructorId, required this.name,})
-      : super(key: key);
+      {super.key, required this.instructorId, required this.name,});
 
   @override
   _SelectedInstructorScreenState createState() =>

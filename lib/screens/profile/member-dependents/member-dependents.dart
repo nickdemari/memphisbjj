@@ -7,8 +7,7 @@ import 'package:memphisbjj/services/validations.dart';
 class MemberDependentsScreen extends StatefulWidget {
   final String parentFbUid;
 
-  const MemberDependentsScreen({Key? key, required this.parentFbUid})
-      : super(key: key);
+  const MemberDependentsScreen({super.key, required this.parentFbUid});
 
   @override
   _MemberDependentsScreenState createState() => _MemberDependentsScreenState();

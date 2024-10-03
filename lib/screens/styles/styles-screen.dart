@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:memphisbjj/screens/styles/selected-styles-screen/selected-styles-screen.dart';
 
 class StylesScreen extends StatefulWidget {
-  const StylesScreen({Key? key}) : super(key: key);
+  const StylesScreen({super.key});
 
   @override
   _StylesScreenState createState() => _StylesScreenState();

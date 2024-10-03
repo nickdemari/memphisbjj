@@ -18,7 +18,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashScreenPage extends StatefulWidget {
   final int seconds;
-  const SplashScreenPage({Key? key, required this.seconds}) : super(key: key);
+  const SplashScreenPage({super.key, required this.seconds});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();

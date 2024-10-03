@@ -11,7 +11,7 @@ import 'package:memphisbjj/utils/user-item.dart';
 import 'package:memphisbjj/utils/bubble-indication-painter.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -266,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen>
 class _LogoWidget extends StatelessWidget {
   final double screenHeight;
 
-  const _LogoWidget({Key? key, required this.screenHeight}) : super(key: key);
+  const _LogoWidget({required this.screenHeight});
 
   @override
   Widget build(BuildContext context) {
@@ -292,13 +292,12 @@ class _MenuBar extends StatelessWidget {
   final Color right;
 
   const _MenuBar({
-    Key? key,
     required this.pageController,
     required this.onSignInButtonPress,
     required this.onSignUpButtonPress,
     required this.left,
     required this.right,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -354,13 +353,12 @@ class _SignInForm extends StatelessWidget {
   final VoidCallback onLogin;
 
   const _SignInForm({
-    Key? key,
     required this.emailController,
     required this.passwordController,
     required this.obscureText,
     required this.toggleVisibility,
     required this.onLogin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -396,12 +394,12 @@ class SignInCard extends StatelessWidget {
   final VoidCallback toggleVisibility;
 
   const SignInCard({
-    Key? key,
+    super.key,
     required this.emailController,
     required this.passwordController,
     required this.obscureText,
     required this.toggleVisibility,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -438,7 +436,7 @@ class SignInCard extends StatelessWidget {
 class SignInButton extends StatelessWidget {
   final VoidCallback onLogin;
 
-  const SignInButton({Key? key, required this.onLogin}) : super(key: key);
+  const SignInButton({super.key, required this.onLogin});
 
   @override
   Widget build(BuildContext context) {
@@ -480,11 +478,11 @@ class EmailField extends StatelessWidget {
   final IconData icon;
 
   const EmailField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.labelText,
     required this.icon,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -517,11 +515,11 @@ class PasswordField extends StatelessWidget {
   final VoidCallback toggleVisibility;
 
   const PasswordField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.obscureText,
     required this.toggleVisibility,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -558,7 +556,7 @@ class PasswordField extends StatelessWidget {
 
 // Stateless widget for Forgot Password Button
 class ForgotPasswordButton extends StatelessWidget {
-  const ForgotPasswordButton({Key? key}) : super(key: key);
+  const ForgotPasswordButton({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -592,7 +590,6 @@ class _SignUpForm extends StatelessWidget {
   final VoidCallback onSignUp;
 
   const _SignUpForm({
-    Key? key,
     required this.emailController,
     required this.nameController,
     required this.passwordController,
@@ -602,7 +599,7 @@ class _SignUpForm extends StatelessWidget {
     required this.toggleVisibility,
     required this.toggleConfirmVisibility,
     required this.onSignUp,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -645,7 +642,7 @@ class SignUpCard extends StatelessWidget {
   final VoidCallback toggleConfirmVisibility;
 
   const SignUpCard({
-    Key? key,
+    super.key,
     required this.emailController,
     required this.nameController,
     required this.passwordController,
@@ -654,7 +651,7 @@ class SignUpCard extends StatelessWidget {
     required this.obscureConfirmText,
     required this.toggleVisibility,
     required this.toggleConfirmVisibility,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -697,7 +694,7 @@ class SignUpCard extends StatelessWidget {
 class SignUpButton extends StatelessWidget {
   final VoidCallback onSignUp;
 
-  const SignUpButton({Key? key, required this.onSignUp}) : super(key: key);
+  const SignUpButton({super.key, required this.onSignUp});
 
   @override
   Widget build(BuildContext context) {

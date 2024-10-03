@@ -6,7 +6,7 @@ import 'package:memphisbjj/screens/onboarding/screens/upload-profile-picture-scr
 import 'package:url_launcher/url_launcher.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({Key? key}) : super(key: key);
+  const VerifyEmailScreen({super.key});
 
   @override
   _VerifyEmailScreenState createState() => _VerifyEmailScreenState();

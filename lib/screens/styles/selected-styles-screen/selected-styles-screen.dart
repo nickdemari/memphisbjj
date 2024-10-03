@@ -6,8 +6,7 @@ class SelectedStyleScreen extends StatefulWidget {
   final String styleId;
 
   const SelectedStyleScreen(
-      {Key? key, required this.styleId, required this.name,})
-      : super(key: key);
+      {super.key, required this.styleId, required this.name,});
 
   @override
   _SelectedStyleScreenState createState() => _SelectedStyleScreenState();

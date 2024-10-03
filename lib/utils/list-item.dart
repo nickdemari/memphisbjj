@@ -9,6 +9,9 @@ class HeadingItem implements ListItem {
 
   HeadingItem(DateTime date)
       : day = DateFormat('EEEE, MMMM d, yyyy').format(date);
+
+  HeadingItem.fromMap(Map<String, dynamic> map)
+      : day = DateFormat('EEEE, MMMM d, yyyy').format(map['date']);
 }
 
 // A ListItem that contains data to display a schedule item

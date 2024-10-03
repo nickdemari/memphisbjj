@@ -10,8 +10,7 @@ import 'package:flutter_native_image/flutter_native_image.dart';
 
 class UploadProfilePicScreen extends StatefulWidget {
   final bool isEdit;
-  const UploadProfilePicScreen({Key? key, this.isEdit = false})
-      : super(key: key);
+  const UploadProfilePicScreen({super.key, this.isEdit = false});
 
   @override
   _UploadProfilePicScreenState createState() => _UploadProfilePicScreenState();
