@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   android_intent_plus: ^5.1.0
   flutter_lints: ^4.0.0
+  flutter_riverpod: ^2.5.1
   timezone: ^0.9.4
 
   firebase_core: any
